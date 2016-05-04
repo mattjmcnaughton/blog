@@ -1,0 +1,11 @@
+baseurl = "http://mattjmcnaughton.com"
+languageCode = "en-us"
+title = "Matt McNaughton's Blog"
+
+[permalinks]
+  post = "/:year/:month/:title/"
+
+[param]
+  AuthorName = "Matt McNaughton"
+  GitHubUser = "mattjmcnaughton"
+  SidebarRecentLimit = 5

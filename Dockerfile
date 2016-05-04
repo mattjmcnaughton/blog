@@ -11,7 +11,7 @@ ENV PATH /go/bin:$PATH
 
 # Install pygments - the only dependency for Hugo.
 RUN apt-get -y update
-RUN apt-get install python-pygments
+RUN apt-get -y install python-pygments
 
 # Install hugo.
 RUN go get -u -v github.com/spf13/hugo

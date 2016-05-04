@@ -4,11 +4,15 @@
 IMAGE_NAME=mattjmcnaughton/hugo-blog:latest
 
 # The prefix for all development commands using docker.
-DEV_DOCKER_PREFIX=docker run --rm -i -v $(shell pwd):/blog $(IMAGE_NAME)
+DEV_DOCKER_PREFIX=docker run --rm -it -v $(shell pwd):/blog $(IMAGE_NAME)
 
 # Build the docker image containing an install of hugo.
 build_image:
 	docker build -t $(IMAGE_NAME) .
+
+# Start up a bash shell in the container to execute commands.
+exec:
+	$(DEV_DOCKER_PREFIX) /bin/bash
 
 # Instruct hugo to build our website. All of the built contents of the website
 # go into `./public`.
