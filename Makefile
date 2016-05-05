@@ -4,11 +4,15 @@
 IMAGE_NAME=mattjmcnaughton/hugo-blog:latest
 
 # The prefix for all development commands using docker.
-DEV_DOCKER_PREFIX=docker run --rm -i -v $(shell pwd):/blog $(IMAGE_NAME)
+DEV_DOCKER_PREFIX=docker run --rm -it -v $(shell pwd):/blog $(IMAGE_NAME)
 
 # Build the docker image containing an install of hugo.
 build_image:
 	docker build -t $(IMAGE_NAME) .
+
+# Start up a bash shell in the container to execute commands.
+exec:
+	$(DEV_DOCKER_PREFIX) /bin/bash
 
 # Instruct hugo to build our website. All of the built contents of the website
 # go into `./public`.
@@ -17,10 +21,9 @@ build:
 
 # Serve the blog in development.
 #
-# Updates will be automatically reflected. We bind to `0.0.0.0` because the
-# default binding of `127.0.0.1` would allow us to only see the served website
-# when we are on the vm hosting Docker.
-#
-# Access the served blog at `http://DOCKER_MACHINE_IP:1313`.
+# Updates will be automatically reflected.
+# Internal links within hugo explicitly reference `localhost`, so for the time
+# being I can't think of how to run this within a Docker container. Thus, `hugo`
+# is a dependency for development (which makes sense).
 serve:
-	$(DEV_DOCKER_PREFIX) hugo server --bind="0.0.0.0"
+	hugo server
