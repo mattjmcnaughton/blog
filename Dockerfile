@@ -21,6 +21,3 @@ ADD . /blog
 
 # Set `/blog` as the workdir.
 WORKDIR /blog
-
-# Expose port 1313 when serving `hugo` locally.
-EXPOSE 1313
