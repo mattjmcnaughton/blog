@@ -19,11 +19,19 @@ exec:
 build:
 	$(DEV_DOCKER_PREFIX) hugo
 
+# Create a new blog post.
+#
+# @EXAMPLE: `make post PATH=post/using-hugo.md`
+post:
+	$(DEV_DOCKER_PREFIX) hugo new $(PATH)
+
 # Serve the blog in development.
 #
 # Updates will be automatically reflected.
 # Internal links within hugo explicitly reference `localhost`, so for the time
 # being I can't think of how to run this within a Docker container. Thus, `hugo`
 # is a dependency for development (which makes sense).
+#
+# @TODO Containerize this as well - need to fix `hugo` hardlinking to localhost.
 serve:
 	hugo server
