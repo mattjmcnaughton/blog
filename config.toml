@@ -9,7 +9,7 @@ disqusShortname = ""
 [params]
   name = "Matt McNaughton"
   description = "My Blog"
-  bio = "Programmer"
+  bio = ""
   # Enter optionally your twitter account
   twitter = "mattjmcnaughton"
   enableRSS = true
@@ -22,8 +22,8 @@ disqusShortname = ""
   # translate or customize each string of the theme.
 
   # Navigation links
-  home = ""
-  about = ""
+  home = "/"
+  about = "/about"
   subscribe = ""
   # Pagination links
   olderPosts = ""
@@ -45,4 +45,5 @@ disqusShortname = ""
 
 # Add additional social link entries underneath
 [social]
-    github   = "https://www.github.com/mattjmcnaughton"
+    github  = "https://www.github.com/mattjmcnaughton"
+    twitter = "https://www.twitter.com/@mattjmcnaughton"
