@@ -4,12 +4,12 @@ languageCode = "en-us"
 title = "Matt McNaughton's Blog"
 theme = "hugo-cactus-theme"
 # Disable comments by leaving disqusShortname empty
-disqusShortname = ""
+disqusShortname = "mattjmcnaughton"
 
 [params]
   name = "Matt McNaughton"
   description = "My Blog"
-  bio = ""
+  bio = "Programmer - Cook - Mental Health Advocate"
   # Enter optionally your twitter account
   twitter = "mattjmcnaughton"
   enableRSS = true
