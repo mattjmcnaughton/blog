@@ -1,5 +1,5 @@
 # Site settings
-baseurl = "http://mattjmcnaughton/"
+baseURL = "http://mattjmcnaughton.com/"
 languageCode = "en-us"
 title = "Matt McNaughton's Blog"
 theme = "hugo-cactus-theme"
