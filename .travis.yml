@@ -4,7 +4,7 @@ sudo: required
 script: echo "TESTS PASS"
 deploy:
   provider: script
-  script: scripts/deploy.sh
+  script: ./scripts/deploy.sh
 env:
   global:
   - secure: osmvH15MIr1Q3AA/nSB4bPsOkzvBcekN4Nf0AeSQYuOmzZFdr16ncAYx/4Q3pQpBdZaQnCpA8ftN7s0kgUyd1wR9rXpQZ5LtkX/GLVLKd/yHPbiru0sihSG2mJPhwdF+60p79mwqZ6Z5DgSfkfSOSiC2BtpkIwhG5p1WC+YeLA5Vbgj4gWBPmedxqLYQu4N9T0jNymEA4dtIZPsX5V6iZCec7riotJm0WH+d4PMDQ5sFMvNkthCft6ErFpKLGT0sNq3wAhYpoXXFwOObAxTx++PRUwfFZCRSPj8LM2zoorn6wo+T1G1gStepWUmYOcSLAG6zUA7WCuWlofJe+psm4h2ILA9IQ693u5AdMfzitUihouBxeqYqDqDc1j30424Nkonqn7glXiQCdz8nc07DILWeorjIVSiEwjS+LN3HXjqznCymsALFlIzCw5vjhDWzZxUPYiN8jXO98mGIIcqf6omQ9JP72sPXbyIvxDuZAcDRdC73rJFr9SD7XSQ7a5MuIvL7VkYzd+aEprhwOlOVXXdpNslulYKiLBlP4ZvEBsp1DjoN+5A8t9AnQ/J+3aXQoJ7LbFZd3EOYnPXxvy/3FR4UQOsTibn6H2SdVkiqVtf1Z8YOK+rIwhT2ytkm0NpaYYK/MZp1fuS3dTL0TaEaQ/eQ8xSU6t1BOMbC1kWBJes=
