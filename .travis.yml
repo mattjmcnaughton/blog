@@ -3,7 +3,7 @@ install: go get -v github.com/spf13/hugo
 sudo: required
 script:
 - hugo -v
-- sudo pip install sdep>=0.21
+- sudo pip install sdep>=0.1.0
 - sdep update
 branches:
   only:
