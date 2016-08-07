@@ -9,7 +9,7 @@ disqusShortname = "mattjmcnaughton"
 [params]
   name = "Matt McNaughton"
   description = "My Blog"
-  bio = "Programmer - Cook - Mental Health Advocate"
+  bio = "SE@Flatiron Health - Williams College '16 - hackNY '15"
   # Enter optionally your twitter account
   twitter = "mattjmcnaughton"
   enableRSS = true
@@ -31,7 +31,7 @@ disqusShortname = "mattjmcnaughton"
   readMore = ""
   copyright = ""
   # Sharing options and author information in posts
-  aboutAuthor = "I'm passionate about distributed systems, cooking, and mental health."
+  aboutAuthor = ""
   tweet = ""
   share = ""
   # 404 page
