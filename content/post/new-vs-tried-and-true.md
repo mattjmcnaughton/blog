@@ -2,7 +2,7 @@
 categories = ["Programming"]
 date = "2016-06-13T03:23:41Z"
 tags = ["programming", "heroku", "rails", "deploy"]
-Title = "New Vs Tried And True"
+Title = "New vs Tried and True"
 +++
 
 Going into a new project, I'm bringing in a ton of new concepts, tools, etc.
