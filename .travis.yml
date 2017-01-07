@@ -1,7 +1,11 @@
 language: go
-install: go get -v github.com/spf13/hugo
+install:
+- go get -u -v github.com/kardianos/govendor
+- go get -u -v github.com/spf13/hugo
+- cd $GOPATH/src/github.com/spf13/hugo && govendor sync && go install && cd $TRAVIS_BUILD_DIR
 sudo: required
 script:
+- cd $TRAVIS_BUILD_DIR
 - hugo -v
 - sudo pip install sdep>=0.1.0
 - sdep update
