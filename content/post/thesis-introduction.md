@@ -28,8 +28,3 @@ similar pattern, yet creates or destroys replica applications based on
 **predicted** resource utilization. The interval of time required for a replica
 pod to share in the computational work determines the interval into the
 future for which we predict.
-
-Over the next couple of weeks, I intend to write a series of blog posts
-detailing the lessons I learned (and mistakes I made). If you're interested in
-Kubernetes, golang, distributed systems, or undergraduate research, I hope
-you'll follow along!
