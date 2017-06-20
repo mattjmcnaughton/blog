@@ -3,7 +3,7 @@ sudo: required
 # It is not possible to install `hugo` with `apt-get` until 16.04, which travis
 # doesn't support yet.
 install:
-  - wget -O /tmp/hugo.deb https://github.com/spf13/hugo/releases/download/v0.16/hugo_0.16_Linux-64bit.deb
+  - wget -O /tmp/hugo.deb https://github.com/spf13/hugo/releases/download/v0.17/hugo_0.17-64bit.deb
   - sudo dpkg -i /tmp/hugo.deb
 script:
 - cd $TRAVIS_BUILD_DIR
