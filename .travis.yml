@@ -1,9 +1,8 @@
 language: go
-install:
-- go get -u -v github.com/kardianos/govendor
-- go get -u -v github.com/spf13/hugo
-- cd $GOPATH/src/github.com/spf13/hugo && govendor sync && go install && cd $TRAVIS_BUILD_DIR
 sudo: required
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y hugo
 script:
 - cd $TRAVIS_BUILD_DIR
 - hugo -v
