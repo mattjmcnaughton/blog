@@ -7,9 +7,9 @@ build:
 
 # Create a new blog post.
 #
-# @EXAMPLE: `make post PATH=post/using-hugo.md`
+# @EXAMPLE: `make post POST=post/using-hugo.md`
 post:
-	hugo new $(PATH)
+	hugo new $(POST)
 
 # Serve the blog in development.
 #
