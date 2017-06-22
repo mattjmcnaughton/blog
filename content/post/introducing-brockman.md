@@ -43,9 +43,13 @@ So now, we'll add the following command, on a five minute interval, to the cront
 [brockman](https://github.com/mattjmcnaughton/brockman) is now reporting on this background scan.
 We need an easy way to determine if any failures occurred, and if so, investigate their cause.
 [brockman](https://github.com/mattjmcnaughton/brockman) provides two commands for this analysis:
-`failure` and `view`. `brockman.sh failure` returns exit code 0 (i.e. succeeds) if
+*failure* and *view*. 
+```
+brockman.sh failure
+```
+ returns exit code 0 (i.e. succeeds) if
 [brockman](https://github.com/mattjmcnaughton/brockman) has unresolved errors, and fails otherwise.
-Add the following to the shell initialization script (i.e. `~/.bashrc`).
+Add the following to the shell initialization script (i.e. `~/.bashrc`):
 
 ```
 if brockman.sh failure
@@ -54,20 +58,26 @@ then
 fi
 ```
 
-The `view` command takes either `alert` or `error` as an argument. `alert` will display
-which background task failed, and instruct us to run `brockman.sh view error` to
-see the error log from the failure. Now, every time we open a new shell,
+The *view* command takes either *alert* or *error* as an argument. *alert* will display
+which background task failed, and instruct us to run
+```
+brockman.sh view error
+```
+to see the error log from the failure. Now, every time we open a new shell,
 [brockman](https://github.com/mattjmcnaughton/brockman) will alert us to any failures needing
 attention.
 
 Finally, when we've successfully handled the error in the background process, we run
-`brockman.sh resolve`. This command prevents [brockman](https://github.com/mattjmcnaughton/brockman)
+```
+brockman.sh resolve
+```
+This command prevents [brockman](https://github.com/mattjmcnaughton/brockman)
 from alerting us about this failure again.
 
 With [brockman](https://github.com/mattjmcnaughton/brockman), we can automate tasks, without the complexity
 of multiple log files or monitoring scripts. Because [brockman](https://github.com/mattjmcnaughton/brockman)
 can report on any command executable from the terminal,
-we can use it with any background process which logs errors to `stderr` and uses
+we can use it with any background process which logs errors to *stderr* and uses
 exit codes to indicate success/failure.
 
 ## Wrap Up
