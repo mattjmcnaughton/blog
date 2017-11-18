@@ -1,5 +1,6 @@
 # Site settings
-baseurl = "http://replace-this-with-your-domain.com/"
+baseurl = "https://example.org/"
+themesDir = "../.."
 languageCode = "en-us"
 title = "Hugo Cactus Theme"
 theme = "hugo-cactus-theme"
@@ -11,12 +12,13 @@ disqusShortname = "spf13"
 [params]
 	name = "John Doe"
 	description = "Describe your website"
-	bio = "Blogger - Programmer - Gopher"
+	bio = "Blogger & Programmer"
 	# Enter optionally your twitter account
 	twitter = "Your Twitter account"
 	enableRSS = true
 
-	# Add custom assets with their paths relative to the static folder
+	# Integrate Javascript files or stylesheets by adding the url to the external assets or by
+	# linking local files with their path relative to the static folder, e.g. "css/styles.css"
 	customCSS = []
 	customJS  = []
 
@@ -25,7 +27,6 @@ disqusShortname = "spf13"
 
 	# Navigation links
 	home = ""
-	about = ""
 	subscribe = ""
 	# Pagination links
 	olderPosts = ""
@@ -33,7 +34,7 @@ disqusShortname = "spf13"
 	readMore = ""
 	copyright = ""
 	# Sharing options and author information in posts
-	aboutAuthor = "I'm an enthusiastic gopher."
+	aboutAuthor = "I'm an blogger."
 	tweet = ""
 	share = ""
 	# 404 page
