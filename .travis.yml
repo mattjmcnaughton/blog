@@ -1,7 +1,7 @@
 language: python
 sudo: required
 install:
-- wget -O /tmp/hugo.deb https://github.com/spf13/hugo/releases/download/v0.17/hugo_0.17-64bit.deb
+- wget -O /tmp/hugo.deb https://github.com/spf13/hugo/releases/download/v0.30.2/hugo_0.30.2_Linux-64bit.deb
 - sudo dpkg -i /tmp/hugo.deb
 script:
 - cd $TRAVIS_BUILD_DIR
