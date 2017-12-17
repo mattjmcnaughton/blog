@@ -6,10 +6,19 @@
     <description>Recent content on Matt McNaughton&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 18 Nov 2017 09:41:46 -0400</lastBuildDate>
+    <lastBuildDate>Wed, 27 Dec 2017 09:41:46 -0400</lastBuildDate>
     
 	<atom:link href="https://mattjmcnaughton.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Getting Started Contributing to Popular Open-Source Projects</title>
+      <link>https://mattjmcnaughton.com/post/getting-started-contributing-to-open-source-projects/</link>
+      <pubDate>Wed, 27 Dec 2017 09:41:46 -0400</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/getting-started-contributing-to-open-source-projects/</guid>
+      <description>Few programming experiences are more informative or rewarding than meaningfully contributing to open-source software. However, even programmers with strong technical skills can experience discouragingly high barriers to entry when contributing to a new project. This barrier to entry feels particularly high for the popular, high-velocity projects. Unfortunately, these projects are often those which first catch the eye, and attract us to open source. Overwhelming. Perhaps Steve Harvey shows it best&amp;hellip;</description>
+    </item>
     
     <item>
       <title>Programming with OCD</title>

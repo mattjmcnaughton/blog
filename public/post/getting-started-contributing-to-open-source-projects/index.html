@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Matt McNaughton">
+<meta name="description" content="My Blog">
+<meta name="generator" content="Hugo 0.30.2" />
+<title>Getting Started Contributing to Popular Open-Source Projects</title>
+<link rel="shortcut icon" href="https://mattjmcnaughton.com/images/favicon.ico">
+<link rel="stylesheet" href="https://mattjmcnaughton.com/css/style.css">
+<link rel="stylesheet" href="https://mattjmcnaughton.com/css/highlight.css">
+
+
+
+<link rel="stylesheet" href="https://mattjmcnaughton.com/css/monosocialiconsfont.css">
+
+
+
+<link href="https://mattjmcnaughton.com/index.xml" rel="alternate" type="application/rss+xml" title="Matt McNaughton&#39;s Blog" />
+
+
+<meta property="og:title" content="Getting Started Contributing to Popular Open-Source Projects" />
+<meta property="og:description" content="Few programming experiences are more informative or rewarding than meaningfully contributing to open-source software. However, even programmers with strong technical skills can experience discouragingly high barriers to entry when contributing to a new project. This barrier to entry feels particularly high for the popular, high-velocity projects. Unfortunately, these projects are often those which first catch the eye, and attract us to open source. Overwhelming. Perhaps Steve Harvey shows it best&hellip;" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://mattjmcnaughton.com/post/getting-started-contributing-to-open-source-projects/" />
+
+
+
+<meta property="article:published_time" content="2017-12-27T09:41:46-04:00"/>
+
+<meta property="article:modified_time" content="2017-12-27T09:41:46-04:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Getting Started Contributing to Popular Open-Source Projects">
+<meta itemprop="description" content="Few programming experiences are more informative or rewarding than meaningfully contributing to open-source software. However, even programmers with strong technical skills can experience discouragingly high barriers to entry when contributing to a new project. This barrier to entry feels particularly high for the popular, high-velocity projects. Unfortunately, these projects are often those which first catch the eye, and attract us to open source. Overwhelming. Perhaps Steve Harvey shows it best&hellip;">
+
+
+<meta itemprop="datePublished" content="2017-12-27T09:41:46-04:00" />
+<meta itemprop="dateModified" content="2017-12-27T09:41:46-04:00" />
+<meta itemprop="wordCount" content="853">
+
+
+
+<meta itemprop="keywords" content="programming,open-source," />
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Getting Started Contributing to Popular Open-Source Projects"/>
+<meta name="twitter:description" content="Few programming experiences are more informative or rewarding than meaningfully contributing to open-source software. However, even programmers with strong technical skills can experience discouragingly high barriers to entry when contributing to a new project. This barrier to entry feels particularly high for the popular, high-velocity projects. Unfortunately, these projects are often those which first catch the eye, and attract us to open source. Overwhelming. Perhaps Steve Harvey shows it best&hellip;"/>
+<meta name="twitter:site" content="@https://www.twitter.com/@mattjmcnaughton"/>
+
+
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://mattjmcnaughton.com/'> <span class="arrow">←</span>/</a>
+	
+
+	
+
+	
+		<a class="cta" href="https://mattjmcnaughton.com/index.xml">Subscribe</a>
+	
+</nav>
+
+    <section id="wrapper">
+        
+        
+<article class="post">
+    <header>
+        <h1>Getting Started Contributing to Popular Open-Source Projects</h1>
+        <h2 class="subtitle"></h2>
+        <h2 class="headline">
+        December 27, 2017
+        <br>
+        
+        
+            
+                <a href="https://mattjmcnaughton.com/tags/programming">programming</a>
+            
+                <a href="https://mattjmcnaughton.com/tags/open-source">open-source</a>
+            
+        
+        
+        </h2>
+    </header>
+    <section id="post-body">
+        
+
+<p>Few programming experiences are more informative or rewarding than meaningfully
+contributing to open-source software. However, even programmers with strong
+technical skills can experience discouragingly high barriers to entry when contributing to a new
+project. This barrier to entry feels particularly high for the popular,
+high-velocity projects. Unfortunately, these projects are often those which
+first catch the eye, and attract us to open source. Overwhelming. Perhaps Steve Harvey shows
+it best&hellip;</p>
+
+<p><iframe src="https://giphy.com/embed/Wv1LRsa2f2afm" width="480" height="441" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/sad-frustrated-steve-harvey-Wv1LRsa2f2afm">via GIPHY</a></p></p>
+
+<p>Fortunately, a couple of techniques exist which can ease your transition and
+help you make meaningful contributions faster. I suggest these techniques based
+on my experiences contributing to
+<a href="https://github.com/kubernetes/kubernetes/">Kubernetes</a>, a popular container
+scheduler and manager from Google. In a couple of months this fall, I went from one or two
+minor documentation commits to ~15 commits. While attempting to ramp up my
+involvement, I found <em>being a gardener</em>, <em>starting small</em>, and <em>creating
+routines</em> exceptionally helpful. I explain more about each technique
+below in the hopes that you&rsquo;ll find them helpful too.</p>
+
+<h2 id="be-a-gardener">Be a gardener</h2>
+
+<p><iframe src="https://giphy.com/embed/10MiARCLPnbCwM" width="480" height="251" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/puppy-shiba-inu-10MiARCLPnbCwM">via GIPHY</a></p></p>
+
+<p>If you haven&rsquo;t yet read illustrious open-source contributor Steve
+Klabnik&rsquo;s <a href="http://words.steveklabnik.com/how-to-be-an-open-source-gardener">How to be an Open-Source
+Gardener</a> blog
+post, I&rsquo;d recommend doing so right now. He discusses how he got
+involved with Rails development, not through making large commits, but through
+helping with issue triage and documentation.</p>
+
+<p>I found one idea particularly helpful as I tried to increase my Kubernete&rsquo;s
+contributions. In his blog post, he recollects how he read every single open issue on Rails
+before he began triaging, documenting, or coding. While it is undoubtedly
+tempting to dive in and start making PRs, Steve&rsquo;s strategy ensures you have the
+proper context to make informed decisions. Which sections of the code are buggy?
+Which sections of the code have heavy churn? Github holds the answers to both
+these questions and more in either issues, pr discussions, or commit logs.</p>
+
+<p>You might say, &ldquo;we can&rsquo;t all be Steve Klabnik reading 800 issues over the course of a
+weekend. Especially with a large project, I&rsquo;ll be reading issues forever?&rdquo;
+You make a great point, which leads me to my second technique that I&rsquo;ve found absolutely vital.</p>
+
+<h2 id="start-small">Start small</h2>
+
+<p><iframe src="https://giphy.com/embed/zQhFEBrX6plKg" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/yoda-zQhFEBrX6plKg">via GIPHY</a></p></p>
+
+<p>My previous technique suggested pursuing depth as the way to get your foot in
+the door on a new open-source project. But unless you are going to spend 16 hours a
+day working on open-source, you can&rsquo;t have deep knowledge everywhere.
+You&rsquo;ll need to couple your pursuit of depth with a
+reduced field of focus. In other words, start small. Pick a distinct section of
+the code base, and dive deep by reviewing issues, past commits and PRs. By
+focusing on a smaller section of the code base, its easier to develop the
+context and knowledge allowing you to make intelligent code, documentation, and
+issue triage contributions.</p>
+
+<p>Picking a section of the code base is a personal decision dependent on a number
+of factors. Consider what type of velocity you&rsquo;re comfortable with - do you want
+new issues to be popping every day, or do you want the ability to take a week
+long break, and come back and not feel overwhelmed? Additionally, think if
+there&rsquo;s an area of the code base in which you have a competitive advantage, or a
+segment of the project which seems particularly welcoming to newcomers.</p>
+
+<p>For issue triages, code review, and commits, I focus almost
+exclusively on the auto-scaling components of Kubernetes.
+Kubernetes. I chose the auto-scaler using the above criteria. It&rsquo;s not a particularly
+high-velocity component of Kubernetes at this point, which is perfect for me as
+I can only contribute on nights and weekends. Additionally, I worked with
+auto-scaling in Kubernetes a couple of years ago for my undergraduate thesis.
+While my thesis work resulted in limited open-source contributions, it did leave
+me with a good knowledge of how auto-scaling, specifically in Kubernetes, works.
+Plus, I&rsquo;d interacted with members of the auto-scaling community and knew how
+insightful and friendly they are.</p>
+
+<h2 id="create-routines">Create Routines</h2>
+
+<p><iframe src="https://giphy.com/embed/xTiTnxCaP0qE2XYalO" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/spongebob-squarepants-squidward-routine-xTiTnxCaP0qE2XYalO">via GIPHY</a></p></p>
+
+<p>My final piece of advice isn&rsquo;t revolutionary but I think its perhaps the most
+important. As much as possible, create a routine for yourself when getting
+started on a new project, and stick to it. In my experience, coding is only half
+the battle in making open-source contributions. Equally important was diligently
+keeping up to date on my open PRs and shepherding them along to getting merged.
+Similarly, keeping up to date each day means I never have to repeat the initial
+deep dive into the historic PRs.</p>
+
+<p>When contributing to Kubernetes, I maintain the following routine. Each morning,
+before work, I check in on my outstanding PRs. Depending on their state, I&rsquo;ll
+either address code review feedback, give the reviewer a friendly ping, or just
+wait. Then I&rsquo;ll check if there are any new issues or PRs in the auto-scaling
+portion of the code base, and address them if I have the knowledge. Only then
+will I start working on code.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In summary, getting started contributing to a new, popular open-source project
+isn&rsquo;t easy. But there are some ways to make it easier. Hope this helps - happy
+hacking :)</p>
+
+<p><iframe src="https://giphy.com/embed/3oAt230cSOP0AEVXqg" width="480"
+height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/3oAt230cSOP0AEVXqg">via GIPHY</a></p></p>
+
+    </section>
+</article>
+
+<footer id="post-meta" class="clearfix">
+    <a href="https://twitter.com/mattjmcnaughton">
+    <img class="avatar" src="https://mattjmcnaughton.com/images/avatar.png">
+    <div>
+        <span class="dark">Matt McNaughton</span>
+        <span></span>
+    </div>
+    </a>
+    <section id="sharing">
+        <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fmattjmcnaughton.com%2fpost%2fgetting-started-contributing-to-open-source-projects%2f - Getting%20Started%20Contributing%20to%20Popular%20Open-Source%20Projects by @mattjmcnaughton"><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+    </section>
+</footer>
+
+<div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "mattjmcnaughton" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
+
+    
+    
+    
+        <li>
+            <a href="/post/programming-with-ocd/">Programming with OCD<aside class="dates">Nov 18 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/post/creating-a-virtual-elasticsearch-cluster-with-ansible-and-vagrant/">Creating a Virtual ElasticSearch Cluster with Ansible and Vagrant<aside class="dates">Jun 26 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/post/introducing-brockman/">Introducing Brockman<aside class="dates">Jun 19 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/post/contributing-to-a-platform-for-change/">Contributing to a Platform for Change<aside class="dates">Jan 7 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/post/hitting-the-ground-running/">Hitting the Ground Running<aside class="dates">Oct 30 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/post/sdep-working/">Sdep Working<aside class="dates">Jun 15 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/post/thesis-introduction/">Thesis Introduction<aside class="dates">May 28 2016</aside></a>
+        </li>
+    
+</ul>
+
+
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    
+    <a class="symbol" href="https://www.github.com/mattjmcnaughton">
+        circlegithub
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/@mattjmcnaughton">
+        circletwitterbird
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+        © Copyright 2017 Matt McNaughton
+    
+    </p>
+</footer>
+
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://mattjmcnaughton.com/js/main.js"></script>
+<script src="https://mattjmcnaughton.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-101845615-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+</body>
+</html>
