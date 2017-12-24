@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on Matt McNaughton&#39;s Blog</title>
+    <link>https://mattjmcnaughton.com/tags/python/</link>
+    <description>Recent content in Python on Matt McNaughton&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 15 Jun 2016 03:13:49 +0000</lastBuildDate>
+    
+	<atom:link href="https://mattjmcnaughton.com/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Sdep Working</title>
+      <link>https://mattjmcnaughton.com/post/sdep-working/</link>
+      <pubDate>Wed, 15 Jun 2016 03:13:49 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/sdep-working/</guid>
+      <description>Just a short post to announce that sdep, the tool I wrote for deploying static websites to Amazon S3, is working! Check out the travis.yml for this blog to see how it can be used to easily continuously deploy a blog.
+The most exciting personal milestone for me on this project is that its the first pip package I&amp;rsquo;ve ever published. This publishing process has brought all kinds of interesting lessons, including my first time managing semver.</description>
+    </item>
+    
+  </channel>
+</rss>

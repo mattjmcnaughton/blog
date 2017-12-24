@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tech on Matt McNaughton&#39;s Blog</title>
+    <link>https://mattjmcnaughton.com/tags/tech/</link>
+    <description>Recent content in Tech on Matt McNaughton&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 07 Jan 2017 16:53:27 +0000</lastBuildDate>
+    
+	<atom:link href="https://mattjmcnaughton.com/tags/tech/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Contributing to a Platform for Change</title>
+      <link>https://mattjmcnaughton.com/post/contributing-to-a-platform-for-change/</link>
+      <pubDate>Sat, 07 Jan 2017 16:53:27 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/contributing-to-a-platform-for-change/</guid>
+      <description>Like many others, I’ve spent the last couple of weeks since the election thinking a lot about new ways to empower and amplify all the voices fighting for justice. While it’s not easy to know what to do in a situation like the one we find ourselves in, I’m reminded of words from Bryan Stevenson, a civil rights lawyer, who spoke at my graduation back in June. His entire speech was insightful and inspiring, and one particular request stuck with me: get proximate.</description>
+    </item>
+    
+  </channel>
+</rss>

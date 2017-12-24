@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Programming on Matt McNaughton&#39;s Blog</title>
+    <link>https://mattjmcnaughton.com/categories/programming/</link>
+    <description>Recent content in Programming on Matt McNaughton&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 18 Nov 2017 09:41:46 -0400</lastBuildDate>
+    
+	<atom:link href="https://mattjmcnaughton.com/categories/programming/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Programming with OCD</title>
+      <link>https://mattjmcnaughton.com/post/programming-with-ocd/</link>
+      <pubDate>Sat, 18 Nov 2017 09:41:46 -0400</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/programming-with-ocd/</guid>
+      <description>Like over 3 million Americans, I struggle with OCD. OCD has impacted, and probably always will in some capacity impact, my life a lot. Unfortunately, software engineering, both my career and one of my favorite hobbies, is no exception.
+What is OCD? via GIPHY
+Everyone who suffers from OCD has a different experience. For me, OCD manifests as certain distorted thoughts sticking in my brain. These sticky thoughts are typically catastrophic events touching on some of my deepest fears and most cherished values.</description>
+    </item>
+    
+    <item>
+      <title>Hitting the Ground Running</title>
+      <link>https://mattjmcnaughton.com/post/hitting-the-ground-running/</link>
+      <pubDate>Sun, 30 Oct 2016 02:07:13 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/hitting-the-ground-running/</guid>
+      <description>I&amp;rsquo;ve had the pleasure of working at Flatiron Health since August 2016. Some of the biggest lessons I&amp;rsquo;ve learned have related to participating in effective code reviews. I wrote up some of my learnings in a blog post for Flatiron&amp;rsquo;s Engineering Blog. Hope you enjoy (and check out some of the other great content written by other Flatiron engineers on the blog)!</description>
+    </item>
+    
+    <item>
+      <title>Sdep Working</title>
+      <link>https://mattjmcnaughton.com/post/sdep-working/</link>
+      <pubDate>Wed, 15 Jun 2016 03:13:49 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/sdep-working/</guid>
+      <description>Just a short post to announce that sdep, the tool I wrote for deploying static websites to Amazon S3, is working! Check out the travis.yml for this blog to see how it can be used to easily continuously deploy a blog.
+The most exciting personal milestone for me on this project is that its the first pip package I&amp;rsquo;ve ever published. This publishing process has brought all kinds of interesting lessons, including my first time managing semver.</description>
+    </item>
+    
+    <item>
+      <title>Thesis Introduction</title>
+      <link>https://mattjmcnaughton.com/post/thesis-introduction/</link>
+      <pubDate>Sat, 28 May 2016 02:50:38 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/thesis-introduction/</guid>
+      <description>Over the course of my final year at Williams College, I spent a lot of time working on a distributed systems thesis with Professor Jeannie Albrecht. My thesis is entitled &amp;ldquo;Predictive Pod Auto-scaling in the Kubernetes Container Cluster Manager&amp;rdquo;, and it is entirely open-source. The written portion, presentation slides, and evaluation code can be found on my Github. Additionally, our contributions to Google&amp;rsquo;s open-source cluster container manager Kubernetes can be found on my fork.</description>
+    </item>
+    
+  </channel>
+</rss>

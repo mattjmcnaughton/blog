@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Thesis on Matt McNaughton&#39;s Blog</title>
+    <link>https://mattjmcnaughton.com/tags/thesis/</link>
+    <description>Recent content in Thesis on Matt McNaughton&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 28 May 2016 02:50:38 +0000</lastBuildDate>
+    
+	<atom:link href="https://mattjmcnaughton.com/tags/thesis/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Thesis Introduction</title>
+      <link>https://mattjmcnaughton.com/post/thesis-introduction/</link>
+      <pubDate>Sat, 28 May 2016 02:50:38 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/thesis-introduction/</guid>
+      <description>Over the course of my final year at Williams College, I spent a lot of time working on a distributed systems thesis with Professor Jeannie Albrecht. My thesis is entitled &amp;ldquo;Predictive Pod Auto-scaling in the Kubernetes Container Cluster Manager&amp;rdquo;, and it is entirely open-source. The written portion, presentation slides, and evaluation code can be found on my Github. Additionally, our contributions to Google&amp;rsquo;s open-source cluster container manager Kubernetes can be found on my fork.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/post/programming-with-ocd/</loc>
+    <lastmod>2017-11-18T09:41:46-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/post/creating-a-virtual-elasticsearch-cluster-with-ansible-and-vagrant/</loc>
+    <lastmod>2017-06-26T09:41:46-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/post/introducing-brockman/</loc>
+    <lastmod>2017-06-19T22:48:33-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/post/contributing-to-a-platform-for-change/</loc>
+    <lastmod>2017-01-07T16:53:27+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/post/hitting-the-ground-running/</loc>
+    <lastmod>2016-10-30T02:07:13+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/post/sdep-working/</loc>
+    <lastmod>2016-06-15T03:13:49+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/post/thesis-introduction/</loc>
+    <lastmod>2016-05-28T02:50:38+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/about/</loc>
+    <lastmod>2016-05-05T22:10:54-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/ansible/</loc>
+    <lastmod>2017-06-26T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/automation/</loc>
+    <lastmod>2017-06-19T22:48:33-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/bash/</loc>
+    <lastmod>2017-06-19T22:48:33-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/distributed-systems/</loc>
+    <lastmod>2017-06-26T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/elasticsearch/</loc>
+    <lastmod>2017-06-26T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/golang/</loc>
+    <lastmod>2016-05-28T02:50:38+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/kubernetes/</loc>
+    <lastmod>2016-05-28T02:50:38+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/</loc>
+    <lastmod>2017-11-18T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/mental-health/</loc>
+    <lastmod>2017-11-18T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/open-source/</loc>
+    <lastmod>2016-06-15T03:13:49+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/post/</loc>
+    <lastmod>2017-11-18T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/programming/</loc>
+    <lastmod>2017-11-18T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/categories/programming/</loc>
+    <lastmod>2017-11-18T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/categories/projects/</loc>
+    <lastmod>2017-06-19T22:48:33-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/python/</loc>
+    <lastmod>2016-06-15T03:13:49+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/categories/social-justice/</loc>
+    <lastmod>2017-01-07T16:53:27+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/</loc>
+    <lastmod>2017-06-26T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/tech/</loc>
+    <lastmod>2017-01-07T16:53:27+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/thesis/</loc>
+    <lastmod>2016-05-28T02:50:38+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/tutorial/</loc>
+    <lastmod>2017-06-26T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/categories/tutorial/</loc>
+    <lastmod>2017-06-26T09:41:46-04:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://mattjmcnaughton.com/tags/volunteer/</loc>
+    <lastmod>2017-01-07T16:53:27+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+</urlset>
