@@ -7,5 +7,4 @@ hidden = true
 Hi my name's Matt. I'm a software engineer at Flatiron Health. In 2016, I graduated from Williams
 College where I majored in computer science and political science. I'm into systems, open-source,
 baking bread, and mental health advocacy. You can find me on
-[Github](https://github.com/mattjmcnaughton) or [Twitter](https://twitter.com/@mattjmcnaughton)
-or through [email](mailto:mattjmcnaughton@gmail.com).
+[Github](https://github.com/mattjmcnaughton) or through [email](mailto:mattjmcnaughton@gmail.com).
