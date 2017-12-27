@@ -32,16 +32,6 @@ Everyone who suffers from OCD has a different experience. For me, OCD manifests 
     </item>
     
     <item>
-      <title>Introducing Brockman</title>
-      <link>https://mattjmcnaughton.com/post/introducing-brockman/</link>
-      <pubDate>Mon, 19 Jun 2017 22:48:33 -0400</pubDate>
-      
-      <guid>https://mattjmcnaughton.com/post/introducing-brockman/</guid>
-      <description>Claiming that us programmers focus most of our programming time on using encapsulation and automation to reduce complexity is like chefs claiming most of their job focuses on preparing food, and that heat and recipes are essential tools. Pretty obvious.
-Yet, while we relentlessly pursue encapsulation and automation when enforcing information-hiding in classes or continuously deploying our applications, our personal workstations can be the wild west. Essential tasks like system updates, anti-virus scans, and file garbage collection should be automated.</description>
-    </item>
-    
-    <item>
       <title>Hitting the Ground Running</title>
       <link>https://mattjmcnaughton.com/post/hitting-the-ground-running/</link>
       <pubDate>Sun, 30 Oct 2016 02:07:13 +0000</pubDate>
@@ -51,11 +41,11 @@ Yet, while we relentlessly pursue encapsulation and automation when enforcing in
     </item>
     
     <item>
-      <title>Thesis Introduction</title>
-      <link>https://mattjmcnaughton.com/post/thesis-introduction/</link>
+      <title>Predictive Auto-scaling in Kubernetes - Thesis</title>
+      <link>https://mattjmcnaughton.com/post/predictive-auto-scaling-in-kubernetes-thesis/</link>
       <pubDate>Sat, 28 May 2016 02:50:38 +0000</pubDate>
       
-      <guid>https://mattjmcnaughton.com/post/thesis-introduction/</guid>
+      <guid>https://mattjmcnaughton.com/post/predictive-auto-scaling-in-kubernetes-thesis/</guid>
       <description>Over the course of my final year at Williams College, I spent a lot of time working on a distributed systems thesis with Professor Jeannie Albrecht. My thesis is entitled &amp;ldquo;Predictive Pod Auto-scaling in the Kubernetes Container Cluster Manager&amp;rdquo;, and it is entirely open-source. The written portion, presentation slides, and evaluation code can be found on my Github. Additionally, our contributions to Google&amp;rsquo;s open-source cluster container manager Kubernetes can be found on my fork.</description>
     </item>
     

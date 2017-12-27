@@ -12,11 +12,11 @@
     
     
     <item>
-      <title>Thesis Introduction</title>
-      <link>https://mattjmcnaughton.com/post/thesis-introduction/</link>
+      <title>Predictive Auto-scaling in Kubernetes - Thesis</title>
+      <link>https://mattjmcnaughton.com/post/predictive-auto-scaling-in-kubernetes-thesis/</link>
       <pubDate>Sat, 28 May 2016 02:50:38 +0000</pubDate>
       
-      <guid>https://mattjmcnaughton.com/post/thesis-introduction/</guid>
+      <guid>https://mattjmcnaughton.com/post/predictive-auto-scaling-in-kubernetes-thesis/</guid>
       <description>Over the course of my final year at Williams College, I spent a lot of time working on a distributed systems thesis with Professor Jeannie Albrecht. My thesis is entitled &amp;ldquo;Predictive Pod Auto-scaling in the Kubernetes Container Cluster Manager&amp;rdquo;, and it is entirely open-source. The written portion, presentation slides, and evaluation code can be found on my Github. Additionally, our contributions to Google&amp;rsquo;s open-source cluster container manager Kubernetes can be found on my fork.</description>
     </item>
     

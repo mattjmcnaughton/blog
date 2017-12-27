@@ -18,11 +18,6 @@
   </url>
   
   <url>
-    <loc>https://mattjmcnaughton.com/post/introducing-brockman/</loc>
-    <lastmod>2017-06-19T22:48:33-04:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://mattjmcnaughton.com/post/contributing-to-a-platform-for-change/</loc>
     <lastmod>2017-01-07T16:53:27+00:00</lastmod>
   </url>
@@ -33,7 +28,7 @@
   </url>
   
   <url>
-    <loc>https://mattjmcnaughton.com/post/thesis-introduction/</loc>
+    <loc>https://mattjmcnaughton.com/post/predictive-auto-scaling-in-kubernetes-thesis/</loc>
     <lastmod>2016-05-28T02:50:38+00:00</lastmod>
   </url>
   
@@ -45,18 +40,6 @@
   <url>
     <loc>https://mattjmcnaughton.com/tags/ansible/</loc>
     <lastmod>2017-06-26T09:41:46-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://mattjmcnaughton.com/tags/automation/</loc>
-    <lastmod>2017-06-19T22:48:33-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://mattjmcnaughton.com/tags/bash/</loc>
-    <lastmod>2017-06-19T22:48:33-04:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -122,12 +105,6 @@
   <url>
     <loc>https://mattjmcnaughton.com/categories/programming/</loc>
     <lastmod>2017-12-27T09:41:46-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://mattjmcnaughton.com/categories/projects/</loc>
-    <lastmod>2017-06-19T22:48:33-04:00</lastmod>
     <priority>0</priority>
   </url>
   

@@ -2,7 +2,7 @@
 categories = ["Programming"]
 date = "2016-05-28T02:50:38Z"
 tags = ["thesis", "programming", "kubernetes", "golang"]
-title = "Thesis Introduction"
+title = "Predictive Auto-scaling in Kubernetes - Thesis"
 +++
 
 Over the course of my final year at Williams College, I spent a lot of time
@@ -28,3 +28,6 @@ similar pattern, yet creates or destroys replica applications based on
 **predicted** resource utilization. The interval of time required for a replica
 pod to share in the computational work determines the interval into the
 future for which we predict.
+
+Working on this project was incredibly fulfilling and I'm so grateful to those
+who made it possible.
