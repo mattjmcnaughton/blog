@@ -33,11 +33,6 @@
   </url>
   
   <url>
-    <loc>https://mattjmcnaughton.com/post/sdep-working/</loc>
-    <lastmod>2016-06-15T03:13:49+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://mattjmcnaughton.com/post/thesis-introduction/</loc>
     <lastmod>2016-05-28T02:50:38+00:00</lastmod>
   </url>
@@ -133,12 +128,6 @@
   <url>
     <loc>https://mattjmcnaughton.com/categories/projects/</loc>
     <lastmod>2017-06-19T22:48:33-04:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://mattjmcnaughton.com/tags/python/</loc>
-    <lastmod>2016-06-15T03:13:49+00:00</lastmod>
     <priority>0</priority>
   </url>
   
