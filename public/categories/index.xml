@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on Matt McNaughton&#39;s Blog</title>
+    <title>Categories on ~/mattjmcnaughton/blog</title>
     <link>https://mattjmcnaughton.com/categories/</link>
-    <description>Recent content in Categories on Matt McNaughton&#39;s Blog</description>
+    <description>Recent content in Categories on ~/mattjmcnaughton/blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
@@ -11,29 +11,38 @@
     
     
     <item>
-      <title>Programming</title>
-      <link>https://mattjmcnaughton.com/categories/programming/</link>
-      <pubDate>Wed, 27 Dec 2017 09:41:46 -0400</pubDate>
+      <title>Deep Dives</title>
+      <link>https://mattjmcnaughton.com/categories/deep-dives/</link>
+      <pubDate>Sat, 28 May 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://mattjmcnaughton.com/categories/programming/</guid>
+      <guid>https://mattjmcnaughton.com/categories/deep-dives/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Social Justice</title>
-      <link>https://mattjmcnaughton.com/categories/social-justice/</link>
-      <pubDate>Sat, 07 Jan 2017 16:53:27 +0000</pubDate>
+      <title>Essays</title>
+      <link>https://mattjmcnaughton.com/categories/essays/</link>
+      <pubDate>Wed, 27 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://mattjmcnaughton.com/categories/social-justice/</guid>
+      <guid>https://mattjmcnaughton.com/categories/essays/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Tutorial</title>
-      <link>https://mattjmcnaughton.com/categories/tutorial/</link>
-      <pubDate>Mon, 26 Jun 2017 09:41:46 -0400</pubDate>
+      <title>Projects</title>
+      <link>https://mattjmcnaughton.com/categories/projects/</link>
+      <pubDate>Mon, 26 Jun 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://mattjmcnaughton.com/categories/tutorial/</guid>
+      <guid>https://mattjmcnaughton.com/categories/projects/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tutorials</title>
+      <link>https://mattjmcnaughton.com/categories/tutorials/</link>
+      <pubDate>Mon, 26 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/categories/tutorials/</guid>
       <description></description>
     </item>
     

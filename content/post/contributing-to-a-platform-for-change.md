@@ -1,13 +1,7 @@
 +++
-tags = [
-  "volunteer",
-  "tech",
-]
-categories = [
-  "Social Justice",
-]
-date = "2017-01-07T16:53:27Z"
 title = "Contributing to a Platform for Change"
+date = "2017-01-07"
+categories = ["essays"]
 +++
 
 Like many others, I’ve spent the last couple of weeks since the election

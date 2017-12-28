@@ -1,12 +1,7 @@
 +++
-categories = [
-  "Programming",
-]
-date = "2016-10-30T02:07:13Z"
 title = "Hitting the Ground Running"
-tags = [
-  "programming",
-]
+date = "2016-10-30"
+categories = ["Essays"]
 +++
 
 I've had the pleasure of working at [Flatiron Health](https://www.flatiron.com/)

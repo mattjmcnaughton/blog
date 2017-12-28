@@ -9,7 +9,7 @@ build:
 #
 # @EXAMPLE: `make post POST=post/using-hugo.md`
 post:
-	hugo new $(POST) && cat .template.md >> content/$(POST)
+	hugo new $(POST)
 
 # Serve the blog in development.
 #

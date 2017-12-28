@@ -1,8 +1,7 @@
 +++
-categories = ["Programming"]
-date = "2016-05-28T02:50:38Z"
-tags = ["thesis", "programming", "kubernetes", "golang"]
 title = "Predictive Auto-scaling in Kubernetes - Thesis"
+categories = ["Projects", "Deep Dives"]
+date = "2016-05-28"
 +++
 
 Over the course of my final year at Williams College, I spent a lot of time

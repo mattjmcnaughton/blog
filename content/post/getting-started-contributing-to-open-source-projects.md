@@ -1,8 +1,7 @@
 +++
-date = "2017-12-27T09:41:46-04:00"
-tags = ["programming", "open-source"]
-categories = ["Programming"]
 title = "Getting Started Contributing to Popular Open-Source Projects"
+date = "2017-12-27"
+categories = ["Essays"]
 +++
 
 Few programming experiences are more informative or rewarding than meaningfully

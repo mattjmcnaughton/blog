@@ -1,8 +1,7 @@
 +++
-categories = ["Tutorial"]
-date = "2017-06-26T09:41:46-04:00"
-tags = ["tutorial", "elasticsearch", "distributed-systems", "ansible"]
 title = "Creating a Virtual ElasticSearch Cluster with Ansible and Vagrant"
+categories = ["Projects", "Tutorials"]
+date = "2017-06-26"
 +++
 
 ## Running ElasticSearch locally - its not so bad... right?

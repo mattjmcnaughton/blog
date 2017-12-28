@@ -1,49 +1,27 @@
 # Site settings
 baseURL = "https://mattjmcnaughton.com/"
 languageCode = "en-us"
-title = "Matt McNaughton's Blog"
-theme = "hugo-cactus-theme"
+paginate = "10"
+theme = "mainroad"
+title = "~/mattjmcnaughton/blog"
 googleAnalytics = "UA-101845615-1"
 disqusShortname = "mattjmcnaughton"
 
-[params]
+[Author]
   name = "Matt McNaughton"
-  description = "My Blog"
   bio = "SE@Flatiron Health - Williams College '16 - hackNY '15"
-  # Enter optionally your twitter account
-  twitter = "mattjmcnaughton"
-  enableRSS = true
 
-  # Add custom assets with their paths relative to the static folder
-  customCSS = []
-  customJS  = []
+[Params]
+  readmore = true
+  subtitle = "SE@Flatiron Health - Williams College '16 - hackNY '15"
+  post_navigation = true
+  postSections = ["post"]
+  dateformat = "2006-01-02"
 
-  # The variables below are optionally too and can be used to
-  # translate or customize each string of the theme.
+[Params.widgets]
+  search = true
+  categories = true
+  tags_counter = true
 
-  # Navigation links
-  home = "/"
-  about = "/about"
-  subscribe = ""
-  # Pagination links
-  olderPosts = ""
-  newerPosts = ""
-  readMore = ""
-  copyright = ""
-  # Sharing options and author information in posts
-  aboutAuthor = ""
-  tweet = ""
-  share = ""
-  # 404 page
-  title404 = ""
-  subtitle404 = ""
-
-  # Choose a font for the social icons in the footer. Either "mono-social" or "font-awesome"
-  iconFont = "mono-social"
-    # The social icons can be styled differently if you use mono as font - circle, rounded, or empty
-    socialIconStyle = "circle"
-
-# Add additional social link entries underneath
-[social]
-    github  = "https://www.github.com/mattjmcnaughton"
-    twitter = "https://www.twitter.com/@mattjmcnaughton"
+  social_github = "mattjmcnaughton"
+  social_email = "mattjmcnaughton@gmail.com"

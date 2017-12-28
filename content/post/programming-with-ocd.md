@@ -1,8 +1,7 @@
 +++
-date = "2017-11-18T09:41:46-04:00"
-tags = ["programming", "mental-health"]
-categories = ["Programming"]
 title = "Programming with OCD"
+date = "2017-11-18"
+categories = ["Essays"]
 +++
 
 Like over 3 million Americans, I struggle with OCD. OCD has impacted, and probably
