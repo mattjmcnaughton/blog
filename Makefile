@@ -5,12 +5,6 @@
 build:
 	hugo
 
-# Create a new blog post.
-#
-# @EXAMPLE: `make post POST=post/using-hugo.md`
-post:
-	hugo new $(POST)
-
 # Serve the blog in development.
 #
 # Updates will be automatically reflected.

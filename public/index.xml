@@ -6,10 +6,19 @@
     <description>Recent content on ~/mattjmcnaughton/blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 27 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 29 Dec 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mattjmcnaughton.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Papers I Love: Rsync</title>
+      <link>https://mattjmcnaughton.com/post/papers-i-love-rsync/</link>
+      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/papers-i-love-rsync/</guid>
+      <description>It&amp;rsquo;s not often that academia analyzes the unix tools we use everyday. But rsync is one fortunate exception as Andrew Tridgell not only wrote rsync while pursuing his PhD, but also published a short and accessible paper outlining its inner workings. While I&amp;rsquo;d highly encourage reading the entire paper, I took away one major tl:dr; from the rsync algorithm: be lazy. This lesson will be applicable anytime I write performance conscious code.</description>
+    </item>
     
     <item>
       <title>Getting Started Contributing to Popular Open-Source Projects</title>
