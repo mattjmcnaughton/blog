@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Papers I Love: Rsync</title>
+<title>Concurrent Futures in Sheepdoge: How a few lines of code resulted in a 78% performance improvement</title>
 
 <meta name="generator" content="Hugo 0.30.2" />
 
@@ -49,94 +49,115 @@ ga('send', 'pageview');
 <main class="main-content content" role="main" itemprop="mainContentOfPage">
 	<article class="post">
 		<header class="post__header clearfix">
-			<h1 class="post__title">Papers I Love: Rsync</h1>
+			<h1 class="post__title">Concurrent Futures in Sheepdoge: How a few lines of code resulted in a 78% performance improvement</h1>
 			<p class="post__meta meta">
 				<svg class="icon icon-time" height="14" viewBox="0 0 16 16" width="14" xmlns="http://www.w3.org/2000/svg"><path d="m8-.0000003c-4.4 0-8 3.6-8 8 0 4.4000003 3.6 8.0000003 8 8.0000003 4.4 0 8-3.6 8-8.0000003 0-4.4-3.6-8-8-8zm0 14.4000003c-3.52 0-6.4-2.88-6.4-6.4000003 0-3.52 2.88-6.4 6.4-6.4 3.52 0 6.4 2.88 6.4 6.4 0 3.5200003-2.88 6.4000003-6.4 6.4000003zm.4-10.4000003h-1.2v4.8l4.16 2.5600003.64-1.04-3.6-2.1600003z"/></svg>
 				<time class="post__meta-date" datetime="2017-12-29T00:00:00">2017-12-29</time>
 				<span class="post__meta-categories meta-categories">
 					<svg class="icon icon-category" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
-					<a class="meta-categories__link" href="/categories/papers-i-love" rel="category">Papers I Love</a></span>
+					<a class="meta-categories__link" href="/categories/deep-dives" rel="category">Deep Dives</a></span>
 			</p>
 		</header>
 		<div class="post__content clearfix">
 			<figure class="post__thumbnail">
-				<img src="/img/rsync.png" alt="Papers I Love: Rsync">
+				<img src="/img/concurrent-futures.jpg" alt="Concurrent Futures in Sheepdoge: How a few lines of code resulted in a 78% performance improvement">
 			</figure>
 			
 
-<p>It&rsquo;s not often that academia analyzes the unix tools we use everyday.
-But <code>rsync</code> is one fortunate exception as <a href="https://en.wikipedia.org/wiki/Andrew_Tridgell">Andrew
-Tridgell</a> not only wrote <code>rsync</code>
-while pursuing his PhD, but also published a short and accessible
-<a href="https://www.andrew.cmu.edu/course/15-749/READINGS/required/cas/tridgell96.pdf">paper</a>
-outlining its inner workings. While I&rsquo;d highly encourage reading the entire paper, I took away
-one major tl:dr; from the <code>rsync</code> algorithm: <strong>be lazy</strong>.
-This lesson will be applicable anytime I write performance conscious code.</p>
+<p>For the past couple of months, I&rsquo;ve been working on
+<a href="https://github.com/sheepdoge/sheepdoge">Sheepdoge</a>, a tool for managing your
+personal Unix machines with Ansible. It&rsquo;s like
+<a href="https://github.com/boxen">boxen</a>, but for Ansible.</p>
 
-<h2 id="algorithm-overview">Algorithm Overview</h2>
+<p>One new sheepdoge feature I&rsquo;m particularly excited about is the use of <code>concurrent.futures</code>
+during <code>sheepdoge install</code>. <code>concurrent.futures</code> provides a high-level API for
+executing code asynchronously, making adding thread/process based concurrency
+trivial. It is a standard library python module as of 3.2, and is available on python 2.7 through the
+<a href="https://pypi.python.org/pypi/futures">futures</a> backport.</p>
 
-<p>Before diving into the benefits of being lazy, we must understand rsync&rsquo;s goals and
-implementation. <code>rsync</code> is an algorithm for updating a file on machine A to be
-identical to a file on machine B. Tridgell optimizes for when the connection
-between machine A and machine B is high-latency and when the two files are
-similar.</p>
+<h3 id="why-concurrency-for-sheepdoge-install">Why concurrency for <code>sheepdoge install</code>?</h3>
 
-<p>To copy file <code>a</code> from machine <code>A</code> to file <code>b</code> on machine <code>B</code>, the <code>rsync</code>
-algorithm conducts the following high-level steps.</p>
+<p>The <code>sheepdoge install</code> execution path is an excellent candidate for this
+concurrency. At a high level, we can think of <code>sheepdoge install</code> like the <code>pip
+install -r requirements.txt</code> command. Both take a list of packages hosted at a
+remote location and install them into a specified directory on the host machine.</p>
 
-<ol>
-<li>Machine <code>B</code> splits file <code>b</code> into non-overlapping blocks of size <code>S</code> bytes.</li>
-<li>For each block, <code>B</code> calculates a weak checksum and a strong checksum.</li>
-<li>Machine <code>B</code> sends the checksums to machine <code>A</code>.</li>
-<li>Machine <code>A</code> searches through all possible blocks of size <code>S</code> in file <code>a</code> to
-find blocks which have weak and strong checksums equal to one of the blocks
-on <code>B</code>.</li>
-<li>Machine <code>A</code> uses the knowledge of equivalent blocks to send machine <code>B</code> a
-sequence of instructions for constructing a copy of <code>A</code>. It only sends <code>B</code>
-data which it does not have, so if a block in <code>a</code> is a match for a block on
-<code>b</code>, machine <code>A</code> will not transmit the block to machine <code>B</code>.</li>
-</ol>
+<p>Examining the work profile of <code>sheepdoge install</code> shows it is a good theoretical
+candidate for parallelization. Both downloading packages from a remote location
+and installing them into a specified directory are I/O heavy operations.</p>
 
-<p>If you&rsquo;re interested in greater detail, the
-<a href="https://www.andrew.cmu.edu/course/15-749/READINGS/required/cas/tridgell96.pdf">paper</a>
-further explains the algorithm, as well as detailing the underlying math and
-providing empirical analysis.</p>
+<h3 id="analysis">Analysis</h3>
 
-<h2 id="be-lazy">Be Lazy</h2>
+<p>When we run <code>time sheepdoge install --no-parallel</code>, we get the following:</p>
 
-<p><iframe src="https://giphy.com/embed/3o6MbedpC11J84sQ4o" width="480" height="362" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/season-16-the-simpsons-16x9-3o6MbedpC11J84sQ4o">via GIPHY</a></p></p>
+<pre><code>real 7.115s
+user 0.246s
+sys  0.244s
+</code></pre>
 
-<p>In order for the <code>rsync</code> algorithm to operate efficiently, it must quickly
-compare all possible blocks of size <code>S</code> in file <code>a</code> to the set of
-non-overlapping blocks of size <code>S</code> in file <code>b</code>. To visualize, imagine file <code>a</code>
-contains <code>1234567890</code>, file <code>b</code> contains <code>2345678901</code> and <code>S</code> is two characters.
-From step 1 of the algorithm, the blocks from file <code>b</code> are <code>23</code>, <code>45</code>, <code>67</code>,
-<code>89</code>, and <code>01</code>. To accurately compare file <code>a</code> to file <code>b</code>, we not only need to
-compare <code>12</code> on file <code>a</code> to <code>23</code> on file <code>b</code>, but also <code>23</code>, <code>34</code>, <code>45</code>&hellip; on
-file <code>a</code> to <code>23</code> on file <code>b</code>. However, we don&rsquo;t want to do an expensive calculation for each
-possible block on <code>a</code>. Rather, we want to a perform a calculation which allows
-us to take our checksum for block <code>i,j</code> and with a small amount of work, find
-the checksum of block <code>i+1,j+1</code>.</p>
+<p>From this output, we know the <code>sheepdoge install --no-parallel</code> command took 7.115s to
+execute. However, it was only using the CPU for ~.5s. Given I ran this test on
+my laptop, with no other processes consuming a large amount of CPU, I conclude
+that the ~6.5 seconds unaccounted for by the summation of user and sys was
+time spent doing IO. Additionally, when run sequentially, the <code>install</code> command blocks during
+IO operations, meaning the CPU does nothing related to <code>sheepdoge</code> until the next
+IO operation completes. In other words, we&rsquo;re not maximizing our utilization of
+computing resources.</p>
 
-<p>Tridgell accomplishes this through the weak checksum calculated in steps 2 and 4
-of the algorithm. As he discusses in the paper, given <code>weak-checksum(i,j)</code> and values
-<code>i,j+1</code>, we need to do little additional work to find <code>weak-checksum(i+1,j+1)</code>.
-Because of this efficiency, the algorithm can very quickly find the weak checksum for
-all possible blocks in <code>a</code>.</p>
+<p>However, if we run <code>sheepdoge install --parallel</code>, we can keep the CPU working
+while we wait for IO operations to finish. Furthermore, we can begin multiple IO
+operations at once, since the system is easily able to parallelize these
+operations. These optimizations lead to big speed improvements, as we can see
+from the output of <code>time sheepdoge install --parallel</code>.</p>
 
-<p>However, the weak checksum is not perfect. In certain scenarios, it will give
-false positives and say two unequal blocks are equal.
-To be absolutely certain two blocks are equal, we need
-to calculate and compare the strong checksum. However, the strong checksum is
-more expensive to calculate, and the value of <code>strong-checksum(i,j)</code> gives us no
-insight into the value of <code>strong-checksum(i+1,j+1)</code>.</p>
+<pre><code>real 1.498s
+user 0.272s
+sys  0.294s
+</code></pre>
 
-<p>Tridgell cleverly works around this by <strong>being lazy</strong>, as <code>rsync</code> does the hard
-work of calculating and comparing the strong checksums only if the weak
-checksums are equal. The algorithm carefully avoids doing expensive operations
-until they are absolutely necessary by utilizing a cheap approximation, with the
-potential for false positives. This technique is applicable to almost any situation involving expensive
-computation.</p>
+<p>As you can see, we&rsquo;ve vastly decreased the time where resources sit idle,
+improving overall run time by 78%!</p>
+
+<h3 id="using-concurrent-futures">Using <code>concurrent.futures</code></h3>
+
+<p>Adding concurrency through <code>concurrent.futures</code> is simple. Because each
+process we&rsquo;re executing is independent, we only needed to change a couple lines of code
+and do not have to worry about locking, memory sharing, etc. Note that
+<code>pup.install()</code> is the I/O heavy method responsible for downloading the remote
+package and installing it in the proper location.</p>
+
+<p>Without <code>concurrent.futures</code>:</p>
+
+<pre><code>def _execute(self):
+    for pup in self._pups_to_install:
+        pup.install()
+</code></pre>
+
+<p>With <code>concurrent.futures</code>:</p>
+
+<pre><code>from concurrent.futures import ThreadPoolExecutor, wait
+
+...
+
+def _execute(self):
+    with ThreadPoolExecutor(max_workers=self._max_workers) as executor:
+        install_futures = {
+            executor.submit(pup.install) for pup in self._pups_to_install
+        }
+
+        wait(install_futures)
+</code></pre>
+
+<p>You can find further documentation for all the different ways to utilize <code>concurrent.futures</code>
+<a href="https://docs.python.org/3/library/concurrent.futures.html">here</a>.</p>
+
+<h3 id="wrapping-up">Wrapping up</h3>
+
+<p><code>concurrent.futures</code> is a great tool for speeding up I/O heavy portions of your
+code, and I hope this post will point you towards some places in your code base
+where it could make a performance difference. And if you&rsquo;re interested in using
+or contributing to <a href="https://github.com/sheepdoge/sheepdoge">sheepdge</a>, please
+get in touch!</p>
 
 		</div>
 		
@@ -146,10 +167,7 @@ computation.</p>
 	
 <nav class="post-nav row clearfix" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
 	<div class="post-nav__item post-nav__item--prev col-1-2">
-		<a class="post-nav__link" href="/post/getting-started-contributing-to-open-source-projects/" rel="prev"><span class="post-nav__caption">«Previous</span><p class="post-nav__post-title">Getting Started Contributing to Popular Open-Source Projects</p></a>
-	</div>
-	<div class="post-nav__item post-nav__item--next col-1-2">
-		<a class="post-nav__link" href="/post/concurrent-futures-in-sheepdoge/" rel="next"><span class="post-nav__caption">Next»</span><p class="post-nav__post-title">Concurrent Futures in Sheepdoge: How a few lines of code resulted in a 78% performance improvement</p></a>
+		<a class="post-nav__link" href="/post/papers-i-love-rsync/" rel="prev"><span class="post-nav__caption">«Previous</span><p class="post-nav__post-title">Papers I Love: Rsync</p></a>
 	</div>
 </nav>
 

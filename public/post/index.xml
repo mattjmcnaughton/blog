@@ -12,6 +12,16 @@
     
     
     <item>
+      <title>Concurrent Futures in Sheepdoge: How a few lines of code resulted in a 78% performance improvement</title>
+      <link>https://mattjmcnaughton.com/post/concurrent-futures-in-sheepdoge/</link>
+      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/concurrent-futures-in-sheepdoge/</guid>
+      <description>For the past couple of months, I&amp;rsquo;ve been working on Sheepdoge, a tool for managing your personal Unix machines with Ansible. It&amp;rsquo;s like boxen, but for Ansible.
+One new sheepdoge feature I&amp;rsquo;m particularly excited about is the use of concurrent.futures during sheepdoge install. concurrent.futures provides a high-level API for executing code asynchronously, making adding thread/process based concurrency trivial. It is a standard library python module as of 3.2, and is available on python 2.</description>
+    </item>
+    
+    <item>
       <title>Papers I Love: Rsync</title>
       <link>https://mattjmcnaughton.com/post/papers-i-love-rsync/</link>
       <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
