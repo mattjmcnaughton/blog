@@ -6,10 +6,20 @@
     <description>Recent content in Posts on ~/mattjmcnaughton/blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 29 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 21 Jan 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mattjmcnaughton.com/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Installing Ubuntu 17.10 on MacBook Air</title>
+      <link>https://mattjmcnaughton.com/post/installing-ubuntu-1710-on-macbook-air/</link>
+      <pubDate>Sun, 21 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/installing-ubuntu-1710-on-macbook-air/</guid>
+      <description>After a Saturday of disk partitioning, a trip to CVS for an emergency thumb drive, and much Googling, I&amp;rsquo;m writing this blog post from a MacBook Air running Ubuntu 17.10.
+I won&amp;rsquo;t write an entire tutorial on the installation, as some great ones already exist (in particular, I benefitted greatly from this tutorial from CalTech and this tutorial from Christopher Berner). Instead, I&amp;rsquo;ll share why I installed Ubuntu 17.10 on my MacBook Air, some tips I found helpful during the installation, and the remaining shortcomings I hope to address in the coming weeks.</description>
+    </item>
     
     <item>
       <title>Concurrent Futures in Sheepdoge: How a few lines of code resulted in a 78% performance improvement</title>
