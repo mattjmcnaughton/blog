@@ -1,9 +1,22 @@
 # Makefile for running development and production blog commands.
 
+IMAGE = "mattjmcnaughton/blog:$$(git rev-list HEAD -n 1)"
+
 # Instruct hugo to build our website. All of the built contents of the website
 # go into `./public`.
 build:
 	hugo
+
+build_image: build
+	docker build -t $(IMAGE) .
+
+# @TODO(mattjmcnaughton) Automate this as part of a CI/CD pipeline.
+publish: build_image
+	docker push $(IMAGE)
+
+# @TODO(mattjmcnaughton) Automate this as part of a CI/CD pipeline.
+deploy:
+	@echo "todo"
 
 # Serve the blog in development.
 #
