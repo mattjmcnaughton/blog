@@ -4,8 +4,11 @@ The code and blog entires behind my [blog](https://mattjmcnaughton.com).
 
 ## Deploy
 
-Deploy using [ansible](https://github.com/mattjmcnaughton/ansible-blog).
-Formerly using [sdep](https://github.com/mattjmcnaughton/sdep).
+Deployed/hosted using
+[Kubernetes](https://github.com/mattjmcnaughton/blog-on-k8s).
+
+Formerly using [ansible](https://github.com/mattjmcnaughton/ansible-blog),
+and before that using [sdep](https://github.com/mattjmcnaughton/sdep).
 
 ## Dependencies
 
