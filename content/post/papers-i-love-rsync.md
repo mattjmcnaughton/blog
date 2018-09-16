@@ -1,7 +1,7 @@
 +++
-title = "Papers I Love: Rsync"
+title = "A Closer Look at Rsync"
 date = "2017-12-29"
-categories = ["Papers I Love"]
+categories = ["Essays"]
 thumbnail = "img/rsync.png"
 +++
 

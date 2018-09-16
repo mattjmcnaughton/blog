@@ -1,6 +1,6 @@
 +++
 title = "Predictive Auto-scaling in Kubernetes - Thesis"
-categories = ["Projects", "Deep Dives"]
+categories = ["Projects"]
 date = "2016-05-28"
 +++
 

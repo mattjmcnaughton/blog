@@ -1,7 +1,7 @@
 +++
 title = "Installing Ubuntu 17.10 on MacBook Air"
 date = "2018-01-21"
-categories = ["Tutorials"]
+categories = ["Projects"]
 thumbnail = "img/linux.jpg"
 +++
 

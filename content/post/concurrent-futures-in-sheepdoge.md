@@ -1,7 +1,7 @@
 +++
 title = "Concurrent Futures in Sheepdoge: How a few lines of code resulted in a 78% performance improvement"
 date = "2017-12-29"
-categories = ["Deep Dives"]
+categories = ["Projects"]
 thumbnail = "img/concurrent-futures.jpg"
 +++
 
