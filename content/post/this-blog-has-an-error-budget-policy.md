@@ -129,9 +129,9 @@ To make the math easy, let's assume 10,000 requests. I'll update these values on
 a rolling cadence as we have actual usage data. Remember, our SLO is the
 following:
 
-- Availability: The proportion of successful requests, as measured from nginx logs and where any status
+- Availability: The proportion of successful requests, as measured from the web server and where any status
   code other than 5XX is considered successful, is > 99%.
-- Latency: The proportion of sufficiently fast requests, as measured from nginx logs and
+- Latency: The proportion of sufficiently fast requests, as measured from the web server and
   where sufficiently fast is defined as < 1s, is > 99%.
 
 Now, we just need to do some easy math. If we take `10,000 * (1 - .99)`, we get
