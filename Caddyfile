@@ -1,4 +1,4 @@
-localhost:80
+:80
 tls off
 prometheus {
   use_caddy_addr
