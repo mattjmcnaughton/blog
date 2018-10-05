@@ -1,0 +1,7 @@
+localhost:80
+tls off
+prometheus {
+  use_caddy_addr
+}
+log stdout
+errors stdout

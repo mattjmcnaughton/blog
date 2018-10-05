@@ -1,2 +1,4 @@
-FROM nginx:alpine
-COPY public /usr/share/nginx/html
+FROM mattjmcnaughton/local-caddy-prometheus-base:latest
+
+COPY public /srv
+COPY Caddyfile /etc/Caddyfile
