@@ -116,22 +116,22 @@ availability. Our SLI specification was the percentage of requests that are succ
 To transform this SLI from a specification to an implementation, we'll state our
 availability SLI as the following:
 
-- The proportion of successful requests, as measured from nginx logs. Any status
+- The proportion of successful requests, as measured from the web server. Any status
   code other than 5XX is considered successful.
 
 Our second SLI was around latency. Our SLI specification was around the
 proportion of sufficiently fast requests, where sufficiently fast was outlined
 as < 1s. We can state our SLO implementation as the following:
 
-- The proportion of sufficiently fast requests, as measured from nginx logs.
+- The proportion of sufficiently fast requests, as measured from the web server.
   Sufficiently fast is defined as < 1s.
 
 If we couple these SLI implementations with the SLO thresholds defined in the
 previous section, we have a fully specified SLO.
 
-- The proportion of successful requests, as measured from nginx logs and where any status
+- The proportion of successful requests, as measured from the web server and where any status
   code other than 5XX is considered successful, is > 99%.
-- The proportion of sufficiently fast requests, as measured from nginx logs and
+- The proportion of sufficiently fast requests, as measured from the web server and
   where sufficiently fast is defined as < 1s, is > 99%.
 
 We now have a fully implemented SLO! We'll explore aggregating the metrics which

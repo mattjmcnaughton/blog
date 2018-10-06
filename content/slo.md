@@ -18,10 +18,12 @@ This [site](/) is a static website used for publishing my personal blog.
 
 ### SLIs and SLO
 
-- Availability: The proportion of successful requests, as measured from nginx logs and where any status
+- Availability: The proportion of successful requests, as measured from the web server and where any status
   code other than 5XX is considered successful, is > 99%.
-- Latency: The proportion of sufficiently fast requests, as measured from nginx logs and
+- Latency: The proportion of sufficiently fast requests, as measured from the web server and
   where sufficiently fast is defined as < 1s, is > 99%.
+
+We measure our SLO over a four-week rolling window.
 
 ### Rationale
 
