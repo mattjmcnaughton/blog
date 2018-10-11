@@ -43,8 +43,17 @@ EXPOSE 80
 COPY --from=parent_builder /go/bin/parent /bin/parent
 COPY --from=caddy_builder /usr/local/bin/caddy /bin/caddy
 
+# We bake the Caddyfile and the content into the image, as opposed to mounting
+# them at runtime as volumes. Incorporating all relevant information in the
+# image makes interacting with containers derived from this image simpler, and
+# also makes it easier to perform true "rollbacks" with Kubernetes.
 COPY Caddyfile /etc/Caddyfile
 COPY public /srv
 
+# As described in
+# https://www.ctl.io/developers/blog/post/dockerfile-entrypoint-vs-cmd/, use
+# ENTRYPOINT in combination with CMD to specify a default executable, as well as
+# default arguments to said executable which may be overwritten by the user
+# during `docker run`.
 ENTRYPOINT ["/bin/parent", "/bin/caddy"]
 CMD ["--conf", "/etc/Caddyfile", "--log", "stdout", "--agree=false"]
