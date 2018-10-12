@@ -9,7 +9,7 @@ disable_comments = true
 
 Hi, my name's Matt :)
 
-I'm work as a SWE at Flatiron Health. I graduated from Williams
+I work as a SWE at Flatiron Health. I graduated from Williams
 College where I majored in computer science and political science.
 
 I'm into open-source systems programming and developer tooling,
