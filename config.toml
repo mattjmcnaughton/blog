@@ -9,11 +9,11 @@ disqusShortname = "mattjmcnaughton"
 
 [Author]
   name = "Matt McNaughton"
-  bio = "SE@Flatiron Health - Williams College '16 - hackNY '15"
+  bio = "SWE@Flatiron Health - Williams College '16"
 
 [Params]
   readmore = true
-  subtitle = "SE@Flatiron Health - Williams College '16 - hackNY '15"
+  subtitle = "SWE@Flatiron Health - Williams College '16"
   post_navigation = true
   postSections = ["post"]
   dateformat = "2006-01-02"
