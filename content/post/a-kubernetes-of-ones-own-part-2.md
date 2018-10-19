@@ -28,7 +28,7 @@ Kubernetes cluster. Additionally, it assumes that you've installed
 and [terraform](https://www.terraform.io/downloads.html).
 
 It also assumes you've cloned my
-[terraform-kops](https://github.com/mattjmcnaughton/terraform-kops) project onto
+[personal-k8s](https://github.com/mattjmcnaughton/personal-k8s) project onto
 your local machine.
 
 ## Step 1: Decision Time and AWS setup
@@ -44,8 +44,9 @@ some decisions. Specifically, what is the domain in which we'll host all k8s
 DNS, and in which s3 bucket should kops store its state.
 
 With the answers to those questions in mind, you can follow the
-[instructions](https://github.com/mattjmcnaughton/terraform-kops#instructions)
-section of [terraform-kops](https://github.com/mattjmcnaughton/terraform-kops).
+[instructions](https://github.com/mattjmcnaughton/personal-k8s/tree/master/bootstrap#instructions)
+section of
+[personal-k8s/bootstrap](https://github.com/mattjmcnaughton/personal-k8s/tree/master/bootstrap).
 The instructions indicate when you need to parameterize the existing code with
 your preferred values.
 
@@ -60,7 +61,7 @@ href="https://giphy.com/gifs/funny-OMeGDxdAsMPzW">via GIPHY</a></p>
 
 We are now ready to create the Kubernetes cluster. Remember, before we undertake
 any operation involving Kops, we want to run `source
-/PATH/TO/terraform-kops/env.sh`, which will populate useful environment
+/PATH/TO/personal-k8s/bootstrap/env.sh`, which will populate useful environment
 variables.
 
 Now, we can run the following command to perform the first step in creating our
@@ -144,7 +145,7 @@ can run the following command to delete your Kubernetes cluster.
 kops delete cluster --name ${NAME} --yes
 ```
 
-The [terraform-kops](https://github.com/mattjmcnaughton/terraform-kops)
+The [personal-k8s/bootstrap](https://github.com/mattjmcnaughton/personal-k8s/tree/master/bootstrap)
 documentation provides instructions for deleting all of the AWS resources you
 created to support Kops.
 

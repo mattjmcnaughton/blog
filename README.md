@@ -1,11 +1,11 @@
 # Blog
 
-The code and blog entires behind my [blog](https://mattjmcnaughton.com).
+The code and blog entires behind my [blog](http://mattjmcnaughton.com).
 
 ## Deploy
 
 Deployed/hosted using
-[Kubernetes](https://github.com/mattjmcnaughton/blog-on-k8s).
+[Kubernetes](https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/blog).
 
 Formerly using [ansible](https://github.com/mattjmcnaughton/ansible-blog),
 and before that using [sdep](https://github.com/mattjmcnaughton/sdep).

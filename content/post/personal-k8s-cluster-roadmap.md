@@ -25,12 +25,13 @@ subjects they can expect guidance.
 
 ## The Solution
 
-I've created the
-[personal-k8s-cluster-roadmap](https://github.com/mattjmcnaughton/personal-k8s-cluster-roadmap)
-repo for exactly this purpose. I'll use
-[Github issues](https://github.com/mattjmcnaughton/personal-k8s-cluster-roadmap/issues)
+I've centralized all of my Kubernetes related code and configuration in the
+[personal-k8s](https://github.com/mattjmcnaughton/personal-k8s) repo.
+
+I'll use
+[Github issues](https://github.com/mattjmcnaughton/personal-k8s/issues)
 to aggregate planned work and
-[Github projects](https://github.com/mattjmcnaughton/personal-k8s-cluster-roadmap/projects/1)
+[Github projects](https://github.com/mattjmcnaughton/personal-k8s/1)
 to prioritize the backlog, and track in progress work.
 
 I'm hoping this will provide a bit of organization to an undertaking for which I
@@ -45,3 +46,7 @@ P.S. I apologize for the interruption from the [SLO
 Implementation](http://mattjmcnaughton.com/post/slo-implementation-part-0/) series.
 I promise my next blog post will be on deploying Prometheus to a Kubernetes
 cluster :)
+
+P.P.S There are additional reasons why I centralized all of my Kubernetes
+configuration and code in a single repo, but I'll explore those in a different
+blog post.
