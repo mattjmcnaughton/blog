@@ -73,31 +73,12 @@ href="https://giphy.com/gifs/fox-debate-jv-3aGZA6WLI9Jde">via GIPHY</a></p>
 
 We can now start writing your Kubernetes configuration files. There are many
 fancy ways to create Kubernetes configuration, but for now, we'll keep
-everything simple with vanilla yaml. Create a file called `blog.yaml` and add the
+everything simple with vanilla yaml. Create a file called `bundle.yaml` and add the
 following:
 
-```yaml
----
-apiVersion: apps/v1beta2
-kind: Deployment
-metadata:
-  name: blog
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: blog
-  template:
-    metadata:
-      labels:
-        app: blog
-    spec:
-      containers:
-      - name: blog
-        image: YOUR_IMAGE_HERE
-        ports:
-        - containerPort: 80
-```
+<script
+src="https://gist.github.com/mattjmcnaughton/d150aa40da336ba40f2173ed1ca99de3.js"></script>
+
 This code block tells Kubernetes there should be a deployment named `blog`,
 which consists of two pods with the label `app: blog`. The deployment should
 construct these pods via a template. This template specifies the pods contain
@@ -113,23 +94,9 @@ container image.
 We've configured the deployment. Now we just need to add the following section
 to configure the service:
 
-```yaml
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: blog
-  labels:
-    app: blog
-spec:
-  type: LoadBalancer
-  selector:
-    app: blog
-  ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-```
+<script
+src="https://gist.github.com/mattjmcnaughton/bd0064e174180671b71e5d45e8498e36.js"></script>
+
 This section of the code tells Kubernetes there should be a service named
 `blog`. The service has the type
 [LoadBalancer](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/),
@@ -141,8 +108,8 @@ our service's selector. Our service selects all pods with the tag `app: blog`.
 Finally, we instruct our service to forward port 80 on the load balancer to port
 80 on the pod.
 
-Finally, run `kubectl apply -f blog.yaml`, which instructs Kubernetes to perform
-the actions necessary such that the objects defined in `blog.yaml` exist.
+Finally, run `kubectl apply -f bundle.yaml`, which instructs Kubernetes to perform
+the actions necessary such that the objects defined in `bundle.yaml` exist.
 Congrats, you're running an application on Kubernetes!
 
 <iframe src="https://giphy.com/embed/3o7abIZJKIhfhvqfHq" width="480"
