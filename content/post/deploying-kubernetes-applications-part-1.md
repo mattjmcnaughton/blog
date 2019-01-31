@@ -5,9 +5,6 @@ categories = ["Projects"]
 thumbnail = "img/deploy-solution.jpg"
 +++
 
-TODO:
-- Proofread
-
 In the first blog post in [this
 series](/post/deploying-kubernetes-applications-part-0/), we examined how our
 previous deployment strategy of running `kubectl apply -f` on static manifests
