@@ -16,7 +16,7 @@ I'm into open-source systems programming and developer tooling,
 tinkering with Linux on the desktop, Toronto sports teams, baking bread, and mental health advocacy.
 
 Currently, I focus most of my leisure coding time on Kubernetes and the Cloud
-Native ecosystem. I try and contribute to [Kubernetes](https://github.com/kubernetes/kubernetes) and
+Native ecosystem. I contribute to [Kubernetes](https://github.com/kubernetes/kubernetes) and
 its associated projects ([Helm](https://github.com/helm), etc.) as much as
 possible.  I also run
 [my own personal Kubernetes](http://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-0/)
@@ -32,5 +32,8 @@ In my senior year of college (2015-2016), I wrote a
 [thesis](https://github.com/mattjmcnaughton/thesis) entitled "Predictive
 Auto-scaling of Pods in the Kubernetes Container Cluster Manager."
 
-You can find me on [Github](https://github.com/mattjmcnaughton) or through [email](mailto:mattjmcnaughton@gmail.com).
+You can find me on [Github](https://github.com/mattjmcnaughton) or through [email](mailto:me@mattjmcnaughton.com).
+You can find my GPG public key [here](/mattjmcnaughton.pub.asc).
+
+
 I'm pretty much **mattjmcnaughton** everywhere on the web :)
