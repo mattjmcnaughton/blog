@@ -12,28 +12,30 @@ Hi, my name's Matt :)
 I work as a SWE at Flatiron Health. I graduated from Williams
 College where I majored in computer science and political science.
 
-I'm into open-source systems programming and developer tooling,
-tinkering with Linux on the desktop, Toronto sports teams, baking bread, and mental health advocacy.
-
 Currently, I focus most of my leisure coding time on Kubernetes and the Cloud
 Native ecosystem. I contribute to [Kubernetes](https://github.com/kubernetes/kubernetes) and
-its associated projects ([Helm](https://github.com/helm), etc.) as much as
-possible.  I also run
-[my own personal Kubernetes](http://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-0/)
+its associated projects as much as possible, and am tremendously excited to have
+recently been added to the [Kubernetes Github Organization](https://github.com/kubernetes).
+
+I also run [my own personal Kubernetes](http://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-0/)
 cluster, on which I host this blog and other applications.
 See [this repo](https://github.com/mattjmcnaughton/personal-k8s)
 for the most recent information on work I've done and work I hope to do in the
 future on my personal cluster, as well as all the code :)
 
-In the past, I spent a couple of months in the summer of 2017 developing
-[Sheepdoge](https://github.com/sheepdoge), which is essentially [Boxen](https://github.com/boxen)
-but for Ansible. I also contributed to [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py).
-In my senior year of college (2015-2016), I wrote a
+All my k8s work started in my senior year of college (2015-2016), when I wrote a
 [thesis](https://github.com/mattjmcnaughton/thesis) entitled "Predictive
 Auto-scaling of Pods in the Kubernetes Container Cluster Manager."
 
-You can find me on [Github](https://github.com/mattjmcnaughton) or through [email](mailto:me@mattjmcnaughton.com).
+In the past, I spent a couple of months in the summer of 2017 developing
+[Sheepdoge](https://github.com/sheepdoge), which is essentially [Boxen](https://github.com/boxen)
+but for Ansible. I also contributed to [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py).
+
+More broadly, I'm into open-source systems programming and developer tooling,
+tinkering with Linux on the desktop, Toronto sports teams, baking bread, and mental health advocacy.
+
+<hr />
+
+You can find me on [Github](https://github.com/mattjmcnaughton)
+or reach me through [email](mailto:me@mattjmcnaughton.com).
 You can find my GPG public key [here](/mattjmcnaughton.pub.asc).
-
-
-I'm pretty much **mattjmcnaughton** everywhere on the web :)
