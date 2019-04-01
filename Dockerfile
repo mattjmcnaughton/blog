@@ -7,7 +7,7 @@
 # minimizing attack surface.
 
 # Based on https://github.com/abiosoft/caddy-docker/blob/master/builder/Dockerfile
-FROM golang:1.10-alpine as parent_builder
+FROM golang:1.12-alpine as parent_builder
 
 # Necessary for `go get ...`
 RUN apk add --no-cache git gcc musl-dev
