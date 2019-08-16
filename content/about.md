@@ -16,6 +16,8 @@ Currently, I focus most of my leisure coding time on Kubernetes and the Cloud
 Native ecosystem. I contribute to [Kubernetes](https://github.com/kubernetes/kubernetes) and
 its associated projects as much as possible, and am tremendously excited to have
 recently been added to the [Kubernetes Github Organization](https://github.com/kubernetes).
+and made a [Reviewer](https://github.com/kubernetes/kubernetes/commit/269cd63e15031de6efed05f5d63d5403f7f010c4)
+for sig-node.
 
 I also run [my own personal Kubernetes](http://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-0/)
 cluster, on which I host this blog and other applications.
