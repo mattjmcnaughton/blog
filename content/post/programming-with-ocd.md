@@ -150,3 +150,49 @@ this part of my life with family and friends.
 I am always eager to talk with anyone who is feeling a similar way - whether I
 can offer any guidance or help, or just someone to listen. Please email me at
 mattjmcnaughton @ gmail.com :)
+
+<br>
+
+<hr>
+
+<br>
+
+### [Aug 2019] Update
+
+Thank you so much to everyone who has reached out to me about reading this post
+- it really means a lot :)
+
+#### Book Recs
+
+In a lot of my emails, I found myself recommending the same books, so I thought
+I'd go ahead in post them here.
+
+- [The Mindfulness Workbook for OCD](https://www.amazon.com/Mindfulness-Workbook-OCD-Overcoming-Compulsions/dp/1608828786/)
+
+One particularly helpful component of this book is it does a good job describing
+the different ways OCD can manifest. Early on in my OCD journey, I found it an
+integral part of better understanding my own OCD. It also offers tools for
+managing OCD derived from combining mindfulness practices with cognitive
+behavioral therapy.
+
+- [Freedom from Obsessive Compulsive Disorder](https://www.amazon.com/Freedom-Obsessive-Compulsive-Disorder-Personalized/dp/042527389X/)
+
+In my experience, this book provides good background info on OCD, and also
+rich concrete advice around creating a recovery plan. I think it can be helpful both
+for those struggling with OCD and those who have a loved one struggling with
+OCD.
+
+- [The Man Who Couldn't Stop](https://www.amazon.com/Man-Who-Couldnt-Stop-Thought-ebook/dp/B00LDR38IU/)
+
+David Adam's auto-biography discusses his personal experience with OCD, in
+addition to providing scientific/historic background on OCD. This book can be a
+helpful way of remembering that those of us who struggle with OCD are not alone.
+
+#### In summary... (once again)
+
+Thank you again to the people who read those post and to those who reached out.
+
+As I said in my original post, I am always eager to talk
+with anyone who is going through their own OCD journey - whether I
+can offer any guidance or help, or just someone to listen. Please email me at
+mattjmcnaughton @ gmail.com :)
