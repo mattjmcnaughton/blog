@@ -4,8 +4,6 @@ languageCode = "en-us"
 paginate = "10"
 theme = "mainroad"
 title = "~/mattjmcnaughton/blog"
-googleAnalytics = "UA-101845615-1"
-disqusShortname = "mattjmcnaughton"
 
 [Author]
   name = "Matt McNaughton"
