@@ -15,13 +15,17 @@ disqusShortname = "mattjmcnaughton"
   readmore = true
   subtitle = "SWE@Flatiron Health - Williams College '16"
   post_navigation = true
-  postSections = ["post"]
+  mainSections = ["post"]
+  post_meta = ["date", "categories"]
   dateformat = "2006-01-02"
+  highlightColor = "#95a5a6"
 
-[Params.widgets]
-  search = true
-  categories = true
-  tags_counter = true
+[Params.sidebar]
+  home = "right"
+  list = "right"
+  single = "right"
+  widgets = ["search", "social"]
 
-  social_github = "mattjmcnaughton"
-  social_email = "me@mattjmcnaughton.com"
+[Params.widgets.social]
+  github = "mattjmcnaughton"
+  email = "me@mattjmcnaughton.com"
