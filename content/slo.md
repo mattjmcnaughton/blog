@@ -1,76 +1,19 @@
 +++
 date = "2018-09-16T22:10:54-04:00"
 title = "SLO"
-menu = "main"
 +++
 
-For more context on why this blog has an SLO, please read my [blog post](/post/this-blog-has-an-slo).
-This document follows the SLO/Error Budget Policy templates defined in
-[The Site Reliability Workbook](https://www.amazon.com/Site-Reliability-Workbook-Practical-Implement/dp/1492029505/).
+UPDATE: As of 2019-12-19, I no longer host this blog on my personal Kubernetes
+cluster. In fact, I (temporarily) no longer have a personal k8s cluster.
 
----
+As a result, I'm no longer actively focusing on this blog's SLO. When I stopped
+running it on Kubernetes, I lost the monitoring/alerting I'd set up, and I don't
+want to set it up in a non-k8s environment.
 
-## SLO
+I'll still, of course, do my best to keep this blog up and running :) The
+infrastructure ([code here](https://github.com/mattjmcnaughton/nuage/tree/master/terraform/modules/blog))
+utilizes auto-scaling groups and load balancers, so should hopefully be quite
+self-healing.
 
-### Service Overview
-
-This [site](/) is a static website used for publishing my personal blog.
-
-### SLIs and SLO
-
-- Availability: The proportion of successful requests, as measured from the web server and where any status
-  code other than 5XX is considered successful, is > 99%.
-- Latency: The proportion of sufficiently fast requests, as measured from the web server and
-  where sufficiently fast is defined as < 1s, is > 99%.
-
-We measure our SLO over a four-week rolling window.
-
-### Rationale
-
-No attempt has been made to verify that these numbers correlate strongly with
-user experience. As I receive more performance data and user feedback, I will
-refine the SLO thresholds.
-
-### Error Budget
-
-Each objective has a separate error budget. We define this error budget as 100%
-minus the goal for that objective. For example, if we imagine this blog has
-10,000 requests in the last four weeks, the availability error budget is 1%
-(100% - 99%) of 10,000: 100 errors.
-
-We enact the [error budget policy](#error-budget-policy) when any of our
-objectives exhaust their error budgets.
-
----
-
-## Error Budget Policy
-
-### Goals
-
-The goals of this policy are to:
-
-- Ensure this blog is sufficiently stable so as to provide value to its readers.
-- Balance reliability investments with investments in new features and content.
-
-### Non-Goals
-
-The goal of this policy is not too punish developers (i.e. me) for missing SLOs.
-
-### SLO Miss Policy
-
-If this blog is performing at or above the SLO, then I'll have no restrictions
-on new features, new content, or new infrastructure.
-
-If this blog has exceeded its error budget, I'll take the following actions:
-
-- Writing new blog posts will be halted until blog is back within SLO.
-- Changes to blog infrastructure (i.e. Kubernetes configuration) will be halted
-  until blog is back within SLO.
-- I'll try and devote ~1 hr a week to addressing stability issues until the blog
-  is back within SLO.
-
----
-
-## Metrics and Dashboards
-
-Coming soon.
+See [the git history](https://github.com/mattjmcnaughton/blog/commit/e9a7e8cdf6ceb0c8bf0db86a3e627b346c09eba5#diff-991ae77c17f7a1230b664002ec3a9912)
+for what this SLO used to look like.

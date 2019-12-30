@@ -19,11 +19,13 @@ recently been added to the [Kubernetes Github Organization](https://github.com/k
 and made a [Reviewer](https://github.com/kubernetes/kubernetes/commit/269cd63e15031de6efed05f5d63d5403f7f010c4)
 for sig-node.
 
-I also run [my own personal Kubernetes](http://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-0/)
-cluster, on which I host this blog and other applications.
+In the past, I also ran [my own personal Kubernetes](http://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-0/)
+cluster, on which I hosted this blog and other applications.
 See [this repo](https://github.com/mattjmcnaughton/personal-k8s)
-for the most recent information on work I've done and work I hope to do in the
-future on my personal cluster, as well as all the code :)
+for the code. See [my latest self-hosting
+project](https://github.com/mattjmcnaughton/nuage) for how I'm currently hosting
+this blog. tl:dr; I'm temporarily hosting it as a static site on Nginx while I
+work on rebuilding my Kubernetes cluster using Kubeadm, Terraform, etc...
 
 All my k8s work started in my senior year of college (2015-2016), when I wrote a
 [thesis](https://github.com/mattjmcnaughton/thesis) entitled "Predictive
