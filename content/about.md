@@ -5,8 +5,6 @@ menu = "main"
 disable_comments = true
 +++
 
-<img src="/img/avatar.png" style="height:25%; width:25%;"/>
-
 Hi, my name's Matt :)
 
 I work as a SWE at Flatiron Health. I graduated from Williams
@@ -38,7 +36,7 @@ but for Ansible. I also contributed to [elasticsearch-dsl-py](https://github.com
 More broadly, I'm into open-source systems programming and developer tooling,
 tinkering with Linux on the desktop, Toronto sports teams, baking bread, and mental health advocacy.
 
-<hr />
+---
 
 You can find me on [Github](https://github.com/mattjmcnaughton)
 or reach me through [email](mailto:me@mattjmcnaughton.com).
