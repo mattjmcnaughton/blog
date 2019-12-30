@@ -22,7 +22,7 @@ title = "~/mattjmcnaughton/blog"
   home = "right"
   list = "right"
   single = "right"
-  widgets = ["search", "social"]
+  widgets = ["social"]
 
 [Params.widgets.social]
   github = "mattjmcnaughton"
