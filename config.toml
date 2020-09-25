@@ -7,11 +7,9 @@ title = "~/mattjmcnaughton/blog"
 
 [Author]
   name = "Matt McNaughton"
-  bio = "SWE@Flatiron Health - k8s contributor - Williams College '16"
 
 [Params]
   readmore = true
-  subtitle = "SWE@Flatiron Health - k8s contributor - Williams College '16"
   post_navigation = true
   mainSections = ["post"]
   post_meta = ["date", "categories"]
