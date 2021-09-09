@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 1) Reducing the Cost of Running a Personal k8s Cluster: EC2 Instances - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 1) Reducing the Cost of Running a Personal k8s Cluster: EC2 Instances</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-11-27T00:00:00">2018-11-27</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/servers.jpg" alt="(Part 1) Reducing the Cost of Running a Personal k8s Cluster: EC2 Instances">
+		</figure><div class="content post__content clearfix">
+			<h2 id="introduction">Introduction</h2>
+<p>In <a href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-0/">my last blog
+post</a>, I
+introduced our goal of decreasing the cost of running a personal k8s cluster, and
+made the case for why decreasing the cost is important. We also did some quick
+calculations which showed that EC2 instances are the most expensive part of our
+cluster, costing ~$115 per month or ~$1.4K per year. There&rsquo;s no time like the
+present to actually start decreasing EC2 costs, so let&rsquo;s get down to business.</p>
+<iframe src="https://giphy.com/embed/h45algtniCWEo" width="480" height="272"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/problem-nissan-h45algtniCWEo">via GIPHY</a></p>
+<h2 id="optimizing-ec2-instances">Optimizing EC2 instances</h2>
+<p>Again, using the default <a href="https://github.com/kubernetes/kops">Kops</a> configuration,
+the m3.medium we use for the master has 1 CPU and 4 GB of memory,
+while the t2.mediums we use for the nodes combine to give us 4 CPU and 8GB memory.</p>
+<p>We must first ensure our cluster actually needs all of these resources, as
+the most blunt and effective cost-saving measure would be reducing the size of
+our EC2 instances or, even better, deleting instances entirely. However, to
+confidently undertake those actions, we must first show our cluster is
+over-provisioned.</p>
+<h3 id="monitoring-resource-usage">Monitoring resource usage</h3>
+<p>Previously, our cluster did not offer visibility into the resource usage of each
+application running on the cluster, nor did it offer visibility into the
+aggregate resource usage across all the applications running on the container.
+Our first duty is giving ourselves this visibility.</p>
+<p>We&rsquo;ll start with garnering micro insights into each application&rsquo;s resource
+usage. By default, Kubernetes runs containers without any resource constraints,
+meaning that, like a non-containerized process running directly on the physical
+host, the processes in the container can attempt to claim all of the node&rsquo;s CPU and memory. The lack
+of resource constraints is not a large problem when we have only one or two
+applications running on our Kubernetes cluster. If we find our Kubernetes cluster low
+on resources, we only have one or two potential culprits to investigate.
+However, as soon as we start running a non-trivial number of
+applications on our Kubernetes cluster,<sup><a href="#fn1">1</a></sup> it becomes much
+more important to understand the minimum and maximum amount of resources
+allocated to each container and have confidence Kubernetes will enforce said
+limits.</p>
+<p>Fortunately, Kubernetes provides
+<a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#resource-requests-and-limits-of-pod-and-container">first class support</a>
+for containers specifying the minimum and maximum amount of
+resources they require. Each container
+can specify a <code>resource.request</code> and a <code>resource.limit</code> for both CPU and memory. A
+pod calculates its resource request and resource limit by summing the resource
+requests and limits for all its containers. A resource request is the minimum amount
+of resources a pod needs to function. The Kubernetes scheduler will not schedule
+a pod to a certain node unless the node can fulfill its resource request. The
+limit is the maximum amount of resources a pod can consume. If the pod attempts
+to use more CPU that its limit, it will be CPU throttled, and if it attempts to
+use more memory than its limit, it will be terminated. For simplicities sake, we
+define the limit and the request to be equal, essentially guaranteeing
+each pod a given amount of resources. Setting them to the same value makes
+determining the total resource needs of my cluster simple.</p>
+<p>We can see an example of how to specify these values in the code snippet below.</p>
+<pre tabindex="0"><code>apiVersion: apps/v1beta2
+kind: Deployment
+...
+spec:
+  ...
+  template:
+    ...
+    spec:
+      containers:
+      - name: blog
+        image: docker.io/mattjmcnaughton/blog
+        ...
+        resources:
+          requests:
+            cpu: &quot;100m&quot;
+            memory: &quot;100Mi&quot;
+          limits:
+            cpu: &quot;100m&quot;
+            memory: &quot;100Mi&quot;
+</code></pre><p>After ensuring all containers have a resource request/limit (see
+<a href="https://github.com/mattjmcnaughton/personal-k8s/commit/382be789d50f60a1a323cdf8a75fa53cbe213750">this commit</a>
+for more details), we can trivially calculate the resources our cluster needs.
+The master needs resources equal to the summation of all resource
+requests/limits for all pods scheduled on the master, and the nodes need
+resources equal to the summation of all resource requests/limits for all pods
+scheduled on the nodes.</p>
+<p>By allocating all of our pods a definite set of resources, we&rsquo;ve transformed our
+original question of &ldquo;do we have an appropriate amount of resources for our
+Kubernetes cluster&rdquo; into two simpler questions: &ldquo;is our cluster correctly provisioned
+(i.e. is the sum of resources allocated to
+each pod an appropriate percentage of the cluster&rsquo;s total resources)&rdquo;
+and &ldquo;are our allocations of resources to pods accurate&rdquo;? We&rsquo;ll explore each of
+these questions individually.</p>
+<h3 id="is-our-cluster-correctly-provisioned">Is our cluster correctly provisioned?</h3>
+<p>In order for our cluster to be &ldquo;correctly provisioned&rdquo; it should have an amount
+of resources that is &ldquo;just right&rdquo;. As an example, we don&rsquo;t want to over-provision
+(i.e. only use 10% of available resources), because then we are paying money for
+computing power that we aren&rsquo;t using. Alternatively, we don&rsquo;t want to
+under-provision (i.e. only be able to schedule 10% of our applications because
+our cluster doesn&rsquo;t have the required resources). We want to be right in the
+middle.</p>
+<p>Once we ensure each of our pods has a resource request/limit, its easy to ensure
+our cluster is not under-provisioned. Specifically, the scheduler will not
+schedule a pod if it cannot fulfill its resource request. As long as all our
+pods are scheduled, our cluster is not under-provisioned. We do not yet have any
+auto-scaling, so the only time our cluster runs new Pods is when we add them.
+Since pod creation is currently manual, I&rsquo;m comfortable with not having
+automated alerts for whether were there are not sufficient resources to schedule
+a pod. If we later add auto-scaling, or some other process wherein our cluster
+would have a variable number of pods, we&rsquo;ll want to revisit this decision.</p>
+<p>We can rely upon a equally lightweight manual method for determining if we&rsquo;ve
+overallocated resources to our cluster. We can run
+<code>kubectl describe node NODE_NAME | grep -A 5 &quot;Allocated&quot;</code> for details around
+each node&rsquo;s resource allocation.<sup><a href="#fn2">2</a></sup>
+Below we display a sample of the output for one of our nodes.<sup><a href="#fn3">3</a></sup></p>
+<img src="/img/node-describe-allocation.png">
+<p>As you can see, we&rsquo;re fairly well provisioned. We&rsquo;re using ~70% of CPU, which is
+just about where we want to be. We&rsquo;re only using ~40% of memory, which would
+suggest that we should decrease our cluster&rsquo;s memory allocation while retaining
+its CPU allocation. While that sounds like a good idea in theory, I don&rsquo;t
+believe its possible with the currently available <a href="https://aws.amazon.com/ec2/instance-types/">EC2 instance
+types</a>. The smallest compute optimized EC2
+machine, the c5.large, offers our current allocation of two CPUs and 4 GB of memory
+for slightly cheaper. While the c5.large is slightly cheaper than two
+m3.mediums, we no longer have multiple nodes.
+If we try the opposite strategy and try to get our four CPUs via running four t2.micros, which
+would give us 4GB of memory instead of 8GB of memory, we&rsquo;d still be paying about
+the same amount as we pay for two t2.mediums.</p>
+<h3 id="are-our-allocations-of-resources-to-pods-accurate">Are our allocations of resources to pods accurate?</h3>
+<p>Of course, all of the analysis we conducted in the previous section is worthless
+if our per-pod resource allocation is incorrect. As such, we turn our attention
+to whether we&rsquo;ve correctly allocated resources to our pods.</p>
+<p>We answer these questions in two main ways. First, we can use <code>kubectl top pods</code>,<sup><a href="#fn4">3</a></sup> which gives us a <a href="http://man7.org/linux/man-pages/man1/top.1.html">top</a>
+style resource usage report. For example, the report shown below highlights that
+our <code>prometheus-prometheus-0</code> pod is currently using 136Mi of the 500Mi of
+memory allocated to our cluster.</p>
+<p><img src="/img/kubectl-top-pod.png" /></p>
+<p>While <code>kubectl top pods</code> is interesting, we&rsquo;re even more interested in seeing
+resource usage as a percentage of resources allocated, particularly when it is
+tracked over time. And if we can set up alerts for when we are in-danger of
+under-provisioning our applications, that&rsquo;s also quite beneficial.</p>
+<p>If you&rsquo;re guessing that we&rsquo;re going to use Prometheus, Grafana, and AlertManager
+for to accomplish this monitoring and alerting, you&rsquo;re exactly right.</p>
+<p>We start by configuring Prometheus to scrape metrics from the
+<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/">kubelet</a>,
+which is the node agent responsible for managing the pods on the node.</p>
+<script src="https://gist.github.com/mattjmcnaughton/01fe7978db2cbf5106d3ac63763b5e2c.js"></script>
+<p>Scraping Kubelet&rsquo;s exposed metrics gives us a couple interesting data points for
+our desired monitoring.<sup><a href="#fn5">5</a></sup></p>
+<p>First, it defines <code>container_memory_working_set_bytes</code>
+and <code>container_spec_memory_limit_bytes</code>, which are the memory the container is
+using and the memory the container is allocated respectively. We can use the
+query below to express the percentage of allocated memory the pod is utilizing.</p>
+<pre tabindex="0"><code>sum(container_memory_working_set_bytes{container_name!~&quot;POD&quot;, pod_name!=&quot;&quot;, namespace!~&quot;kube-system&quot;}) by (pod_name) /
+sum (container_spec_memory_limit_bytes{container_name!~&quot;POD&quot;,pod_name!=&quot;&quot;}) by (pod_name)
+</code></pre><p>We graph this metric via Grafana, as can be seen below.</p>
+<img src="/img/ratio-memory-limit-utilized.png">
+<p>Kubelet also exposes helpful metrics for monitoring our pod&rsquo;s CPU allocation. We
+are given the <code>container_cpu_cfs_throttled_seconds_total</code> metric, which we can
+use to find how often a container was CPU throttled (i.e. under-provisioned
+CPU), as seen in the expression below.</p>
+<pre tabindex="0"><code>sum by(pod_name) (rate(container_cpu_cfs_throttled_seconds_total{container_name!~&quot;POD&quot;,namespace!~&quot;kube-system&quot;,pod_name!=&quot;&quot;}[1h]))
+</code></pre><p>We again graph this metric via Grafana, as can be seen below.</p>
+<img src="/img/ratio-time-cpu-throttled.png">
+<p>Both these graphs are useful, but we don&rsquo;t want to be checking Grafana every day
+to ensure our pod allocations are correct. Fortunately, we can use
+Prometheus and AlertManager to add automated alerting for when pods are
+under-allocated memory or CPU for a sustained amount of time. The
+PrometheusRules we use for these alerts can be seen below.</p>
+<script src="https://gist.github.com/mattjmcnaughton/3ed9bc908d4d2c0c8325c79f80eefd06.js"></script>
+<p>From our work above, we can be fairly confident we are not under-provisioning our
+pods, and we know that if we do somehow start under-provisioning them, we&rsquo;ll
+receive an alert. Its fair to ask whether we are over-provisioning our pods,
+especially given the our fairly low memory usage. As I&rsquo;m relatively new to
+managing pods on a Kubernetes cluster, I don&rsquo;t mind being slightly
+over-provisioned for now, so I&rsquo;m going to leave our pod resource allocations.
+However, its definitely something we should keep in the back of our minds.</p>
+<h2 id="optimizing-cost-of-the-needed-ec2-instances">Optimizing cost of the needed EC2 instances</h2>
+<p>From our work above, we can be relatively confident that the 1 m3.medium
+master and 2 t2.medium nodes currently backing our cluster are an appropriate
+current resource allocation. We can now turn our interest to paying AWS as little as
+possible for those machines.</p>
+<p>Our largest savings come from experimenting with different AWS <a href="https://aws.amazon.com/ec2/pricing/">EC2 instance
+classes</a>.
+<a href="https://aws.amazon.com/ec2/pricing/on-demand/">on-demand</a> instance class AWS
+utilizes by default. By default, AWS EC2 instances are of the
+<a href="https://aws.amazon.com/ec2/pricing/on-demand/">on-demand</a> instance class. This
+instance class prioritizes reliability and flexibility. We can start and stop
+paying for an instance on a per hour basis, and AWS guarantees that the instance is
+ours as long as we want it. However, reliability and flexibility have a price,
+as on-demand instances are the most expensive instance class.
+If we&rsquo;re willing to sacrifice either reliability or flexibility, we can pay less.</p>
+<p>To sacrifice reliability, we utilize <a href="https://aws.amazon.com/ec2/spot/">spot instances</a>. Spot
+instances are spare EC2 computing resources, for which Amazon allows you the set
+a max bid. The spot instance price varies based on demand and capacity. If our
+max bid is less than the market price, our instance will be terminated.</p>
+<p>To sacrifice flexibility, we utilize <a href="https://aws.amazon.com/ec2/pricing/reserved-instances/">reserved
+instances</a>. Reserved
+instances are a billing arrangement, in which Amazon gives us a discount on EC2
+instances, on the pre-condition that we reserve the instance for a time period
+greater than one year.</p>
+<p>Each of these instance classes map to the different types of machines in
+Kubernetes.</p>
+<h3 id="reserved-instances">Reserved Instances</h3>
+<iframe src="https://giphy.com/embed/xUA7aLMq7BD17XsOeA" width="480"
+height="351" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/seinfeld-hold-jerry-xUA7aLMq7BD17XsOeA">via
+GIPHY</a></p>
+<p>The master is a perfect candidate for a reserved instance. We
+want the master to run constantly, and can also be fairly confident that
+the resources required by the
+<a href="https://kubernetes.io/docs/concepts/#kubernetes-control-plane">Kubernetes Control Plan</a>,
+which is the predominant work load running on the master, will be
+relatively consistent. If we are willing to commit to running our Kubernetes
+cluster for ~1 year, and I am,<sup><a href="#fn6">6</a></sup>
+then we can purchase a m3.medium EC2 Reserved
+Instance for an entire year, and receive significant savings over the on-demand
+price.</p>
+<p>In AWS, a Reserved Instance is strictly a billing concept, meaning we don&rsquo;t need
+to change anything with our Kops configuration. I purchased my m3.medium
+Reserved Instance via the <a href="https://aws.amazon.com/ec2/pricing/reserved-instances/">AWS
+UI</a>. I purchased it for
+one year, and also chose a <a href="https://aws.amazon.com/ec2/faqs/">Convertible</a>
+Reserved Instance. The Convertible Reserved Instance allows us to essentially
+&ldquo;swap&rdquo; our Reserved Instance for another Reserved Instance, provided that the
+new Reserved Instance is more expensive. This swapping ability offers production
+against our Kubernetes master needing more resources, in return for sacrificing
+a small amount of savings.</p>
+<p>Once we have purchased a Reserved Instance, we don&rsquo;t need to do anything.
+Essentially, AWS looks at all the EC2 instances we have running, and if any
+match unutilized Reserved Instances, we do not have to pay for them via the
+on-demand billing mechanism. So we will keep the m3.medium master Kops
+initially launched for us, and just start paying for it as a reserved instance.</p>
+<p>From our calculations in <a href="/post/reducing-the-cost-of-a-personal-k8s-cluster-part-0">part 0</a>,
+an m3.medium, payed for as an on-demand instance, costs $48.24 a month, or
+$578.88 a year. I paid $406.00 for my m3.medium Convertible Reserved Instance,
+With this simple change, I saved 30% on the cost of our master, and around 10%
+our total cluster costs for the year.<sup><a href="#fn7">7</a></sup></p>
+<h3 id="spot-instances">Spot Instances</h3>
+<iframe src="https://giphy.com/embed/1gUWdf8Z8HCxpM8cUR" width="480"
+height="354" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/ariana-grande-thank-u-next-you-1gUWdf8Z8HCxpM8cUR">via
+GIPHY</a></p>
+<p>While Reserved Instance&rsquo;s are a perfect match for Kubernetes' master, Spot
+Instances are a perfect match for Kubernetes' nodes. Spot instances offer
+significant savings, as long as we are comfortable with the idea that they might
+be terminated in certain circumstances. Fortunately, we are comfortable with
+that possibility, because one of Kubernetes' main benefits is its ability to abstract away
+the details of the underlying hardware. An application running on Kubernetes
+should have no concerns at all if an underlying node is terminated and replaced. Kops
+itself supports this by managing all nodes via an <a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/AutoScalingGroup.html">AWS Auto Scaling
+Group</a>,
+meaning that creating new nodes in response to old nodes being terminated is a
+completely automated process.</p>
+<p>Kops makes it trivial to start utilizing Spot Instances for your nodes.
+As <a href="https://github.com/kubernetes/kops/blob/master/docs/instance_groups.md#converting-an-instance-group-to-use-spot-instances">Kops documentation</a>
+explains, all we have to do is specify a <code>maxPrice</code> when configuring our
+<code>InstanceGroup</code>, and Kops will launch Spot Instances instead of Reserved
+Instances. We set our <code>maxPrice</code> as equal to the on-demand price of the instance
+type.<sup><a href="#fn8">8</a></sup>, although it is rare that we&rsquo;ll ever
+actually need to pay that much.</p>
+<p>As a quick but important aside, frustratingly, setting our max spot instance bid price equal to
+the on-demand instance price does not guarantee that we&rsquo;ll always be able to
+purchase Spot Instances. Some participants in the Spot Instance market set their
+max price to a very high value (i.e. $1K) to ensure they will always win bids,
+even when it would be cheaper to switch to on-demand instances for that brief
+window. We are hesitant to adopt a similar tactic, because of its potential to
+result in a surprisingly high AWS bill. However, this Spot Instance market quirk
+does mean there will be short, infrequent windows (maybe once a week for 10 or so minutes)
+in which we cannot purchase Spot Instances.<sup><a href="#fn7">7</a></sup> Such
+downtime is a large problem for some applications and not so big a deal for
+others. Ideally, we would use this issues impact on our applications' SLOs and
+error budgets to determine the appropriate course of action.
+Yet unfortunately for our current Kubernetes cluster configuration,
+our monitoring/alerting runs on those nodes, so when we don&rsquo;t have
+nodes, we have nothing to tell us when and to what extent our other services are
+experiencing issues. Even with these drawbacks, we still believe the cost savings
+of Spot Instances are worth it. Soon, we hope to fix this issue entirely by
+purchasing a Reserved t2.medium instance, which we will use to ensure that at
+least one pod is always running for our services with the most stringent uptime
+requirements. If you&rsquo;re curious, you can follow along on <a href="https://github.com/mattjmcnaughton/personal-k8s/issues/13">the
+implementation</a> here,
+and I&rsquo;ll of course blog about it when I&rsquo;m the work is complete.</p>
+<p>The savings with Spot Instances are even more variable than the savings with
+Reserved Instances, but again they are quite significant. On average, for the
+us-west-1 region, a t2.medium spot instance costs around $.0139 an hour, compared to
+$.0464 an hour for an on-demand instance. This reduces our yearly spend on our
+Kubernetes' nodes from $801.79 to $240.19, for a savings of around 70%. Making
+just this change would reduce our annual bill for our Kubernetes cluster by
+around ~30%.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>By verifying our Kubernetes cluster&rsquo;s needed computing resource allocation, and
+determining the cheapest way possible to obtain said computing resources, we&rsquo;ve
+reduced our annual bill from ~$2K to ~1.2K, for a overall savings of around
+~40%! But we aren&rsquo;t done yet. We examined computing resources, but we still want
+to examine storage resources (EBS volumes) and networking resources (ELBs).
+We&rsquo;ll address these ideas in the remaining blog posts in this series. Looking forward to it!</p>
+<iframe src="https://giphy.com/embed/gauzBevJxeJHy" width="480" height="271"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/aziz-ansari-tom-haverford-gauzBevJxeJHy">via
+GIPHY</a></p>
+<hr />
+<p><sup id="fn1">1. Assuming we want to run multiple applications is a fairly safe
+assumption, as it does not really make sense to use Kubernetes
+if you&rsquo;re only running one or two applications.</sup></p>
+<p><sup id="fn2">2. You can find the names of the nodes in your k8s cluster with
+<code>kubectl get nodes</code>.</sup></p>
+<p><sup id="fn3">3. Note, the limits are lower than the requests, because some of the
+pods Kubernetes schedules by default on all nodes (i.e. <code>kube-dns</code> and
+<code>kube-proxy-ip-...</code>) do not specify resource limits.</sup></p>
+<p><sup id="fn4">4. Note, you will need to deploy the
+<a href="https://github.com/kubernetes-incubator/metrics-server">metrics-server</a> in
+order for <code>kubectl top pods</code> to work. My
+<a href="https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/metrics-server">personal-k8s</a>
+project includes templates for deploying the metrics-server.
+</sup></p>
+<p><sup id="fn5">5. Special thanks to the good folks at <a href="https://freshtracks.io/">FreshTracks</a> for their great
+<a href="https://blog.freshtracks.io/a-deep-dive-into-kubernetes-metrics-part-3-container-resource-metrics-361c5ee46e66">blog post</a>
+on useful Kubernetes' container resource metrics.</sup></p>
+<p><sup id="fn6">6. If you cannot commit to running your Kubernetes cluster for an
+entire year, then you should not purchase a reserved instance.</sup></p>
+<p><sup id="fn7">7. Note, the exact savings you experience may very depending on
+the AWS region in which you&rsquo;re purchasing your Reserved Instance.</sup></p>
+<p><sup id="fn8">8. For example, there was a brief window (a couple of minutes) on the morning of CyberMonday in which I couldn&rsquo;t purchase Spot Instances.</sup></p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-0/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 0) Reducing the Cost of Running a Personal k8s Cluster: Introduction</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-2/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 2) Reducing the Cost of Running a Personal k8s Cluster: Volumes and Load Balancers</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

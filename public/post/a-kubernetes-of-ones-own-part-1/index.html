@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 1) A Kubernetes of One&#39;s Own: I Can Haz Cluster? - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 1) A Kubernetes of One&#39;s Own: I Can Haz Cluster?</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-09-08T00:00:00">2018-09-08</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/shipping-container.jpeg" alt="(Part 1) A Kubernetes of One&#39;s Own: I Can Haz Cluster?">
+		</figure><div class="content post__content clearfix">
+			<p>In my last <a href="/post/a-kubernetes-of-ones-own-part-0">blog post</a>, I hope I
+convinced you why you should be creating your own Kubernetes cluster for
+personal usage. Now, we can tackle the fun part of creating the cluster.</p>
+<h2 id="what-is-a-kubernetes-cluster">What is a Kubernetes cluster?</h2>
+<iframe src="https://giphy.com/embed/fAjPCZNOtmTLy" width="480" height="270"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/ineedthisforreactions-what-is-this-i-cant-even-gif-fAjPCZNOtmTLy">via
+GIPHY</a></p>
+<p>We can start by answering the most important question: what is a Kubernetes
+cluster? A Kubernetes cluster is a collection of physical resources
+on which we run the Kubernetes container management software. Once we have a
+Kubernetes cluster, we can use it to host applications, run batch workloads,
+etc.</p>
+<p>The methods for creating and managing a Kubernetes cluster fall into a couple of
+distinct categories.</p>
+<p>First, we have
+<a href="https://kubernetes.io/docs/setup/pick-right-solution/#local-machine-solutions">local-machine solutions</a>.
+In this model, we use our local workstations resources to run Kubernetes.
+<a href="https://github.com/kubernetes/minikube">Minikube</a> is the most popular example
+of this pattern.</p>
+<p>Second, we have
+<a href="https://kubernetes.io/docs/setup/pick-right-solution/#hosted-solutions">hosted solutions</a>.
+In this model, a cloud provider Google both provides the physical
+resources and manages the Kubernetes software for us. Our job is purely
+application specific configuration and code.</p>
+<p>Third, we have <a href="https://kubernetes.io/docs/setup/pick-right-solution/#turnkey-cloud-solutions">turnkey cloud
+solutions</a>,
+which allow us to easily create a Kubernetes cluster on common cloud platforms
+with only a couple commands. These turnkey solutions also often provide tooling
+for managing the Kubernetes cluster once its running.
+<a href="https://github.com/kubernetes/kops">kops</a> is popular tooling supporting a
+turnkey solution.</p>
+<p>Fourth, we have <a href="https://kubernetes.io/docs/setup/pick-right-solution/#turnkey-cloud-solutions">on-premises turnkey
+solutions</a>.
+These solutions are similar to the turnkey cloud solutions, but instead of
+creating a Kubernetes cluster in the public cloud (i.e. AWS, GCE), they create
+it on your own internal cloud network.</p>
+<p>Finally, for the truly bold, there are
+<a href="https://kubernetes.io/docs/setup/pick-right-solution/#custom-solutions">custom solutions</a>,
+which essentially leave all of the installation, configuration, and management
+to the user.</p>
+<iframe src="https://giphy.com/embed/65os7odbIW6pa" width="480" height="296"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/finals-study-jason-bateman-65os7odbIW6pa">via
+GIPHY</a></p>
+<p>Regardless of how we create the cluster, all Kubernetes clusters share foundational elements.
+With respect to hardware, a cluster contains both a master node and a set of worker nodes.
+With respect to software, it has six main components: API server, scheduler,
+controller manager, kubelet, kube-proxy, and etcd. <a href="https://jvns.ca/about/">Julia Evans</a>
+has a <a href="https://jvns.ca/blog/2017/06/04/learning-about-kubernetes/">fantastic blog post</a> which does a
+much better job than I could explaining what these components do.</p>
+<h2 id="what-are-our-goals-for-our-kubernetes-cluster">What are our goals for our Kubernetes cluster?</h2>
+<iframe src="https://giphy.com/embed/26BRQ09DUipJ63dEQ" width="480" height="480"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/cosplay-comic-con-sdcc2016-26BRQ09DUipJ63dEQ">via
+GIPHY</a></p>
+<p>Because each method for creating a Kubernetes cluster has different strengths
+and weaknesses, we need to think about what we value in the cluster creation and
+maintenance process. At a high level, I have the following priorities in order
+of importance:</p>
+<ol>
+<li>Initial creation of the cluster should be painless. We want to start using
+Kubernetes now. We don&rsquo;t want to spend weeks and weeks wrestling with the
+cluster creation process.</li>
+<li>The cluster creation and management process provides the right level of
+abstraction. Kubernetes clusters have many different knobs you can turn. I&rsquo;d
+like access to these knobs, but I would also like them to start at sensible
+values.</li>
+<li>I want to pay as little as possible.</li>
+<li>Because I&rsquo;m most familiar with AWS and use it professionally, I&rsquo;d like to use
+a cluster creation process which supports AWS, but isn&rsquo;t necessarily
+restricted to AWS.</li>
+</ol>
+<h2 id="evaluating-the-options">Evaluating the options</h2>
+<p>With our valuation framework in place, we can start honing in on the perfect option
+for us for creating a Kubernetes cluster.</p>
+<p>Remember, Kubernetes offers local-machine, hosted, turnkey cloud, on-premises
+turnkey, and custom solutions for creating a Kubernetes cluster. Since we want
+our cluster to fulfill production use cases, local-machine solutions are not
+feasible. Since we want to pay as little as possible and I don&rsquo;t have multiple
+spare servers just lying around, on-premises turnkey solutions are out. And
+since I want setting up the cluster to not be an absolute nightmare, custom
+solutions are out.</p>
+<p>After eliminating what won&rsquo;t work, we are left to decide between hosted and
+turnkey cloud solutions. Considering our goal of using AWS as our cloud
+provider, we are deciding between <a href="https://aws.amazon.com/eks/">Amazon EKS</a> and
+using <a href="https://github.com/kubernetes/kops">kops</a> to create and manage our
+Kubernetes cluster on AWS public cloud.</p>
+<p>After some experimentation, I decided on Kops. Kops offers sensible defaults,
+yet also fine grained control. Additionally, it imposes no costs beyond the AWS
+resources it uses. And most importantly, from reading quick start documentation
+for <a href="https://aws.amazon.com/eks/getting-started/">EKS</a> and
+<a href="https://github.com/kubernetes/kops/blob/master/docs/aws.md">Kops</a>, I felt more
+confident I could successfully create a cluster and manage a cluster using
+Kops than EKS.</p>
+<iframe src="https://giphy.com/embed/d2VNDNckZ1OQWbN6" width="480" height="366"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/season-4-the-simpsons-4x15-d2VNDNckZ1OQWbN6">via
+GIPHY</a></p>
+<p>So that&rsquo;s it! I choose Kops for creating and managing our cluster! In the <a href="/post/a-kubernetes-of-ones-own-part-2">next
+blog post</a>,
+I&rsquo;ll walk you through all the steps you need to create your cluster.
+Looking forward to it :)</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/a-kubernetes-of-ones-own-part-0/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 0) A Kubernetes of One&#39;s Own: Start with Why</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/a-kubernetes-of-ones-own-part-2/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 2) A Kubernetes of One&#39;s Own: Can We Build It? Yes We Can!</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

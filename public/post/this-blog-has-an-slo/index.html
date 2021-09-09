@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>This Blog Has an SLO - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">This Blog Has an SLO</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-09-16T00:00:00">2018-09-16</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/slo.jpg" alt="This Blog Has an SLO">
+		</figure><div class="content post__content clearfix">
+			<h2 id="background">Background</h2>
+<p>I recently started reading <a href="https://www.amazon.com/Site-Reliability-Workbook-Practical-Implement/dp/1492029505/">The Site Reliability
+Workbook</a>,
+which is the companion book to the excellent <a href="https://www.amazon.com/Site-Reliability-Engineering-Production-Systems/dp/149192912X/">Site Reliability Engineering: How
+Google Runs Production Systems</a>.</p>
+<iframe src="https://giphy.com/embed/8dYmJ6Buo3lYY" width="480" height="352"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/baby-story-reading-8dYmJ6Buo3lYY">via GIPHY</a></p>
+<p>These books devote considerable attention to <a href="https://landing.google.com/sre/book/chapters/service-level-objectives.html">Service Level
+Ojectives</a> (SLOs),
+which are a way of defining a given level of service that users can expect. More
+technically, a SLO is a collection of Service Level Indicators (SLIs), metrics
+that measure whether our service is providing value, and their
+acceptable ranges. For example, our SLO for a web service could be that 95% of
+requests are successful and 99% of requests return in less than 500ms.</p>
+<p>Explicitly deciding on and publishing an SLO clarifies both
+internal and external expectations for the service. If the service is within
+SLO, then it is functioning acceptably. If the service is outside SLO, it is
+not.</p>
+<p>From SLOs, we can create <a href="https://landing.google.com/sre/book/chapters/embracing-risk.html#id-na2u1S2SKi1">error
+budgets</a>.
+Error budgets, which we&rsquo;ll explore in a later blog post,
+translate our current ability to meet our into decisions around the allocation
+of engineering resources. Essentially, our service can only experience so many
+errors before it has spent all its error budget, and must prioritize stability
+over innovation.</p>
+<p>Google&rsquo;s SRE books predominantly focus on companies deploying at a &ldquo;Google
+level&rdquo; scale. However, SLOs are a useful tool for any developer, regardless of
+the size of their company or deployment. We define a SLO by codifying what it
+means for our service to be successful. Having an explicit definition of success
+is necessary for any project, and is particularly necessary when the application
+has a large backlog of ambitious changes. So, despite this blog having about
+one-billionth of the users of most Google products, I&rsquo;m still going to define
+and publicize an SLO for it.</p>
+<h2 id="creating-an-slo">Creating an SLO</h2>
+<iframe src="https://giphy.com/embed/ne3xrYlWtQFtC" width="480" height="205"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/funny-lol-ne3xrYlWtQFtC">via GIPHY</a></p>
+<p>Creating an SLO is a somewhat formulaic process. First, we identify the SLIs for
+our service. The <a href="https://www.amazon.com/Site-Reliability-Workbook-Practical-Implement/dp/1492029505/">Site Reliability Workbook</a>
+proposes that the type of a service dictates its SLIs, and the most
+common service types are request-driven, pipeline, and storage.
+This blog is clearly a request-driven service.</p>
+<p>Two main SLIs describe the performance of a request-driven service. The first is
+availability, which we define as &ldquo;the proportion of requests that resulted in a
+successful response.&rdquo; The second is latency, which we define as &ldquo;the proportion
+of requests that were faster than some threshold.&rdquo; Intuitively, these SLIs map
+closely to our heuristic models of what makes a &ldquo;good&rdquo; website from a technical
+perspective. If the site consistently and quickly serves the content we desire,
+then its fulfilling its providing value. Unfortunately, there&rsquo;s no SLI for the quality of my writing :)</p>
+<iframe src="https://giphy.com/embed/l2R06WPHU4ae0H4LC" width="480" height="279"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/chuber-qa-quality-assurance-l2R06WPHU4ae0H4LC">via
+GIPHY</a></p>
+<p>We have our SLIs. If we match these SLIs with an acceptable threshold for their
+values, then we have our SLO. Both the SRE books deep-dive into choosing
+appropriate values, but the most important aspect to remember is the SLO will
+require refinement over time. In other words, you don&rsquo;t need the perfect values
+to start. In a business environment, or really any environment where it isn&rsquo;t
+just you hosting your own blog, you should be sure that all stakeholders are
+involved in deciding the thresholds. Its vital that everyone agrees that the
+service is working if its in SLO, and not working if its not in SLO.</p>
+<p>With respect to the availability metric, we set 99% success as our target. With
+respect to latency, we set 99% of requests &lt; 1s as our target. These seem like
+sensible initial values, which preserve our ability to experiment and the blog&rsquo;s
+ability to be useful to readers. Note, with
+latency, its important to use percentiles like 90% or 99% instead of average.
+Using averages can mask long-running requests which significantly degrade the
+user experience. Additionally, note that we just define the thresholds in this
+section. We don&rsquo;t actually specify how we&rsquo;re going to measure the SLIs.
+We consider specifying the measurements to be implementing the SLO, and we leave
+it for the next section.</p>
+<p>Finally, we must determine the time range over which we want to measure the SLO.
+The <a href="https://www.amazon.com/Site-Reliability-Workbook-Practical-Implement/dp/1492029505/">Site Reliability Workbook</a>
+recommends a four-week rolling window as a good general-purpose interval which
+accurately captures the user&rsquo;s perceptions of service performance. The four-week
+rolling window works perfectly for our use case.</p>
+<h2 id="implementing-an-slo">Implementing an SLO</h2>
+<p>The <a href="https://www.amazon.com/Site-Reliability-Workbook-Practical-Implement/dp/1492029505/">Site Reliability Workbook</a>
+carefully delineates between a SLI specification and a SLI implementation. The SLI specification
+is the description of the service outcome influencing user satisfaction, independent
+of how we will measure this outcome. The SLI implementation is the SLI
+specification plus how we will measure it. Similarly, an SLO
+comprised of SLI specifications is an SLO specification. An SLO comprised of SLI
+implementations is an SLO implementation.</p>
+<p>From our work in the preceding sections, we have an SLO specification. In this
+section, we&rsquo;ll establish a specific method for measuring our SLIs, at which
+point we&rsquo;ll have an SLO implementation.</p>
+<p>Remember, our SLO comprises of two different SLIs. The first is around
+availability. Our SLI specification was the percentage of requests that are successful.
+To transform this SLI from a specification to an implementation, we&rsquo;ll state our
+availability SLI as the following:</p>
+<ul>
+<li>The proportion of successful requests, as measured from the web server. Any status
+code other than 5XX is considered successful.</li>
+</ul>
+<p>Our second SLI was around latency. Our SLI specification was around the
+proportion of sufficiently fast requests, where sufficiently fast was outlined
+as &lt; 1s. We can state our SLO implementation as the following:</p>
+<ul>
+<li>The proportion of sufficiently fast requests, as measured from the web server.
+Sufficiently fast is defined as &lt; 1s.</li>
+</ul>
+<p>If we couple these SLI implementations with the SLO thresholds defined in the
+previous section, we have a fully specified SLO.</p>
+<ul>
+<li>The proportion of successful requests, as measured from the web server and where any status
+code other than 5XX is considered successful, is &gt; 99%.</li>
+<li>The proportion of sufficiently fast requests, as measured from the web server and
+where sufficiently fast is defined as &lt; 1s, is &gt; 99%.</li>
+</ul>
+<p>We now have a fully implemented SLO! We&rsquo;ll explore aggregating the metrics which
+enable us to measure our SLO and monitoring and alerting upon the fulfillment
+of our SLO in a future blog post.</p>
+<h2 id="publishing-our-slo">Publishing our SLO</h2>
+<p>We&rsquo;ve written our SLO, so the final step is to publish it. I&rsquo;ve hosted it as a
+<a href="/slo/">top level page</a> on this site, so it should be easily discoverable. Once
+I create the monitoring around whether the site meets this SLO, I&rsquo;ll publish it
+on the SLO page as well. That way y&rsquo;all can hold me accountable :)</p>
+<iframe src="https://giphy.com/embed/l3q2NboZyZSrDTM7S" width="480" height="270"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/abcnetwork-modern-family-phil-dunphy-l3q2NboZyZSrDTM7S">via
+GIPHY</a></p>
+<h2 id="coming-soon-error-budgets-and-monitoring">Coming Soon: Error Budgets, and Monitoring</h2>
+<p>There are two future blog posts on this topic to which you can look forward. One post will
+be a technical tutorial on adding the infrastructure to Kubernetes to aggregate
+and monitor the metrics I need to determine whether I&rsquo;m meeting the SLO. Another
+post will describe how I can use this SLO to create an <a href="https://landing.google.com/sre/book/chapters/embracing-risk.html">error
+budget</a>,
+an extremely useful tool which will help me balance between investing in
+stability and new functionality.</p>
+<p>Additionally, its important to revise SLOs over
+time as we become more experienced running our service and have a greater sense
+of the thresholds our service must meet to provide value to users. So we will
+continue to revisit this topic.</p>
+<p>So look forward to some posts in that realm as well. Until next time, thanks for reading
+:)</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/hosting-static-blog-on-kubernetes/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">Hosting Static Blog on Kubernetes</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/this-blog-has-an-error-budget-policy/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">This Blog Has an Error Budget Policy</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

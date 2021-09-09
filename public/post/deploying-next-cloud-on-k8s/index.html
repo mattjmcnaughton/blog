@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Deploying Nextcloud on k8s - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Deploying Nextcloud on k8s</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-02-12T00:00:00">2019-02-12</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/next-cloud.jpg" alt="Deploying Nextcloud on k8s">
+		</figure><div class="content post__content clearfix">
+			<p>In our <a href="/post/saving-money-while-maintaining-performance-with-tolerations-on-k8s/">last blog post</a>,
+we increased the stability of our Kubernetes cluster and also increased its
+available resources. With these improvements in place, we can tackle deploying
+our most complex application yet: <a href="https://nextcloud.com/">Nextcloud</a>. By the
+end of this blog post, you&rsquo;ll have insight into the major architecture decisions we
+made when deploying Nextcloud to Kubernetes. As always, we&rsquo;ll link the full
+source code should you want to dive deeper.</p>
+<h2 id="what-is-nextcloud">What is Nextcloud?</h2>
+<iframe src="https://giphy.com/embed/JSueytO5O29yM" width="480" height="480"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/realitytvgifs-britney-spears-confused-funny-face-JSueytO5O29yM">via
+GIPHY</a></p>
+<p>Before we investigate how we deployed Nextcloud, we need to know what it
+actually is. Nextcloud has a great <a href="https://nextcloud.com/#why-nextcloud">website</a>
+which outlines its full capabilities and benefits, but at a high level, its an
+&ldquo;open source, self-hosted file share and communication platform.&rdquo; We will
+use it to augment/replace uses of proprietary tools like Google Calendar,
+Trello, etc. With respect to
+<a href="https://en.wikipedia.org/wiki/Nextcloud#Architecture">architecture</a>, the
+Nextcloud server is a web server written in PHP, and it can interact with several different
+database management systems, including SQLite and PostgreSQL.</p>
+<h3 id="deploying-nextcloud-to-k8s-from-1000-feet">Deploying Nextcloud to k8s from 1,000 feet</h3>
+<p>As Nextcloud is a web application, deploying Nextcloud to Kubernetes shares many
+similarities with deploying this blog to Kubernetes, which is a process we
+detailed quite thoroughly via this <a href="post/hosting-static-blog-on-kubernetes/">blog post</a>.
+We need to deploy pods running a Nextcloud container and configure a service to
+route traffic to these pods. Sounds simple enough, right? However, as we&rsquo;ll see
+Nextcloud introduces some interesting wrinkles for which we need to account.</p>
+<h2 id="architecture-decisions-when-deploying-nextcloud">Architecture Decisions when Deploying Nextcloud</h2>
+<iframe src="https://giphy.com/embed/3oKIPlLZEbEbacWqOc" width="480"
+height="360" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/reactionseditor-interesting-hmm-3oKIPlLZEbEbacWqOc">via
+GIPHY</a></p>
+<p>Nextcloud presents a couple of interesting architectural challenges. First,
+Nextcloud&rsquo;s current implementation relies on state written to the file system.
+Second, our Nextcloud instance needs initialization commands executed
+whenever we first deploy it. Finally, our
+Nextcloud instance needs a database to which it can write persistent state.</p>
+<h3 id="deployment-vs-statefulset">Deployment vs StatefulSet</h3>
+<p>As best we can tell, Nextcloud unfortunately is a stateful application.
+Specifically, it relies upon a <code>config.php</code> with a username/password that it creates
+during the initial installation process. Any additional Nextcloud container must have
+this <code>config.php</code> file, or else Nextcloud thinks it needs to redo the
+initial installation, which will fail. However, since Nextcloud itself creates this
+file, we can&rsquo;t easily bind it as a read only volume on multiple pods.</p>
+<p>We considered a couple different options. First, we considered creating a persistent
+volume claim in the ReadWriteMany access mode, meaning we&rsquo;d attach the volume containing
+<code>config.php</code> to many pods. We could then use a StatefulSet resource to ensure
+only one pod was initializing the <code>config.php</code>, and then all remaining pods
+would see it already exists and understand they don&rsquo;t need to create it. Unfortunately,
+this does not work because <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes">EBS volumes cannot be bound in the ReadWriteMany
+access mode</a>.</p>
+<p>Alternatively, we could generate the <code>config.php</code> file as a one-off job, store
+it as a Kubernetes secret, and the attach it in read only mode to each pod.
+This solution felt slightly too complex to be worth it at this time, though it
+remains an option for the future.</p>
+<p>Finally, we decided to limit our Nextcloud replicas to 1, and ensure
+<code>config.php</code> was written to a persistent volume in the ReadWriteOnce access
+mode. With this setup, we retain <code>config.php</code> if our Nextcloud pod is
+terminated/killed, and don&rsquo;t have to do any complicated initialization steps.</p>
+<p>We can revisit this decision if we discover there&rsquo;s a real need for multiple
+Nextcloud pods.</p>
+<h3 id="manually-executing-commands-on-boot">Manually Executing Commands on Boot</h3>
+<p>After our Nextcloud cluster is first created, we need to run some initialization
+steps. Specifically, we need to create our personal user account and
+enable/disable desired additional applications (i.e. Tasks, Calendar, etc).</p>
+<p>We considered multiple options for executing this script.
+First, we thought about creating a <code>Job</code> which
+would be responsible for executing this script. We could then execute this <code>Job</code>
+when necessary (and could gate its execution via a flag in <code>values.yaml</code>).
+However, we ran into the same problem as before with the multiple replica pods
+for Nextcloud. Our script needs <code>config.php</code> to execute, yet currently only one
+pod can mount the volume containing <code>config.php</code>.</p>
+<p>We also considered configuring our Nextcloud pod to run this script during its
+init process. However, the commands in this script will only succeed once,
+and we expect that the Nextcloud pod will be recreated multiple times through
+its lifecycle. It felt like a bit of an anti-pattern to be continuously running a script we expect
+to fail. Additionally, if we swallowed failures, there&rsquo;d also be the risk that we&rsquo;d miss an actual
+legitimate failure.</p>
+<p>For simplicities sake, we decided to just execute the script in the currently
+running pod (with the <code>config.php</code>) and trust the user to remember to run it.
+Considering the user cannot log in if they do not exec the script, there seems
+to be a fairly small chance of them forgetting.</p>
+<p>See the <a href="https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/next-cloud">README.md</a>
+for a more detailed description of how we expect the user to interact with the
+script.</p>
+<h3 id="running-the-backing-database">Running the backing database</h3>
+<p>We also had to decide how to run the database Nextcloud needs to store all its
+state.</p>
+<p>The simplest option would have been using SQLite, which is what Nextcloud does
+by default. We could have mounted a persistent volume to wherever SQLite writes
+data, meaning loosing the Nextcloud pod would not cause data loss. However, we were fairly
+concerned about how using SQLite would impact performance.
+We felt we needed to use Postgres to get acceptable performance. Additionally, using
+SQLite would&rsquo;ve been an additional design decision which forced us to only use
+one pod.</p>
+<p>After deciding to use Postgres, we had two options: pay for a hosted Postgres
+instance (i.e. <a href="https://aws.amazon.com/rds/">RDS</a>) or self-host the database on
+our Kubernetes cluster. We ultimately decided against RDS for multiple reasons.
+First, it was non-trivially expensive, even if we utilized the smallest
+database. Additionally, the support for creating a RDS database using Kubernetes
+primitives wasn&rsquo;t as defined as we would like. Finally, we weren&rsquo;t sure if
+introducing RDS would cause us to sacrifice dev/prod parity, as we&rsquo;re very
+hesitant to pay for both a dev and a prod RDS database.</p>
+<p>With these concerns in mind, we decided to at least attempt self hosting our
+Postgres database on Kubernetes. We chose to deploy via the <a href="https://github.com/helm/charts/tree/master/stable/postgresql">Postgresql Helm
+Chart</a>
+because we are already utilizing Helm as the basis for our deployments,
+and Helm&rsquo;s dependency model allows us to specify the Postgresql chart as a
+dependency of our Nextcloud chart.
+Another option we considered was <a href="https://kubedb.com/">kubedb</a>, but we had
+difficultly getting it to work with a couple hours of experimentation, and
+ultimately decided to move on.</p>
+<p>While we went with self-hosted Postgresql deployed via a Helm chart,
+we imagine we&rsquo;ll revisit this decision in the future as both the technologies we
+decided against mature.</p>
+<h2 id="i-can-haz-source-code">I can haz source code??</h2>
+<iframe src="https://giphy.com/embed/JIX9t2j0ZTN9S" width="480" height="480"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/JIX9t2j0ZTN9S">via GIPHY</a></p>
+<p>All the design decisions we&rsquo;ve discussed below are reflected in the
+<a href="https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/next-cloud">source code</a>,
+which is organized like a standard Helm chart.</p>
+<h2 id="future-work-and-conclusion">Future work and conclusion</h2>
+<p>In the interest of releasing MVPs, we deployed our Nextcloud application before
+it had all of the functionality we could desire. We intend to add the
+following features over the next couple of months, and have created the
+following tickets to track them.</p>
+<ul>
+<li><a href="https://github.com/mattjmcnaughton/personal-k8s/issues/17">Monitor Nextcloud via Prometheus and track SLO</a></li>
+<li><a href="https://github.com/mattjmcnaughton/personal-k8s/issues/18">Regular database backups for Nextcloud Postgres Database</a></li>
+<li><a href="https://github.com/mattjmcnaughton/personal-k8s/issues/4">Expose Nextcloud on public internet, behind HTTPS</a></li>
+</ul>
+<p>It was exciting to deploy a more complex application like Nextcloud to our
+Kubernetes cluster, and we look forward to continuing to improve our deployment
+over time. We&rsquo;ll be sure to share updates as blog posts as we do.</p>
+<iframe src="https://giphy.com/embed/CWU5PaIvkyApi" width="480" height="360"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/happy-the-simpsons-excited-CWU5PaIvkyApi">via
+GIPHY</a></p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/saving-money-while-maintaining-performance-with-tolerations-on-k8s/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">Saving Money While Maintaining Performance With Tolerations on k8s</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/patching-cve-2019-5736/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">Patching Runc Vulnerability (CVE-2019-5736)</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

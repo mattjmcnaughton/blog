@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>~/mattjmcnaughton/blog</title>
+    <link>https://mattjmcnaughton.com/</link>
+    <description>Recent content on ~/mattjmcnaughton/blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 25 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://mattjmcnaughton.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Stepping Back</title>
+      <link>https://mattjmcnaughton.com/post/stepping-back/</link>
+      <pubDate>Fri, 25 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/stepping-back/</guid>
+      <description>Hiya folks, just a quick post from me today :)
+After over a year of daily(-ish) contributions, I just want to let folks know I&amp;rsquo;m going to be taking a step back from contributing to Kubernetes. Once this diff is merged, I won&amp;rsquo;t be a reviewer for sig-node anymore. Additionally, with the KEP for Building Kubelet Without Docker complete, my major projects are all wrapped up, and I doubt I&amp;rsquo;ll be picking up new ones.</description>
+    </item>
+    
+    <item>
+      <title>Intro to Contributing to Kubernetes: Testing - Part 1</title>
+      <link>https://mattjmcnaughton.com/post/intro-to-contributing-to-k8s-testing-part-1/</link>
+      <pubDate>Tue, 11 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/intro-to-contributing-to-k8s-testing-part-1/</guid>
+      <description>tl:dr; By the end of this blog post, you&amp;rsquo;ll understand the tests your proposed Kubernetes diffs must pass before being merged. You&amp;rsquo;ll have all the background information to be ready for part 2 (coming soon), in which we discuss how to actually run all the different test suites locally.
+Background As a brief reminder, I&amp;rsquo;ve been focusing the majority of my open-source development capacity on Kubernetes for almost a year. During that time, and going forward, I&amp;rsquo;m writing blog posts geared towards potential new Kubernetes&#39; contributors.</description>
+    </item>
+    
+    <item>
+      <title>k8s: Meet our Contributors</title>
+      <link>https://mattjmcnaughton.com/post/k8s-meet-our-contributors/</link>
+      <pubDate>Thu, 06 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/k8s-meet-our-contributors/</guid>
+      <description>Just a quick post :) Yesterday, I had the pleasure of being a guest on the Kubernetes projects&#39; awesome monthly Meet Our Contributors session, led by Paris Pittman. Nikhita Raghunath and Paul Morie were also guests; it was great to speak with, and learn from, them.
+Here&amp;rsquo;s the recording of the session!
+
+ 
+These sessions happen every month and are a great resource. A big thanks to Paris for organizing them, and would definitely encourage everyone to check them out and ask questions.</description>
+    </item>
+    
+    <item>
+      <title>Nuage: Back to Basics</title>
+      <link>https://mattjmcnaughton.com/post/back-to-basics/</link>
+      <pubDate>Sun, 29 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/back-to-basics/</guid>
+      <description>In my last post, I discussed how I was spending the majority of my non-work programming time focusing on Kubernetes contributions, with a particular focus on sig/node. Well, that statement is still true :) Hopefully, I&amp;rsquo;ll find the time in 2020 to blog more regularly about this work, but it&amp;rsquo;s not what I&amp;rsquo;m going to share today.
+Introducing Nuage via GIPHY
+Rather, I&amp;rsquo;m excited to post today about Nuage. Nuage is the name I&amp;rsquo;ve given to my project to manage all aspects of my personal computing in the cloud.</description>
+    </item>
+    
+    <item>
+      <title>Upgrading k8s cluster to 1.13.6</title>
+      <link>https://mattjmcnaughton.com/post/upgrading-k8s-cluster-to-1-13-6/</link>
+      <pubDate>Sat, 22 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/upgrading-k8s-cluster-to-1-13-6/</guid>
+      <description>Since I last posted, I&amp;rsquo;ve been focusing almost all of my &amp;ldquo;fun coding&amp;rdquo; time on contributing to the Kubernetes code base. You can see my contributions on my Github. I&amp;rsquo;ve been particularly focusing on the components of the code base owned by sig/node. It&amp;rsquo;s been rewarding and a great learning experience&amp;hellip; but it does mean I haven&amp;rsquo;t been focusing on adding features to my personal Kubernetes cluster. And since that&amp;rsquo;s what I mainly blogged about, it also means I&amp;rsquo;ve been blogging less.</description>
+    </item>
+    
+    <item>
+      <title>Update Schedule for k8s Cluster and its Applications</title>
+      <link>https://mattjmcnaughton.com/post/update-schedule-for-k8s-cluster/</link>
+      <pubDate>Tue, 12 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/update-schedule-for-k8s-cluster/</guid>
+      <description>Regularly updating our k8s cluster, and the applications running on it, is one of the most powerful tools we have for ensuring our cluster functions securely and reliably. Staying vigilant about applying updates is particularly important for a fast moving project like Kubernetes, which releases new minor versions each quarter. This blog post outlines the process we&amp;rsquo;re proposing for ensuring our cluster, and the applications running on it, remain up to date.</description>
+    </item>
+    
+    <item>
+      <title>k8s Dev Quick Start</title>
+      <link>https://mattjmcnaughton.com/post/k8s-dev-quick-start/</link>
+      <pubDate>Thu, 07 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/k8s-dev-quick-start/</guid>
+      <description>Kubernetes is a incredibly exciting and fast moving project. Contributing to these types of projects, while quite rewarding, can have a bit of a startup cost. I experienced the start up cost a bit myself, after returning to contributing to the Kubernetes after a couple of months of focusing on running my own Kubernetes cluster, as opposed to contributing source code. So this post is partially for y&amp;rsquo;all and partially for future me :)</description>
+    </item>
+    
+    <item>
+      <title>mattjmcnaughton.com is now https</title>
+      <link>https://mattjmcnaughton.com/post/blog-is-now-https/</link>
+      <pubDate>Mon, 25 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/blog-is-now-https/</guid>
+      <description>We&amp;rsquo;re excited to announce all connections to mattjmcnaughton.com, and its subdomains (i.e. blog.mattjmcnaughton.com, etc.), are now able, and in fact forced, to use HTTPS. After reading this post, we hope you&amp;rsquo;ll be convinced of the merits of using HTTPS for public-internet facing services, and also have the knowledge to easily modify your services to start supporting HTTPS connections.
+Why do we care about HTTPS? via GIPHY
+Offering, and defaulting to, HTTPS is good web hygiene.</description>
+    </item>
+    
+    <item>
+      <title>Patching Runc Vulnerability (CVE-2019-5736)</title>
+      <link>https://mattjmcnaughton.com/post/patching-cve-2019-5736/</link>
+      <pubDate>Sat, 16 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/patching-cve-2019-5736/</guid>
+      <description>So far, most of our posts on this blog have been about the exciting parts of running our own Kubernetes cluster. But, running a Kubernetes cluster isn&amp;rsquo;t all having fun deploying applications. We also have to be responsible for system maintenance. That need became particularly apparent recently with the release of CVE-2019-5736 on 2/11/19.
+What is CVE-2019-5736 via GIPHY
+CVE-2019-5736 is the CVE for a container escape vulnerability discovered in runc.</description>
+    </item>
+    
+    <item>
+      <title>Deploying Nextcloud on k8s</title>
+      <link>https://mattjmcnaughton.com/post/deploying-next-cloud-on-k8s/</link>
+      <pubDate>Tue, 12 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/deploying-next-cloud-on-k8s/</guid>
+      <description>In our last blog post, we increased the stability of our Kubernetes cluster and also increased its available resources. With these improvements in place, we can tackle deploying our most complex application yet: Nextcloud. By the end of this blog post, you&amp;rsquo;ll have insight into the major architecture decisions we made when deploying Nextcloud to Kubernetes. As always, we&amp;rsquo;ll link the full source code should you want to dive deeper.</description>
+    </item>
+    
+    <item>
+      <title>Saving Money While Maintaining Performance With Tolerations on k8s</title>
+      <link>https://mattjmcnaughton.com/post/saving-money-while-maintaining-performance-with-tolerations-on-k8s/</link>
+      <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/saving-money-while-maintaining-performance-with-tolerations-on-k8s/</guid>
+      <description>In our blog series on decreasing the cost of our Kubernetes cluster, we suggested replacing on-demand EC2 instances with spot instances for Kubernetes&#39; nodes. When we first introduced this idea, we mentioned that this strategy could have negative impacts on both our applications&#39; availability and our ability to monitor our applications&#39; availability. At the time, we still converted to spot instances because we believed the savings benefits were worth the decrease in reliability.</description>
+    </item>
+    
+    <item>
+      <title>(Part 1) Deploying Kubernetes&#39; Applications: The Solution</title>
+      <link>https://mattjmcnaughton.com/post/deploying-kubernetes-applications-part-1/</link>
+      <pubDate>Tue, 29 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/deploying-kubernetes-applications-part-1/</guid>
+      <description>In the first blog post in this series, we examined how our previous deployment strategy of running kubectl apply -f on static manifests did not meet our increasingly complex requirements for our strategy/system for deploying Kubernetes&#39; applications. In the second, and final, post in this mini-series, we&amp;rsquo;ll outline the new deployment strategy and how it fulfills our requirements.
+The new system via GIPHY
+Our new deployment strategy makes use of Helm, a popular tool in the Kubernetes ecosystem which describes itself as &amp;ldquo;a tool that streamlines installing and managing Kubernetes applications.</description>
+    </item>
+    
+    <item>
+      <title>(Part 0) Deploying Kubernetes&#39; Applications: The Problem</title>
+      <link>https://mattjmcnaughton.com/post/deploying-kubernetes-applications-part-0/</link>
+      <pubDate>Thu, 10 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/deploying-kubernetes-applications-part-0/</guid>
+      <description>Over the holiday break, I spent a lot of my leisure coding time rethinking the way we deploy applications to Kubernetes. The blog series this post kicks off will explore how we migrated from an overly simplistic deploy strategy to one giving us the flexibility we need to deploy more complex applications. To ensure a solid foundation, in this first post, we&amp;rsquo;ll define our requirements for deploying Kubernetes&#39; applications and evaluate whether our previous systems and strategies met these requirements (spoiler alert&amp;hellip; it didn&amp;rsquo;t).</description>
+    </item>
+    
+    <item>
+      <title>(Part 3) Reducing the Cost of Running a Personal k8s Cluster: Conclusion</title>
+      <link>https://mattjmcnaughton.com/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-3/</link>
+      <pubDate>Sat, 15 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-3/</guid>
+      <description>Overall impact In parts one and two of this series, we sought to reduce our AWS costs by optimizing our computing, networking, and storage expenditures. Since this post is the final one in the series, let&amp;rsquo;s consider how we did in aggregate. Before any resource optimizations, we had the following bill:
+master ec2 (1 m3.medium): (1 * 0.067 $/hour * 24 * 30) = 48.24 nodes ec2 (2 t2.medium): (2 * 0.</description>
+    </item>
+    
+    <item>
+      <title>(Part 2) Reducing the Cost of Running a Personal k8s Cluster: Volumes and Load Balancers</title>
+      <link>https://mattjmcnaughton.com/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-2/</link>
+      <pubDate>Wed, 12 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-2/</guid>
+      <description>In the previous post in this series, we showed how utilizing Spot Instances and Reserved Instances reduces the annual bill for running our Kubernetes cluster from ~2K to ~1.2K. In this post, we&amp;rsquo;ll pursue cost reduction for storage and networking resources, our final two prominent, unoptimized costs.1 Our quick calculations from the first post in this series show, that with the default Kops configuration, we pay ~$360 annually for EBS (storage) and ~$216 annually for ELBs (networking), for an annual total of just over $500.</description>
+    </item>
+    
+    <item>
+      <title>(Part 1) Reducing the Cost of Running a Personal k8s Cluster: EC2 Instances</title>
+      <link>https://mattjmcnaughton.com/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-1/</link>
+      <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-1/</guid>
+      <description>Introduction In my last blog post, I introduced our goal of decreasing the cost of running a personal k8s cluster, and made the case for why decreasing the cost is important. We also did some quick calculations which showed that EC2 instances are the most expensive part of our cluster, costing ~$115 per month or ~$1.4K per year. There&amp;rsquo;s no time like the present to actually start decreasing EC2 costs, so let&amp;rsquo;s get down to business.</description>
+    </item>
+    
+    <item>
+      <title>(Part 0) Reducing the Cost of Running a Personal k8s Cluster: Introduction</title>
+      <link>https://mattjmcnaughton.com/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-0/</link>
+      <pubDate>Fri, 23 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-0/</guid>
+      <description>For the last couple of months, I&amp;rsquo;ve spent the majority of my non-work coding time creating a Kubernetes of my own. My central thesis for this work is that Kubernetes is one of the best platforms for individual developers who want to self-host multiple applications with &amp;ldquo;production&amp;rdquo; performance needs (i.e. hosting a blog, a private Gitlab, a NextCloud, etc.). Supporting this thesis requires multiple forms of evidence.
+via GIPHY
+First, we need to show that deploying/maintaining multiple different applications with Kubernetes is doable and enjoyable without quitting our jobs and becoming full time sysadmins for personal projects.</description>
+    </item>
+    
+    <item>
+      <title>(Part 4) SLO Implementation: Alerting</title>
+      <link>https://mattjmcnaughton.com/post/slo-implementation-part-4/</link>
+      <pubDate>Mon, 12 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/slo-implementation-part-4/</guid>
+      <description>I&amp;rsquo;m pretty excited to be writing this blog post, as it is the final one in our SLO Implementation series.
+via GIPHY
+In this final post, we&amp;rsquo;ll discuss using Prometheus Alerting Rules and Alertmanager to notify us when our blog is violating its SLO. Adding this alerting ensures we will be aware of any severe issues our users may face, and allows us to minimize the error budget spent by each incident.</description>
+    </item>
+    
+    <item>
+      <title>(Part 3) SLO Implementation: Deploying Grafana</title>
+      <link>https://mattjmcnaughton.com/post/slo-implementation-part-3/</link>
+      <pubDate>Thu, 01 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/slo-implementation-part-3/</guid>
+      <description>For the past couple of weeks, our Prometheus cluster has been quietly polling this blog&amp;rsquo;s web server for metrics. Now that we&amp;rsquo;re collecting the data, our next job is make the data provide value. Our data provides value when it assists us in understanding our application&amp;rsquo;s past and current SLO adherence, and when it improves our actual SLO adherence. In this blog post, we&amp;rsquo;ll focus on the first of the two aforementioned value propositions.</description>
+    </item>
+    
+    <item>
+      <title>(Part 2) SLO Implementation: Prometheus Up &amp; Running</title>
+      <link>https://mattjmcnaughton.com/post/slo-implementation-part-2/</link>
+      <pubDate>Sat, 13 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/slo-implementation-part-2/</guid>
+      <description>For all of you just itching to deploy another application to your Kubernetes cluster, this post is for you.
+via GIPHY
+In it, I&amp;rsquo;ll be discussing deploying Prometheus, the foundation of our planned monitoring and alerting, to our Kubernetes cluster. This post will only discuss getting the Prometheus cluster running on our Kubernetes cluster. I&amp;rsquo;ll leave setting up monitoring, alerting, and useful visualizations for a later blog post in the series.</description>
+    </item>
+    
+    <item>
+      <title>Personal k8s Cluster Roadmap</title>
+      <link>https://mattjmcnaughton.com/post/personal-k8s-cluster-roadmap/</link>
+      <pubDate>Sat, 13 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/personal-k8s-cluster-roadmap/</guid>
+      <description>The Problem So far, my ideas for experimenting with my personal Kubernetes cluster have been spread out across discrete blog posts. As a result, its difficult for me, and I imagine y&amp;rsquo;all as the readers, to track a prioritized list of projects.
+via GIPHY
+I also think that, in the future, it will be useful for us to be able to easily see which projects have been completed and which have not.</description>
+    </item>
+    
+    <item>
+      <title>(Part 1) SLO Implementation: Release the Metrics</title>
+      <link>https://mattjmcnaughton.com/post/slo-implementation-part-1/</link>
+      <pubDate>Sun, 07 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/slo-implementation-part-1/</guid>
+      <description>In the blog post overviewing our SLO implementation, I listed configuring our blog to expose the metrics for Prometheus to scrape as the first step. To fulfill that promise, this post examines the necessary steps for taking our static website and serving it via a production web server which exposes the latency and success metrics our SLO needs.
+A brief examination of Prometheus metrics Application monitoring has two fundamental components: instrumentation and exposition.</description>
+    </item>
+    
+    <item>
+      <title>(Part 0) SLO Implementation: Overview</title>
+      <link>https://mattjmcnaughton.com/post/slo-implementation-part-0/</link>
+      <pubDate>Fri, 05 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/slo-implementation-part-0/</guid>
+      <description>My last two blog posts enumerated this blog&amp;rsquo;s SLO and error budget. Our next logical step is adding the monitoring and alerting infrastructure which will transform our SLO usage from theoretical to practical. Like creating a Kubernetes of One&amp;rsquo;s Own, this project contains multiple steps which we&amp;rsquo;ll explore over multiple blog posts. While this series focuses on achieving this goal for this blog&amp;rsquo;s specific SLO, the techniques are applicable to many scenarios.</description>
+    </item>
+    
+    <item>
+      <title>This Blog Has an Error Budget Policy</title>
+      <link>https://mattjmcnaughton.com/post/this-blog-has-an-error-budget-policy/</link>
+      <pubDate>Thu, 20 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/this-blog-has-an-error-budget-policy/</guid>
+      <description>In my last blog post, I publicized an SLO for this blog. I also mentioned that, in the future, I&amp;rsquo;d couple the SLO with an error budget and error budget policy. Well, the future is today, because this post will define error budgets and error budget policies and their benefits, before proposing a specific error budget and error budget policy to accompany our previously defined SLO.
+What are Error Budget and Error Budget Policies?</description>
+    </item>
+    
+    <item>
+      <title>SLO</title>
+      <link>https://mattjmcnaughton.com/slo/</link>
+      <pubDate>Sun, 16 Sep 2018 22:10:54 -0400</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/slo/</guid>
+      <description>UPDATE: As of 2019-12-19, I no longer host this blog on my personal Kubernetes cluster. In fact, I (temporarily) no longer have a personal k8s cluster.
+As a result, I&amp;rsquo;m no longer actively focusing on this blog&amp;rsquo;s SLO. When I stopped running it on Kubernetes, I lost the monitoring/alerting I&amp;rsquo;d set up, and I don&amp;rsquo;t want to set it up in a non-k8s environment.
+I&amp;rsquo;ll still, of course, do my best to keep this blog up and running :) The infrastructure (code here) utilizes auto-scaling groups and load balancers, so should hopefully be quite self-healing.</description>
+    </item>
+    
+    <item>
+      <title>This Blog Has an SLO</title>
+      <link>https://mattjmcnaughton.com/post/this-blog-has-an-slo/</link>
+      <pubDate>Sun, 16 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/this-blog-has-an-slo/</guid>
+      <description>Background I recently started reading The Site Reliability Workbook, which is the companion book to the excellent Site Reliability Engineering: How Google Runs Production Systems.
+via GIPHY
+These books devote considerable attention to Service Level Ojectives (SLOs), which are a way of defining a given level of service that users can expect. More technically, a SLO is a collection of Service Level Indicators (SLIs), metrics that measure whether our service is providing value, and their acceptable ranges.</description>
+    </item>
+    
+    <item>
+      <title>Hosting Static Blog on Kubernetes</title>
+      <link>https://mattjmcnaughton.com/post/hosting-static-blog-on-kubernetes/</link>
+      <pubDate>Sat, 15 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/hosting-static-blog-on-kubernetes/</guid>
+      <description>In my last three blog posts, we focused on creating a Kubernetes cluster you can use for your own personal computing needs. But what good is a Kubernetes cluster if we&amp;rsquo;re not using it to run applications? Spoiler alert, not much.
+Let&amp;rsquo;s make your Kubernetes cluster worth the cash you&amp;rsquo;re paying and get some applications running on it. In this post, we&amp;rsquo;ll walk through deploying your first application to Kubernetes: a static blog.</description>
+    </item>
+    
+    <item>
+      <title>(Part 2) A Kubernetes of One&#39;s Own: Can We Build It? Yes We Can!</title>
+      <link>https://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-2/</link>
+      <pubDate>Mon, 10 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-2/</guid>
+      <description>In my last blog post, we outlined the different methods of creating and maintaining a Kubernetes cluster, before deciding on Kops. In this blog post, we&amp;rsquo;ll actually create the cluster using Kops. I&amp;rsquo;ll provide source code and instructions, so by the end of this post, you can have your own Kubernetes cluster!
+This tutorial is strongly based on Kops AWS tutorial, although its even simplifier because I&amp;rsquo;ve written some generic terraform configurations which simplify initial AWS configuration.</description>
+    </item>
+    
+    <item>
+      <title>(Part 1) A Kubernetes of One&#39;s Own: I Can Haz Cluster?</title>
+      <link>https://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-1/</link>
+      <pubDate>Sat, 08 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-1/</guid>
+      <description>In my last blog post, I hope I convinced you why you should be creating your own Kubernetes cluster for personal usage. Now, we can tackle the fun part of creating the cluster.
+What is a Kubernetes cluster? via GIPHY
+We can start by answering the most important question: what is a Kubernetes cluster? A Kubernetes cluster is a collection of physical resources on which we run the Kubernetes container management software.</description>
+    </item>
+    
+    <item>
+      <title>(Part 0) A Kubernetes of One&#39;s Own: Start with Why</title>
+      <link>https://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-0/</link>
+      <pubDate>Fri, 07 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/a-kubernetes-of-ones-own-part-0/</guid>
+      <description>From my last blog post, you know Kubernetes manages the blog you are reading right now. But I violated pretty much all the rules of good blogging by only briefly discussing why I wanted to start running my own production Kubernetes cluster in the first place, and how exactly I made that happen. I think I was just excited it was working and I wanted to share&amp;hellip;
+via GIPHY
+Now, I&amp;rsquo;m writing to remedy my excited self&amp;rsquo;s mistakes.</description>
+    </item>
+    
+    <item>
+      <title>This Blog is Running on Kubernetes</title>
+      <link>https://mattjmcnaughton.com/post/blog-running-on-k8s/</link>
+      <pubDate>Thu, 06 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/blog-running-on-k8s/</guid>
+      <description>I&amp;rsquo;ve avidly followed the Kubernetes project since it was the basis of my undergraduate thesis in 2015. But despite all my reading and minikube experimentation, I felt I was missing out the important lessons you can only learn from using a technology to run real applications in production. I acutely felt this pain when contributing code to the Kubernetes ecosystem, as I was able to fix bugs, but didn&amp;rsquo;t have knowledge and empathy around the production user&amp;rsquo;s experience.</description>
+    </item>
+    
+    <item>
+      <title>Installing Ubuntu 17.10 on MacBook Air</title>
+      <link>https://mattjmcnaughton.com/post/installing-ubuntu-1710-on-macbook-air/</link>
+      <pubDate>Sun, 21 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/installing-ubuntu-1710-on-macbook-air/</guid>
+      <description>After a Saturday of disk partitioning, a trip to CVS for an emergency thumb drive, and much Googling, I&amp;rsquo;m writing this blog post from a MacBook Air running Ubuntu 17.10.
+I won&amp;rsquo;t write an entire tutorial on the installation, as some great ones already exist (in particular, I benefitted greatly from this tutorial from CalTech and this tutorial from Christopher Berner). Instead, I&amp;rsquo;ll share why I installed Ubuntu 17.10 on my MacBook Air, some tips I found helpful during the installation, and the remaining shortcomings I hope to address in the coming weeks.</description>
+    </item>
+    
+    <item>
+      <title>A Closer Look at Rsync</title>
+      <link>https://mattjmcnaughton.com/post/papers-i-love-rsync/</link>
+      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/papers-i-love-rsync/</guid>
+      <description>It&amp;rsquo;s not often that academia analyzes the unix tools we use everyday. But rsync is one fortunate exception as Andrew Tridgell not only wrote rsync while pursuing his PhD, but also published a short and accessible paper outlining its inner workings. While I&amp;rsquo;d highly encourage reading the entire paper, I took away one major tl:dr; from the rsync algorithm: be lazy. This lesson will be applicable anytime I write performance conscious code.</description>
+    </item>
+    
+    <item>
+      <title>Concurrent Futures in Sheepdoge: How a few lines of code resulted in a 78% performance improvement</title>
+      <link>https://mattjmcnaughton.com/post/concurrent-futures-in-sheepdoge/</link>
+      <pubDate>Fri, 29 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/concurrent-futures-in-sheepdoge/</guid>
+      <description>For the past couple of months, I&amp;rsquo;ve been working on Sheepdoge, a tool for managing your personal Unix machines with Ansible. It&amp;rsquo;s like boxen, but for Ansible.
+One new sheepdoge feature I&amp;rsquo;m particularly excited about is the use of concurrent.futures during sheepdoge install. concurrent.futures provides a high-level API for executing code asynchronously, making adding thread/process based concurrency trivial. It is a standard library python module as of 3.2, and is available on python 2.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started Contributing to Popular Open-Source Projects</title>
+      <link>https://mattjmcnaughton.com/post/getting-started-contributing-to-open-source-projects/</link>
+      <pubDate>Wed, 27 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/getting-started-contributing-to-open-source-projects/</guid>
+      <description>Few programming experiences are more informative or rewarding than meaningfully contributing to open-source software. However, even programmers with strong technical skills can experience discouragingly high barriers to entry when contributing to a new project. This barrier to entry feels particularly high for the popular, high-velocity projects. Unfortunately, these projects are often those which first catch the eye, and attract us to open source. Overwhelming. Perhaps Steve Harvey shows it best&amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>Programming with OCD</title>
+      <link>https://mattjmcnaughton.com/post/programming-with-ocd/</link>
+      <pubDate>Sat, 18 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/programming-with-ocd/</guid>
+      <description>Like over 3 million Americans, I struggle with OCD. OCD has impacted, and probably always will in some capacity impact, my life a lot. Unfortunately, software engineering, both my career and one of my favorite hobbies, is no exception.
+What is OCD? via GIPHY
+Everyone who suffers from OCD has a different experience. For me, OCD manifests as certain distorted thoughts sticking in my brain. These sticky thoughts are typically catastrophic events touching on some of my deepest fears and most cherished values.</description>
+    </item>
+    
+    <item>
+      <title>Contributing to a Platform for Change</title>
+      <link>https://mattjmcnaughton.com/post/contributing-to-a-platform-for-change/</link>
+      <pubDate>Sat, 07 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/contributing-to-a-platform-for-change/</guid>
+      <description>Like many others, I’ve spent the last couple of weeks since the election thinking a lot about new ways to empower and amplify all the voices fighting for justice. While it’s not easy to know what to do in a situation like the one we find ourselves in, I’m reminded of words from Bryan Stevenson, a civil rights lawyer, who spoke at my graduation back in June. His entire speech was insightful and inspiring, and one particular request stuck with me: get proximate.</description>
+    </item>
+    
+    <item>
+      <title>Predictive Auto-scaling in Kubernetes - Thesis</title>
+      <link>https://mattjmcnaughton.com/post/predictive-auto-scaling-in-kubernetes-thesis/</link>
+      <pubDate>Sat, 28 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/predictive-auto-scaling-in-kubernetes-thesis/</guid>
+      <description>Over the course of my final year at Williams College, I spent a lot of time working on a distributed systems thesis with Professor Jeannie Albrecht. My thesis is entitled &amp;ldquo;Predictive Pod Auto-scaling in the Kubernetes Container Cluster Manager&amp;rdquo;, and it is entirely open-source. The written portion, presentation slides, and evaluation code can be found on my Github. Additionally, our contributions to Google&amp;rsquo;s open-source cluster container manager Kubernetes can be found on my fork.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://mattjmcnaughton.com/about/</link>
+      <pubDate>Thu, 05 May 2016 22:10:54 -0400</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/about/</guid>
+      <description>Hi, my name&amp;rsquo;s Matt :)
+I work as a SWE at Flatiron Health. I graduated from Williams College where I majored in computer science and political science.
+To be honest, as of 2020, I&amp;rsquo;m not the most prolific of bloggers, but will post when I have something I&amp;rsquo;d like to share :)
+I like open-source systems programming and developer tooling, tinkering with Linux on the desktop, reading, Toronto sports teams, baking bread, and participating in mental health advocacy.</description>
+    </item>
+    
+    <item>
+      <title>GPG</title>
+      <link>https://mattjmcnaughton.com/gpg/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/gpg/</guid>
+      <description>You can find my GPG public key here. I accept emails encrypted using this public key and sign my emails with this public key when helpful.1
+1. My email setup is a little bit in flux as I transition away from Gmail to Fastmail and Mutt. I hope to post more about it soon, and establish better guidelines for myself around when I GPG sign emails and when I GPG encrypt emails.</description>
+    </item>
+    
+  </channel>
+</rss>

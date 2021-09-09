@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 0) Deploying Kubernetes&#39; Applications: The Problem - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 0) Deploying Kubernetes&#39; Applications: The Problem</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-01-10T00:00:00">2019-01-10</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/deploy-problem.jpg" alt="(Part 0) Deploying Kubernetes&#39; Applications: The Problem">
+		</figure><div class="content post__content clearfix">
+			<p>Over the holiday break, I spent a lot of my leisure coding time rethinking the
+way we deploy applications to Kubernetes. The blog series this post kicks off will explore how we
+migrated from an overly simplistic deploy strategy to one giving us the
+flexibility we need to deploy more complex applications. To ensure a solid foundation,
+in this first post, we&rsquo;ll define
+our requirements for deploying Kubernetes' applications and evaluate whether our
+previous systems and strategies met these requirements (spoiler alert&hellip; it didn&rsquo;t).</p>
+<h1 id="requirements-for-how-we-deploy-kubernetes-applications">Requirements for how we deploy Kubernetes' applications</h1>
+<p>As we considered the applications (NextCloud, Gitlab, etc.)
+we&rsquo;re hoping to deploy to Kubernetes in 2019, we realized they necessitated certain
+functionality in our strategy for deploying Kubernetes' applications.</p>
+<iframe src="https://giphy.com/embed/4KFjJmTGav0QoE5WDk" width="480"
+height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/4KFjJmTGav0QoE5WDk">via GIPHY</a></p>
+<p>To start, these applications would require different configuration when deploying to
+development than when deploying to production. To reflect this reality, we must be able to
+<strong>write a manifest once, and deploy it in multiple environments with minimal
+effort and duplication</strong>. A simple example of this variance
+is the creation of persistent volumes. In development, we want these to be 1GB
+max, while in production they will be much larger.</p>
+<p>In a similar vein, these applications are suitably complex that we want to be
+able to <strong>define multiple, tunable parameters and share them across all the
+manifests comprising an application</strong>.</p>
+<p>Additionally, these applications will make substantial usage of secret values
+(i.e. password for the Gitlab admin account), and we want <strong>interactions with
+secrets to be secure and simple</strong>.</p>
+<p>These complex applications also involve several different components (i.e. a web
+application and a database). Our deployment strategy must support <strong>grouping these components
+together conceptually without unnecessary duplication and sharing variables between them</strong>.</p>
+<p>Finally, we want the ability to <strong>leverage already existing community investments to deploy
+applications via Kubernetes</strong>. Constantly looking to learn from the community,
+and utilize its solutions, will ensure our investments in Kubernetes are in
+areas where we can contribute unique value.</p>
+<p>And with these definitions, we know the rules to which our deployment strategies
+and systems must conform.</p>
+<iframe src="https://giphy.com/embed/xUNd9XxgH9yjNIXyJa" width="480"
+height="360" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/heyarnold-hey-arnold-nicksplat-xUNd9XxgH9yjNIXyJa">via
+GIPHY</a></p>
+<h1 id="our-previous-system-and-its-shortcomings">Our Previous system and its shortcomings</h1>
+<p>Before exploring the new system, we must explore the previous system and
+understand where it fell short.</p>
+<p>Our previous system for deploying Kubernetes' applications was about as simple
+as it gets: write our Kubernetes manifests as static <code>.yaml</code> files and
+then deploy them using <code>kubectl apply -f</code>.</p>
+<iframe src="https://giphy.com/embed/xUySTD7evBn33BMq3K" width="480"
+height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/filmeditor-will-ferrell-elf-xUySTD7evBn33BMq3K">via
+GIPHY</a></p>
+<p>Its pretty much what every &ldquo;Intro to
+Kubernetes&rdquo; tutorial uses for deploying applications, and undoubtedly offers
+advantages as it encourages direct interaction with Kubernetes, without any
+potentially confusing abstractions. It is also helpful in that the template file in
+source control maps directly to what is deployed on Kubernetes.</p>
+<p>This deployment system worked fine for a while, as evidenced by the five or so
+Kubernetes' applications we deployed using it. However, it definitely does not
+fulfill the requirements we listed in the preceding section.</p>
+<iframe src="https://giphy.com/embed/26ybwvTX4DTkwst6U" width="480" height="360"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/the-simpsons-bart-simpson-at-least-you-tried-26ybwvTX4DTkwst6U">via
+GIPHY</a></p>
+<p>Deploying static files with <code>kubectl apply -f</code> does not support changing
+variables in the manifest based on the environment in which we&rsquo;re deploying the
+application. For example, when running Prometheus in production, we want to create a StorageClass
+specifying the use of Amazon EBS volumes of the gp2 type. When we were
+defining said StorageClass via a
+<a href="https://github.com/mattjmcnaughton/personal-k8s/commit/ca34bddc14122294195b9e4008e9aecc1f4a9a44#diff-8bc00d67b069133eddc60560686bbf54">static manifest file</a>,
+it was cumbersome to ensure we didn&rsquo;t deploy it when deploying our
+application to our dev Minikube cluster.</p>
+<p>Additionally, with static files, we had no ability to specify which parts of the manifest were
+&ldquo;boilerplate&rdquo; and which parts of the manifest were tunable parameters.
+Application version, which is likely to change frequently over the applications
+lifespan, was in the exact same file as volume mount paths which will likely
+never be change. Similarly, we had no ability to share variables across the different manifests
+used to deploy the different application components. For example, for many of our
+applications, the <code>service-account.yaml</code> manifest would hard code the
+ServiceAccount&rsquo;s <code>name</code> field, and then we would also need to hard code that
+same value in the <code>deployment.yaml</code> manifest when indicating under which service
+account the pod should run.</p>
+<p>Secrets were in a similarly difficult position. We had no way to delineate all
+secrets for an application in a singular file separated from other manifests, which we could easily exclude from
+source control.</p>
+<p>We also couldn&rsquo;t cleanly support applications with multiple related components.
+For example, suppose we have two different web applications, and for each one we want to deploy a
+web server component and a postgres component. If we&rsquo;re using only static files,
+then we&rsquo;re replicating the postgres manifests in two different directories.
+We also continue to struggle with our manifests for related components being
+unable to share variables, which only grows more problematic as our applications
+have more and more components with more and more complex relationships.</p>
+<p>Finally, leveraging 3rd party applications when deploying static manifest files
+leaves much to be desired. To leverage a community solution for deploying an
+application, we just copy the static manifests into our own collection of
+manifest files. However, when we do so, we take on the burden for ensuring these
+static manifest files stay current and working. To compound the difficulty, we
+must perform this maintenance without any form of versioning.</p>
+<p>Disappointingly, our system of deploying static manifest files via <code>kubectl apply -f</code> fails to
+meet pretty much all of our listed requirements.</p>
+<h1 id="conclusion">Conclusion</h1>
+<iframe src="https://giphy.com/embed/1gUWdf8Z8HCxpM8cUR" width="480"
+height="354" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/ariana-grande-thank-u-next-you-1gUWdf8Z8HCxpM8cUR">via
+GIPHY</a></p>
+<p>From our analysis above, its clear that deploying Kubernetes' applications via
+static manifest files will not scale to the more complex applications we hope to
+tackle in the new year. In my next post, we&rsquo;ll explore the new strategy
+we&rsquo;re using for deploying applications and how it meets our stated requirements.</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-3/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 3) Reducing the Cost of Running a Personal k8s Cluster: Conclusion</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/deploying-kubernetes-applications-part-1/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 1) Deploying Kubernetes&#39; Applications: The Solution</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

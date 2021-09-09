@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Hosting Static Blog on Kubernetes - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Hosting Static Blog on Kubernetes</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-09-15T00:00:00">2018-09-15</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/static-site.jpg" alt="Hosting Static Blog on Kubernetes">
+		</figure><div class="content post__content clearfix">
+			<p>In my <a href="/post/a-kubernetes-of-ones-own">last three blog posts</a>,
+we focused on creating a Kubernetes cluster you can
+use for your own personal computing needs.
+But what good is a Kubernetes cluster if we&rsquo;re not using it to run applications? Spoiler
+alert, not much.</p>
+<p>Let&rsquo;s make your Kubernetes cluster worth the cash you&rsquo;re paying
+and get some applications running on it.
+In this post, we&rsquo;ll walk through deploying your first application to Kubernetes:
+a static blog.</p>
+<p>A static blog makes for a perfect first application because
+it is dead simple. We can focus entirely on writing Kubernetes configuration
+and won&rsquo;t need to worry about application logic.</p>
+<p>A static website like a blog also has commonly accessible
+metrics for measuring success: request response time and uptime. In a later blog
+post, we&rsquo;ll establish an
+<a href="https://landing.google.com/sre/book/chapters/service-level-objectives.html">SLO</a>
+for these metrics and add monitoring to ensure
+we&rsquo;re meeting our SLO. We&rsquo;ll also measure how any changes to this application&rsquo;s
+code or Kubernetes' configuration impacts these metrics.</p>
+<p>Finally, its easy to customize a static blog for
+your own use case. While I doubt you&rsquo;ll want to host this specific blog on your
+Kubernetes cluster (unless you want to help me out with hosting :P),
+it is trivial to swap out a container image serving my blog
+with a container image serving your blog (or any other static website).
+The Kubernetes configuration will stay almost exactly the same.</p>
+<iframe src="https://giphy.com/embed/ukCFEU6Cg5MCCDoaVN" width="480"
+height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/netflix-love-happy-ukCFEU6Cg5MCCDoaVN">via
+GIPHY</a></p>
+<h2 id="some-background">Some Background</h2>
+<p>With our goal in place, we can start thinking about what Kubernetes components
+we must define to robustly serve our static website. Our initial use case
+requires only two high level Kubernetes components: a deployment and a service.
+A <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">deployment</a>
+is the recommended method for declaring a desired collection of
+pods. A <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod/">pod</a>
+is the smallest deployable unit of computing that Kubernetes creates
+and manages. Its a group of one or more containers with shared storage/network.
+For this application, our pods consist of a single nginx container which is
+responsible for serving our static site on port 80.</p>
+<p>A <a href="https://kubernetes.io/docs/concepts/services-networking/service/">service</a>
+is an abstraction by which Kubernetes provides a consistent way to access a set
+of pods. A service is necessary because pods are ephemeral. You should never
+communicate with a specific pod, because it could be restarted, moved, or killed
+at any minute.</p>
+<p>If your completely new to Kubernetes, see
+<a href="https://www.katacoda.com/courses/kubernetes/kubectl-run-containers">these</a>
+<a href="https://www.katacoda.com/courses/kubernetes/creating-kubernetes-yaml-definitions">great</a>
+<a href="https://www.katacoda.com/courses/kubernetes/guestbook">tutorials</a> from
+<a href="https://www.katacoda.com/">Katacoda</a> for some foundational hands on experience.</p>
+<h2 id="lets-do-it">Let&rsquo;s Do It!</h2>
+<iframe src="https://giphy.com/embed/3aGZA6WLI9Jde" width="480" height="336"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/fox-debate-jv-3aGZA6WLI9Jde">via GIPHY</a></p>
+<p>We can now start writing your Kubernetes configuration files. There are many
+fancy ways to create Kubernetes configuration, but for now, we&rsquo;ll keep
+everything simple with vanilla yaml. Create a file called <code>bundle.yaml</code> and add the
+following:</p>
+<script
+src="https://gist.github.com/mattjmcnaughton/d150aa40da336ba40f2173ed1ca99de3.js"></script>
+<p>This code block tells Kubernetes there should be a deployment named <code>blog</code>,
+which consists of two pods with the label <code>app: blog</code>. The deployment should
+construct these pods via a template. This template specifies the pods contain
+an instance of the <code>YOUR_IMAGE_HERE</code> container image and expose port 80.
+Be sure to replace <code>YOUR_IMAGE_HERE</code> with the name of your container image.
+For this example to work properly, a container running from your container image should
+serve your static site on port 80. This blog uses the
+<code>docker.io/mattjmcnaughton/blog</code> container image. Here&rsquo;s the
+<a href="https://github.com/mattjmcnaughton/blog/blob/master/Dockerfile">Dockerfile</a>.
+Please leave a comment if you would like a tutorial on constructing the
+container image.</p>
+<p>We&rsquo;ve configured the deployment. Now we just need to add the following section
+to configure the service:</p>
+<script
+src="https://gist.github.com/mattjmcnaughton/bd0064e174180671b71e5d45e8498e36.js"></script>
+<p>This section of the code tells Kubernetes there should be a service named
+<code>blog</code>. The service has the type
+<a href="https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/">LoadBalancer</a>,
+which means Kubernetes allows access to the specified set of pods via an
+external load balancer provided by our cloud provider. For AWS, Kubernetes will
+create an <a href="https://aws.amazon.com/elasticloadbalancing/">ELB</a>
+and route all inbound traffic accessing the ELB to the pods matched by
+our service&rsquo;s selector. Our service selects all pods with the tag <code>app: blog</code>.
+Finally, we instruct our service to forward port 80 on the load balancer to port
+80 on the pod.</p>
+<p>Finally, run <code>kubectl apply -f bundle.yaml</code>, which instructs Kubernetes to perform
+the actions necessary such that the objects defined in <code>bundle.yaml</code> exist.
+Congrats, you&rsquo;re running an application on Kubernetes!</p>
+<iframe src="https://giphy.com/embed/3o7abIZJKIhfhvqfHq" width="480"
+height="306" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/hailstate-mississippi-state-hail-3o7abIZJKIhfhvqfHq">via
+GIPHY</a></p>
+<p>After waiting a minute or two, run <code>kubectl get deployments</code>. You should see a
+deployment named <code>blog</code> with a <code>DESIRED</code> value of 2, and a <code>CURRENT</code> value
+between 0 and 2, depending on how many pods the deployment has finished creating
+from the template. To see these pods, run <code>kubectl get pods</code>. You should see two pods
+named <code>blog-SOME_UID</code> with a <code>STATUS</code> of <code>Running</code>.</p>
+<p>Next, run <code>kubectl get svc</code>.
+You should see a service named <code>blog</code> with an <code>EXTERNAL-IP</code>. If you
+navigate to that <code>EXTERNAL-IP</code>, you should see your website. You&rsquo;ll likely want
+to setup some additional DNS to direct requests to <code>YOUR_HOSTNAME</code> to this
+external IP address. For now, we&rsquo;ll manage this outside of Kubernetes, so I&rsquo;ll
+leave it to you to do implement this configuration however works best for you. I
+use an <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html">A record and an Alias Target in Route 53</a>.</p>
+<h2 id="looking-to-the-future">Looking to the Future</h2>
+<p>Again, congratulations! You now have a &ldquo;production&rdquo; application running via
+Kubernetes. Right now, its very simple and fails to take advantage of much of
+what makes Kubernetes and Cloud Native interesting and special. But, that&rsquo;s just
+for now. In future blog posts, I hope to explore a whole bunch of
+extensions and enhancements to this simple project. Just off the top of my head,
+I have the following ideas:</p>
+<ol>
+<li>Create a <a href="https://github.com/helm/helm">Helm</a> chart for this application, and
+use Helm for deployment. This change allows you all to reuse this work without
+having to manually edit yaml files with your personal values. It also
+supports a more robust deploy process then updating a static file and running
+<code>kubectl apply</code>.</li>
+<li>Define an SLO for our static site based on our twin objectives of low
+response time and high uptime. Add application monitoring to ensure our
+static site continuously meets said SLO.</li>
+<li>Properly configure
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">RBAC</a> for
+this application, ensuring it has the least possible permissions necessary to
+function. Verify our success with a tool like
+<a href="https://github.com/aquasecurity/kube-hunter">kube-hunter</a></li>
+<li>Add centralized logging to provide easy visibility into any potential issues.</li>
+<li>Enable SSL connections to our static site via Let&rsquo;s Encrypt.</li>
+<li>Create a CI/CD pipeline for testing (i.e. container image
+vulnerability scanning, static analysis, etc.), and deploying our
+application.</li>
+</ol>
+<p>While we&rsquo;ll most likely use this static site as the basis for these
+explorations, the majority of the learnings will be applicable to any
+application you deploy on Kubernetes.</p>
+<p>If there are any additional topics you&rsquo;d like me to cover, please leave a
+comment! Additionally, any feedback on my already existing Kubernetes blog posts
+would be greatly appreciated, specifically around the level of specificity. Am I
+explaining too much? Too little? Looking forward to hearing from you and
+looking forward to continuing to experiment with Kubernetes and Cloud Native together.</p>
+<iframe src="https://giphy.com/embed/l1J3CbFgn5o7DGRuE" width="480" height="309"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/goodbye-see-ya-you-l1J3CbFgn5o7DGRuE">via
+GIPHY</a></p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/a-kubernetes-of-ones-own-part-2/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 2) A Kubernetes of One&#39;s Own: Can We Build It? Yes We Can!</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/this-blog-has-an-slo/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">This Blog Has an SLO</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

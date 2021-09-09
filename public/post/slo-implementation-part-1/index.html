@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 1) SLO Implementation: Release the Metrics - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 1) SLO Implementation: Release the Metrics</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-10-07T00:00:00">2018-10-07</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/lots-of-metrics.jpg" alt="(Part 1) SLO Implementation: Release the Metrics">
+		</figure><div class="content post__content clearfix">
+			<p>In the <a href="/post/slo-implementation-part-0">blog post</a> overviewing our SLO
+implementation, I listed configuring our blog to expose the metrics
+for <a href="https://prometheus.io">Prometheus</a> to scrape
+as the first step. To fulfill that promise, this post examines the necessary
+steps for taking our static website and serving it via a production web server which
+exposes the latency and success metrics our SLO needs.</p>
+<h2 id="a-brief-examination-of-prometheus-metrics">A brief examination of Prometheus metrics</h2>
+<p>Application monitoring has two fundamental components: instrumentation and
+exposition. <a href="https://en.wikipedia.org/wiki/Instrumentation">Instrumentation</a>
+refers to measuring and recording different quantities and states. Exposition
+refers to making metrics available to some consumer, which for us is Prometheus.
+We&rsquo;ll discuss both in the context of our static website.</p>
+<h3 id="instrumentation">Instrumentation</h3>
+<p>Prometheus supports a number of different metric types that we could use to
+instrument our application. There are four core types (counter, gauge, histogram and summary), which
+<a href="https://prometheus.io/docs/concepts/metric_types/">Prometheus' documentation</a>
+explores in considerable detail.</p>
+<iframe src="https://giphy.com/embed/5t3POlVgm29ZiERRXT" width="480"
+height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/bigbrotherafterdark-5t3POlVgm29ZiERRXT">via
+GIPHY</a></p>
+<p>We utilize the counter and the histogram to generate the needed metrics for our SLO.</p>
+<p>With respect to the availability component of our SLO, we need to track both the
+number of failed requests and the number of total requests. The counter type
+perfectly fulfills this use case, as it tracks the number or size of events.</p>
+<p>With respect to the latency SLO, we need to track the ever changing response
+time of server requests. We could use a gauge, which provides a snapshot of
+current state (i.e. the response time for the last request to the web server).
+However, a histogram is an even more appropriate metric type. It also captures a
+snapshot of current state, but specifically supports percentile calculations
+(i.e. what is the 99% percentile response time for requests to this web server).
+Since our SLO explicitly examines the 99% percentile, the histogram metric type
+is the most appropriate choice.</p>
+<p>We can generate these metrics in two different ways. In
+the first way, we perform direct instrumentation on the application using
+Prometheus' client side libraries. In other words, the application code has code
+written to track the proper metrics in a way that conforms with Prometheus'
+standards.</p>
+<p>In the second way, our application code has no direct knowledge of
+Prometheus, and instead exports metrics in some non-Prometheus specific format.
+We then use an <a href="https://prometheus.io/docs/instrumenting/exporters/">exporter</a>
+to transform these metrics into a format which Prometheus can ingest. Exporters
+exist for a number of popular open-source projects, and are necessary to use
+Prometheus with projects like Nginx, which were developed years ago, and will
+likely never have Prometheus conforming instrumentation implemented directly in
+the source code.</p>
+<h3 id="exposition">Exposition</h3>
+<p>Implementing exposition involves less decision making than implementing
+instrumentation. Prometheus scrapes metrics from an application via HTTP
+requests to <code>/metrics</code>. It expects the metrics in a standardized, human-readable
+text format. We could produce this text-format by hand, but the Prometheus ecosystem has
+tools to automatically generate the formatted metrics and serve the endpoint for almost any use-case.</p>
+<h2 id="but-how-do-we-get-these-for-our-app">But how do we get these for our app?</h2>
+<p>We desire a static web server for which we can perform the needed instrumentation
+and exposition. We have a couple of different options for creating one. First,
+we could write our own web server, and in doing so, directly instrument our SLI
+metrics using Prometheus' client-side libraries.  Alternatively, we could choose an already existing
+open-source web server, which itself has instrumentation conforming to
+Prometheus requirements. <a href="https://caddyserver.com/">Caddy</a>,
+with the usage of the <a href="https://caddyserver.com/docs/http.prometheus">Prometheus plugin</a>, is
+one such popular open source web server. Finally, we could use a historic web
+server like <a href="https://www.nginx.com/">Nginx</a> or <a href="https://httpd.apache.org/">Apache</a>, and then
+use an exporter to generate Prometheus consumable metrics.</p>
+<iframe src="https://giphy.com/embed/EZdjrzyK1Kw2A" width="480" height="301"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/tyler-james-williams-gif-hunt-fc-EZdjrzyK1Kw2A">via
+GIPHY</a></p>
+<p>While option 1, writing our own web server, would give us considerable control
+over instrumentation, it is definitely overkill for hosting a static blog.
+Additionally, I struggled to find an well-known exporter for Apache or Nginx which both provided
+all the metrics we need for SLO monitoring and was easily configurable.
+Fortunately, option 2, Caddy with the Prometheus plugin, provides everything we
+need. Caddy is a well-known and respected web server and the Prometheus plugin
+instruments the exact metrics we need for SLO tracking.</p>
+<h2 id="lets-write-some-config-files">Let&rsquo;s write some config files!</h2>
+<iframe src="https://giphy.com/embed/48zjXYRwBg5IQ" width="480" height="278"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/working-daffy-duck-typing-48zjXYRwBg5IQ">via
+GIPHY</a></p>
+<p>We know that we want to serve our blog via the Caddy web server, with the
+Prometheus plugin. Additionally, we know we want to run the Caddy web server on
+Kubernetes. Kubernetes runs Docker containers, which derive from Docker images.
+So let&rsquo;s write a Dockerfile!</p>
+<p>In all, the Docker image must contain a binary containing the Caddy web server,
+with the Prometheus plugin, and our Caddy configuration file and static content.
+It must also expose the proper ports to allow us to access the Caddy web server
+from outside of the container. I&rsquo;ve embedded the Dockerfile below. I&rsquo;ve added
+extensive comments examining both the non-trivial what and why of the
+included commands.</p>
+<script
+src="https://gist.github.com/mattjmcnaughton/d829a9a9dfd6c6abfcf1533351b84b6c.js"></script>
+<p>We must specify some light configuration settings for Caddy. Again, I&rsquo;ve
+embedded the Caddyfile below, which contains extensive comments on the
+non-trivial what and why of the configuration specification.</p>
+<script
+src="https://gist.github.com/mattjmcnaughton/d66ec52804e31ea978924cb94283c087.js"></script>
+<p>If you&rsquo;ve cloned <a href="https://github.com/mattjmcnaughton/blog">the project</a>, you can
+run <code>make build_image</code> from the base directory, and you should see a successful
+image construction. If you run <code>docker run -p 8080:80 mattjmcnaughton/blog:$(git rev-list HEAD -n 1)</code>, you will start running a container derived from the image
+you just built. If <code>curl localhost:8080/metrics</code> dumps a whole bunch of metrics
+in Prometheus format, then you&rsquo;re good to go!</p>
+<h2 id="lets-gobble-up-some-metrics">Let&rsquo;s gobble up some metrics!</h2>
+<iframe src="https://giphy.com/embed/ghkKihjlHJ2W4" width="480" height="297"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/pizza-comer-ghkKihjlHJ2W4">via GIPHY</a></p>
+<p>We&rsquo;ve successfully instrumented our blog and exposed the resulting metrics via
+the <code>/metrics</code> endpoint. The final step is configuring our Prometheus instance
+to scrape these metrics. We&rsquo;ll discuss this setup in much greater depth in the
+next blog post, but if you are itching to start experimenting, the embedded
+<code>prometheus.yml</code> file below configures Prometheus to scrape my blog.</p>
+<script
+src="https://gist.github.com/mattjmcnaughton/e415253469fb536f47a833c539ae2738.js"></script>
+<p>You can run a Prometheus Docker container with the given configuration using the
+following command.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">docker run <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -p 9090:9090 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -v /path/to/downloaded/prometheus.yml:/etc/prometheus/prometheus.yml <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  prom/prometheus
+</code></pre></div><p>Try navigating to <code>localhost:9090</code> and querying for the
+<code>caddy_http_request_count_total</code> metric. You should see counters, with a variety
+of labels, tracking all the requests seen by this blog.</p>
+<h2 id="next-time">Next Time</h2>
+<p>Now that our application is instrumented and exposing metrics, our next step is
+hosting Prometheus on Kubernetes and configuring our Prometheus instance to
+scrape our blog&rsquo;s metrics. Can&rsquo;t wait!</p>
+<iframe src="https://giphy.com/embed/6YCelxMJo0txK" width="480" height="271"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/excited-arrested-development-lucille-booth-6YCelxMJo0txK">via
+GIPHY</a></p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/slo-implementation-part-0/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 0) SLO Implementation: Overview</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/personal-k8s-cluster-roadmap/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">Personal k8s Cluster Roadmap</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

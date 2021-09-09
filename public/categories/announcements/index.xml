@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Announcements on ~/mattjmcnaughton/blog</title>
+    <link>https://mattjmcnaughton.com/categories/announcements/</link>
+    <description>Recent content in Announcements on ~/mattjmcnaughton/blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 25 Sep 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://mattjmcnaughton.com/categories/announcements/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Stepping Back</title>
+      <link>https://mattjmcnaughton.com/post/stepping-back/</link>
+      <pubDate>Fri, 25 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/stepping-back/</guid>
+      <description>Hiya folks, just a quick post from me today :)
+After over a year of daily(-ish) contributions, I just want to let folks know I&amp;rsquo;m going to be taking a step back from contributing to Kubernetes. Once this diff is merged, I won&amp;rsquo;t be a reviewer for sig-node anymore. Additionally, with the KEP for Building Kubelet Without Docker complete, my major projects are all wrapped up, and I doubt I&amp;rsquo;ll be picking up new ones.</description>
+    </item>
+    
+  </channel>
+</rss>

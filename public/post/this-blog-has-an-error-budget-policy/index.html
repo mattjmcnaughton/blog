@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>This Blog Has an Error Budget Policy - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">This Blog Has an Error Budget Policy</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-09-20T00:00:00">2018-09-20</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/budget.jpg" alt="This Blog Has an Error Budget Policy">
+		</figure><div class="content post__content clearfix">
+			<p>In my <a href="/post/this-blog-has-an-slo/">last blog post</a>,
+I publicized an <a href="/slo/">SLO</a> for this blog.
+I also mentioned that, in the future, I&rsquo;d couple the SLO with an
+<a href="https://landing.google.com/sre/book/chapters/embracing-risk.html">error budget and error budget policy</a>.
+Well, the future is today, because this post will define
+error budgets and error budget policies and their benefits, before proposing a specific
+error budget and error budget policy to accompany our previously defined <a href="/slo">SLO</a>.</p>
+<h2 id="what-are-error-budget-and-error-budget-policies">What are Error Budget and Error Budget Policies?</h2>
+<iframe src="https://giphy.com/embed/fpXxIjftmkk9y" width="449" height="480"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/fpXxIjftmkk9y">via GIPHY</a></p>
+<p>Understanding error budgets and error budget policies is a vital first step in
+enumerating their pros and cons, and deciding whether we should apply these
+concepts to this blog.</p>
+<p>An error budget is the number of errors we can have, and still be within our SLO.
+Its easiest to understand with an example. Suppose one component of our SLO is
+that 99% of requests to our web server are successful, where we define success
+as a non 5XX status code. Additionally, we are tracking our SLO
+over a four week rolling window and in the previous four weeks we had 1,000 requests.
+Our error budget is 10 failed requests over the upcoming four week window.</p>
+<p>Suppose we deploy a bad container image, which leads to 5 unsuccessful requests. We
+just used 50% of our error budget. If, within the same four week window, we
+experience 10 more unsuccessful requests, we will exhaust our error budget by
+50%. When you exhaust an error budget, its time to enact the error budget policy.</p>
+<p>An error budget policy enumerates the activity a team takes when they&rsquo;ve
+exhausted their error budget for a particular service. It is not intended to
+punish the team violating the SLO, but rather provide structural support
+for investing in stability as opposed to new features.</p>
+<p>An error budget policy can specify a number of actions, and I some
+common components below:</p>
+<ul>
+<li>The team does not deploy any new versions of the service, modulo security
+fixes and fixes directly addressing the SLO failures, until the service no
+longer exhausts its error budget.</li>
+<li>The team devotes X amount of time to working on reliability until the service is back within SLO.</li>
+<li>The team caps time spend working on new features at Y until the service is
+back within SLO.</li>
+</ul>
+<p>Over time, an error budget regenerates as the errors which exhausted the budget
+fall outside of the rolling time window. Once the error budget has regenerated,
+meaning our service its back within its SLO, we can return to development as
+usual. The constraints enumerated by the error budget policy no longer apply.</p>
+<h2 id="why-are-error-budgets-and-error-budget-policies-useful">Why are Error Budgets and Error Budget Policies Useful?</h2>
+<iframe src="https://giphy.com/embed/xT4uQaz24xgfsLE0kU" width="480"
+height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/why-zach-galifianakis-xT4uQaz24xgfsLE0kU">via
+GIPHY</a></p>
+<p>From the previous section, we understand what error budgets and error budget
+policies are. But, are they something we want to apply to our SLOs in general,
+and the SLO for this blog in particular?</p>
+<p>I&rsquo;d argue the answer is a resounding yes. Both error budgets and error budget
+policies make an SLOs a more effective tool.</p>
+<p>Error budgets add a much needed granularity to SLO measurements. On the surface,
+an SLO is a binary concept: the service is either within the SLO or it is not.
+If I&rsquo;m an engineer trying to understand my application&rsquo;s current stability,
+this binary is not sufficient. If all I know is that my SLO is passing, my
+service could either have zero errors or be one error away from being out of
+SLO. This lack of clarity makes it difficult to make decisions around when to
+perform risky changes. An error budget solves this issue. At any time, we can
+determine what percentage of the error the service has exhausted, and use this
+measurement to guide the operations we undertake.</p>
+<p>Additionally, error budgets allow us to quantify the impact of a negative event,
+even if that event did not cause us to fail our SLO. For example, suppose we can
+have 10 errors in a four week window and still meet our SLO. If we first have an
+event that causes 9 errors and then an event that causes 2 errors, we want to
+devote more attention to the first event, because it used a greater percentage
+of our error budget. Yet, if we only have the SLO as a measurement device, we&rsquo;re
+more likely to investigate the second event, because it caused our service to
+move from passing to failing the SLO.</p>
+<p>Error budget policies translate the theoretical concepts of SLOs and error
+budgets into concrete allocations of developer resources. They codify the idea
+that all changes to services have a concrete risk, and provide consistent
+guidance around how to approach said risk.</p>
+<p>For some, the theoretical strictness of the error budget policy is concerning.
+Maybe a service just isn&rsquo;t that important, so they can&rsquo;t imagine prioritizing
+stability investments once an error budget is exhausted. Or maybe clients demand
+new features at a regular cadence, so stopping the deployment of new features is
+a non-starter. While valid concerns, I&rsquo;d argue that in those instances, the
+issue is not with the concept of the error budget policy, but rather with the
+definition of the SLO. If the team responsible for the service doesn&rsquo;t foresee
+themselves wanting, or being able, to take actions to address an SLO failure,
+then the SLO is false advertising. In that situation, skipping the error budget
+policy is not the best option; rather, teams should define a more relaxed, and
+achievable SLO. If the SLO cannot be relaxed, but also there is not support for
+an error budget policy, then stressful times may be on the horizon&hellip; at least
+SLOs and error budget policies surface these impossible expectations in advance,
+and hopefully support a discussion of what is realistic.</p>
+<p>I&rsquo;ll be an applying an error budget policy to this blog for much of the same
+reason I applied an SLO. For one, I&rsquo;m interested to see how this process works
+in practice, and this blog seems like a safe way to test it. In addition, I know
+I have a number of changes I want to make to this blog, and an error budget
+policy seems like the perfect tool for balancing investing in new features and ensuring
+this blog remains useful.</p>
+<h2 id="deriving-an-error-budget-from-an-slo">Deriving an Error Budget from an SLO</h2>
+<iframe src="https://giphy.com/embed/l0Iy4cdVJbfnkTbgc" width="480" height="270"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/colbertlateshow-stephen-colbert-the-late-show-l0Iy4cdVJbfnkTbgc">via
+GIPHY</a></p>
+<p>As I mentioned before, this blog will track its SLO over a four week rolling
+window. Unfortunately, I don&rsquo;t have four weeks of historic usage data, so I will
+need to guess the number of requests this blog received over the last four weeks.
+To make the math easy, let&rsquo;s assume 10,000 requests. I&rsquo;ll update these values on
+a rolling cadence as we have actual usage data. Remember, our SLO is the
+following:</p>
+<ul>
+<li>Availability: The proportion of successful requests, as measured from the web server and where any status
+code other than 5XX is considered successful, is &gt; 99%.</li>
+<li>Latency: The proportion of sufficiently fast requests, as measured from the web server and
+where sufficiently fast is defined as &lt; 1s, is &gt; 99%.</li>
+</ul>
+<p>Now, we just need to do some easy math. If we take <code>10,000 * (1 - .99)</code>, we get
+the number of requests which can fail/not be sufficiently fast, and still be
+within SLO.</p>
+<p>We can define our error budget as follows:</p>
+<ul>
+<li>Availability: Our error budget for unsuccessful requests, where an
+unsuccessful request is a request which returns a status code of 5XX, is 100
+requests.</li>
+<li>Latency: Our error budget for not sufficiently fast requests, where not
+sufficiently fast is defined as &gt; 1s, is 100 requests.</li>
+</ul>
+<h2 id="proposing-an-error-budget-policy">Proposing an Error Budget Policy</h2>
+<iframe src="https://giphy.com/embed/42BtSfGO0XqYIWxONN" width="480"
+height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/abcnetwork-the-proposal-42BtSfGO0XqYIWxONN">via
+GIPHY</a></p>
+<p>All stakeholders should be involved in the error budget policy&rsquo;s creation.
+The involvement of those who approve how developers spend their time is
+particularly important, as the error budget policy proscribes concrete
+investments of development effort.</p>
+<p>Since this blog is an independent project, I&rsquo;m the only stakeholder, so I can
+choose whatever error budget policy I want :)</p>
+<p>My error budget policy enumerates the following actions when the error budget is
+exhausted:</p>
+<ul>
+<li>Writing new blog posts will be halted until blog is back within SLO.</li>
+<li>Changes to blog infrastructure (i.e. Kubernetes configuration) will be halted
+until blog is back within SLO.</li>
+<li>I&rsquo;ll try and devote ~1 hr a week to addressing stability issues until the blog
+is back within SLO.</li>
+</ul>
+<h2 id="publicizing-the-error-budget-policy">Publicizing the Error Budget Policy</h2>
+<iframe src="https://giphy.com/embed/DJ4A6uBf7mYZG" width="480" height="272"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/DJ4A6uBf7mYZG">via GIPHY</a></p>
+<p>Its important to publicize an error budget policy, especially in a collaborative
+context, so that all stakeholders understand why certain actions are being taken
+or not taken.</p>
+<p>I&rsquo;ve added this blog&rsquo;s error budget to the <a href="/slo">SLO</a> page.</p>
+<h2 id="coming-soon-monitoring">Coming Soon: Monitoring</h2>
+<p>Thanks for reading this post and hopefully also <a href="/post/this-blog-has-an-slo">part 1</a>.
+In the next post, we&rsquo;ll wrap up this SLO journey by talking about how we can
+effectively monitor our SLO.</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/this-blog-has-an-slo/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">This Blog Has an SLO</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/slo-implementation-part-0/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 0) SLO Implementation: Overview</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

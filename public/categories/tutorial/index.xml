@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tutorial on ~/mattjmcnaughton/blog</title>
+    <link>https://mattjmcnaughton.com/categories/tutorial/</link>
+    <description>Recent content in Tutorial on ~/mattjmcnaughton/blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 11 Feb 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://mattjmcnaughton.com/categories/tutorial/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Intro to Contributing to Kubernetes: Testing - Part 1</title>
+      <link>https://mattjmcnaughton.com/post/intro-to-contributing-to-k8s-testing-part-1/</link>
+      <pubDate>Tue, 11 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mattjmcnaughton.com/post/intro-to-contributing-to-k8s-testing-part-1/</guid>
+      <description>tl:dr; By the end of this blog post, you&amp;rsquo;ll understand the tests your proposed Kubernetes diffs must pass before being merged. You&amp;rsquo;ll have all the background information to be ready for part 2 (coming soon), in which we discuss how to actually run all the different test suites locally.
+Background As a brief reminder, I&amp;rsquo;ve been focusing the majority of my open-source development capacity on Kubernetes for almost a year. During that time, and going forward, I&amp;rsquo;m writing blog posts geared towards potential new Kubernetes&#39; contributors.</description>
+    </item>
+    
+  </channel>
+</rss>

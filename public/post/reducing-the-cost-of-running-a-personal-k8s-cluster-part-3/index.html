@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 3) Reducing the Cost of Running a Personal k8s Cluster: Conclusion - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 3) Reducing the Cost of Running a Personal k8s Cluster: Conclusion</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-12-15T00:00:00">2018-12-15</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/reducing-cost-conclusion.jpg" alt="(Part 3) Reducing the Cost of Running a Personal k8s Cluster: Conclusion">
+		</figure><div class="content post__content clearfix">
+			<h2 id="overall-impact">Overall impact</h2>
+<p>In parts <a href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-1/">one</a>
+and <a href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-2/">two</a>
+of this series, we sought to reduce our AWS
+costs by optimizing our computing, networking, and storage expenditures. Since
+this post is the final one in the series, let&rsquo;s consider how we did in
+aggregate. Before any resource optimizations, we had the following bill:</p>
+<pre tabindex="0"><code>master ec2 (1 m3.medium): (1 * 0.067 $/hour * 24 * 30) = 48.24
+nodes ec2 (2 t2.medium): (2 * 0.0464 $/hour * 24 * 30) = 66.82
+master ebs (1 64GB gp2): (1 * 64 * .1 $ per GB/month) = 6.40
+nodes ebs (2 128GB gp2): (2 * 128 * .1 $ per GB/month) = 25.60
+elb (1 classic) (1 * .25 $/hour * 24 * 30): 18.00
+total: 165.06
+</code></pre><p>After our resource optimizations, we have the following bill:</p>
+<pre tabindex="0"><code>master ec2 (1 reserved instance m3.medium): ($33 per month) = 33.00
+nodes ec2 (2 t2.medium): (2 * 0.0139 $/hour * 24 * 30) = 20.02
+master ebs (1 30GB gp2): (1 * 30 * .1 $ per GB/month) = 3.00
+nodes ebs (2 64GB gp2): (2 * 64 * .1 $ per GB/month) = 12.80
+elb (1 classic) (1 * .25 $/hour * 24 * 30): 18.00
+total: 86.82
+</code></pre><p>In total, we save $78 a month. Our annual cost decreases from $1,980 to $1,041
+for a savings of $938, or 48%! Not too bad at all!</p>
+<iframe src="https://giphy.com/embed/xNBcChLQt7s9a" width="480" height="480"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/win-xNBcChLQt7s9a">via GIPHY</a></p>
+<h3 id="comparison-to-not-using-k8s">Comparison to not using k8s</h3>
+<p>It&rsquo;s interesting to compare these costs to what we would pay if we wanted to run
+multiple applications without using Kubernetes (i.e. just utilizing AWS
+primitives like EC2 instances, ELBs, etc.).</p>
+<p>Our current <a href="https://github.com/mattjmcnaughton/personal-k8s/projects">personal-k8s roadmap</a>
+includes at least three more applications (JupyterHub, NextCloud, GitLab) we want to run in addition to the
+already running blog. In addition, we will want to run ElasticSearch
+and Kibana for log aggregation and visualization, in addition to the already
+running Prometheus, Alertmanager, and Grafana. In total, there are
+eight distinct applications we either have deployed, or intend to deploy, over
+the next couple of months.</p>
+<p>Let&rsquo;s compare running these applications on Kubernetes vs running these
+applications on bare AWS primitives purely with respect to cost. Let&rsquo;s assume we
+ran each application on t2.micro instances, paying $9.50 a month for each EC2
+instance.<sup><a href="#fn1">1</a></sup> For simplicities sake, let&rsquo;s assume
+each node running an application has a 10GB EBS volume attached, which costs
+$1 per month for each EC2 instance. Finally, we&rsquo;ll assume each node is assigned
+an ElasticIP, which <a href="https://aws.amazon.com/premiumsupport/knowledge-center/elastic-ip-charges/">has no cost</a>
+provided the ElasticIP is attached to a node.</p>
+<p>Overall, we have the following monthly costs:</p>
+<pre tabindex="0"><code>application nodes (8 on-demand t2.micro): ($9.50 per month * 8) = $76.00
+node storage (8 10GB EBS volumes): (.1 $ per GB/month * 10 * 8) = $8.00
+total: $84.00
+</code></pre><p>Our analysis above shows that once we commit to running multiple applications,
+creating a Kubernetes cluster is a cost-neutral decision compared to utilizing
+bare AWS primitives. And of course, running one&rsquo;s own Kubernetes cluster has
+many other advantages with respect to gaining valuable experience, easier
+maintenance and deployment, and it just being fun :)</p>
+<h2 id="retaining-and-extending-cost-savings-over-time">Retaining, and Extending, Cost Savings Over Time</h2>
+<p>We do not want this focus on minimizing our AWS bill to be a one time activity,
+and to help ensure it isn&rsquo;t, we&rsquo;ve put a couple different safeguards in place
+which will help us retain, and potentially even expand, our savings.</p>
+<p>First, we&rsquo;ve checked our Kops configuration into <a href="https://github.com/mattjmcnaughton/personal-k8s/blob/master/bootstrap/kops.yaml">source
+control</a>.
+It can be seen below as of the time of this post:</p>
+<script src="https://gist.github.com/mattjmcnaughton/97bb0e2402c6fc11067b3309501e6b9f.js"></script>
+<p>We can now track changes to our Kubernetes resources exactly the same as we
+track application changes. In addition, we have all the information we would
+need to recreate our Kubernetes cluster with all cost savings in place.</p>
+<p>Additionally, we&rsquo;ve created a <a href="https://github.com/mattjmcnaughton/personal-k8s/issues/12">recurring
+ticket</a> to perform
+resource optimization on our Kubernetes cluster. We plan to tackle this ticket
+once a quarter, and we&rsquo;ll share any findings in a blog post. The ticket suggests
+using the monitoring already in place to check things such as whether we can
+decrease the size of the master/nodes' root volumes and whether we can decrease
+resource allocations for certain pods. This
+<a href="https://github.com/mattjmcnaughton/personal-k8s/blob/master/design/cost-optimization.md">design document</a>
+describes all of our guidelines to pay as little for our Kubernetes cluster as
+possible, while still retaining &ldquo;production&rdquo; level performance.</p>
+<p>Finally, as we have additional capacity, we will explore additional high-impact
+cost-savings tools, and blog with any interesting findings. I&rsquo;m particularly
+interested in further researching <a href="https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler">Cluster
+Autoscaling</a>.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>We&rsquo;re done with our Reducing the Cost of Running a Personal k8s Cluster series
+(find the first post <a href="post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-3/">here</a>).
+Thank you for following along with me and I hope these cost savings made running
+your own k8s cluster slightly more feasible!</p>
+<iframe src="https://giphy.com/embed/xTiTng7eyNZuXl7GzC" width="480"
+height="192" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/hunger-games-good-luck-may-the-odds-be-in-your-favor-xTiTng7eyNZuXl7GzC">via
+GIPHY</a></p>
+<hr />
+<p><sup id="fn1">1. The t2.micro offers 1 CPU and 1 GB of memory. Currently, we
+haven&rsquo;t allocated any of our Kubernetes applications more than .5 CPU and 500MB
+of memory, so we are safe assuming we can use t2.micro instances.</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-2/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 2) Reducing the Cost of Running a Personal k8s Cluster: Volumes and Load Balancers</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/deploying-kubernetes-applications-part-0/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 0) Deploying Kubernetes&#39; Applications: The Problem</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

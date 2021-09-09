@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Upgrading k8s cluster to 1.13.6 - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Upgrading k8s cluster to 1.13.6</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-06-22T00:00:00">2019-06-22</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/1-13-6-upgrade.jpg" alt="Upgrading k8s cluster to 1.13.6">
+		</figure><div class="content post__content clearfix">
+			<p>Since I last posted, I&rsquo;ve been focusing almost all of my &ldquo;fun coding&rdquo; time on
+contributing to the Kubernetes code base. You can see my contributions on my
+<a href="https://github.com/mattjmcnaughton">Github</a>. I&rsquo;ve been particularly focusing on
+the components of the code base owned by
+<a href="https://github.com/kubernetes/community/tree/master/sig-node">sig/node</a>. It&rsquo;s
+been rewarding and a great learning experience&hellip; but it does mean I haven&rsquo;t
+been focusing on adding features to my personal Kubernetes cluster. And since
+that&rsquo;s what I mainly blogged about, it also means I&rsquo;ve been blogging less. While
+I hope to blog more about my k8s contributions in the future, I currently feel I
+should be 100% focused on writing and reviewing code.</p>
+<p>However, while I&rsquo;m not actively developing on my Kubernetes cluster, I still
+need to ensure I&rsquo;m using a supported version without any known security issues.
+In <a href="post/update-schedule-for-k8s-cluster/">this blog post</a>, I outlined my
+schedule for upgrading my cluster and also promised to blog about the process.
+So I&rsquo;m back posting :)</p>
+<iframe src="https://giphy.com/embed/5mYwgGvIR2GN2g0ZZj" width="480"
+height="258" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/snl-saturday-night-live-season-44-5mYwgGvIR2GN2g0ZZj">via
+GIPHY</a></p>
+<p>In this blog post, I&rsquo;ll talk about my experience upgrading my Kubernetes cluster
+from 1.12.7 to 1.13.6.</p>
+<h2 id="upgrade-schedule">Upgrade schedule</h2>
+<p>In the aforementioned previous blog post, we outlined our cluster upgrade policy
+as the following:</p>
+<blockquote>
+<p>If there is a patch release to address a security vulnerability, we will apply it immediately&hellip;
+Otherwise, we will check at the start of each month for if there is a new patch
+release for our minor version, and will apply it if so. On a quarterly cadence,
+we will check if there is a new minor version release, and update if
+necessary to ensure we are using one of the three latest minor versions.</p>
+</blockquote>
+<p>Currently, our cluster is running 1.12.7. Recently, k8s announced
+<a href="https://groups.google.com/forum/#!topic/kubernetes-dev/OxFMDVnqk60">CVE-2019-11246</a>, which impacts
+all 1.12.x clusters below 1.12.9. So we need to upgrade to at least 1.12.9.</p>
+<p>However, with release of of k8s 1.15 this week, 1.12 is moving out of support window (i.e.
+1.12.10 will be the last patch release). As a result, we decided to upgrade to 1.13.x. We
+need to upgrade to 1.13.6 to get the fix for the previously mentioned CVE.</p>
+<p>As a reminder, because we use <a href="https://github.com/kubernetes/kops">kops</a> to manage our cluster, Kops
+<a href="https://github.com/kubernetes/kops#kubernetes-version-support">support for different minor versions</a>
+dictates which minor versions we can use. Kops 1.13 is in beta, and I feel
+comfortable using it to deploy our cluster. However, Kops 1.14 is still in
+alpha, so I&rsquo;m not yet comfortable using it, and thus we&rsquo;re blocked from
+upgrading all the way to 1.14.x. So 1.13.6 it is!</p>
+<h2 id="upgrade-experience">Upgrade experience</h2>
+<p>Overall, the upgrade experience was smooth! At this point, the 1.13.x release
+has been out for a long time and is pretty stable. Furthermore, the
+<a href="https://kubernetes.io/blog/2018/12/03/kubernetes-1-13-release-announcement/">new functionality added in
+1.13</a> does not
+have a substantial impact on the applications running on our cluster nor on the
+way we manage our cluster.</p>
+<p>In the past when we ran <code>kops rolling-upgrade</code>, we&rsquo;ve had issues with stale DNS
+records causing workers to try and contact the old master instead of the new
+master. To address these issues, we doubled both the timeouts we wait after
+terminating a machine and the amount of time we allow kops to attempt
+verification. This migration did not experience DNS staleness issues, although
+we can&rsquo;t be positive it was because of the increased timeouts and not a kops
+bugfix.</p>
+<p>Overall, a smooth migration!</p>
+<iframe src="https://giphy.com/embed/A6aHBCFqlE0Rq" width="480" height="360"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/the-simpsons-swag-homer-simpson-A6aHBCFqlE0Rq">via
+GIPHY</a></p>
+<h2 id="future-plans">Future plans</h2>
+<p>While I don&rsquo;t have any concrete plans, I&rsquo;m thinking about no longer using Kops
+to deploy my cluster, and instead using Kubeadm and Packer/Terraform to build/deploy
+machines. My work with sig/node has lead to the desire for less abstractions
+between the k8s cluster and myself. Also, if I was using kubeadm, I&rsquo;d be
+able to use newer versions of k8s, without needing to wait for the accompanying
+kops release, which typically lags a minor version or two behind. Like I said, I
+have no concrete plans, but I&rsquo;m thinking about it. If I do decide to make this
+change, I will certainly blog about it :)</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/update-schedule-for-k8s-cluster/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">Update Schedule for k8s Cluster and its Applications</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/back-to-basics/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">Nuage: Back to Basics</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

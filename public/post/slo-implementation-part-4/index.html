@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 4) SLO Implementation: Alerting - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 4) SLO Implementation: Alerting</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-11-12T00:00:00">2018-11-12</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/button-alert.jpg" alt="(Part 4) SLO Implementation: Alerting">
+		</figure><div class="content post__content clearfix">
+			<p>I&rsquo;m pretty excited to be writing this blog post, as it is the final one in our
+<a href="/post/slo-implementation-part-0">SLO Implementation</a> series.</p>
+<iframe src="https://giphy.com/embed/3osBL66ezuGwRXXGWk" width="480"
+height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/nba-dunk-3osBL66ezuGwRXXGWk">via GIPHY</a></p>
+<p>In this final post, we&rsquo;ll discuss using Prometheus <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">Alerting
+Rules</a>
+and <a href="https://prometheus.io/docs/alerting/alertmanager/">Alertmanager</a> to notify
+us when our blog is violating its SLO. Adding this alerting ensures
+we will be aware of any severe issues our users may face, and allows us to
+minimize the error budget spent by each incident.</p>
+<h2 id="alerting-strategies">Alerting Strategies</h2>
+<p>Our first step is deciding the algorithm we&rsquo;ll use to determine when we receive
+an alert. <a href="https://www.amazon.com/Site-Reliability-Workbook-Practical-Implement/dp/1492029505">The Site Reliability Workbook</a>
+has useful guidance in this area. At the highest level, they state our goal &ldquo;is
+to be notified for any <em>significant</em> event: an event that consumes a large
+fraction of the error budget.&rdquo; They then define four categories by which we can
+measure an alerting strategy: Precision (i.e. proportion of events detected that
+were actually significant), Recall (i.e. proportion of actual significant events
+detected), Detection time (i.e. how long it takes us to notify during a
+significant event), and Reset time (i.e. how long after an issue is resolved
+before the alert stops firing).</p>
+<p>The workbook presents two main categories of alerting strategies. In the first,
+we compare the current SLI measure to the SLO threshold, and alert when the
+current measure is outside the threshold. We can tune both the timeframe over
+which we calculate the &ldquo;current&rdquo; SLI measure (i.e. aggregate over 10m, aggregate
+over 1d, etc.) and also how long we require the current SLI measure to be
+outside the SLO threshold before we alert.</p>
+<p>Another option is alerting on burn rate, which is &ldquo;how fast, relative to the
+SLO, the service consumes the error budget.&rdquo; Again, there are a variety of
+parameters you can tune when utilizing this strategy, such as alerting on
+multiple different burn rates and also having multiple windows over which you
+calculate burn rate. From my reading, this approach offers the best balance of
+precision, recall, detection time, and reset time. However, it is decidedly
+non-trivial to implement and reason about.</p>
+<p>In the end, we have two options. We can take the simpler strategy to implement
+and accept its shortcomings with respect to precision, recall, detection time,
+and/or reset time, or we can take the more complex approach and accept the
+difficulty of implementation and maintenance.</p>
+<p>In the spirit of releasing MVPs, I chose the first option, and decided to alert
+based on comparing the SLI measure to the SLO threshold. Specifically, we&rsquo;ll
+receive an alert if our SLIs for availability and latency, as measured over the
+last hour, are outside of the SLO threshold for more than 15 minutes.</p>
+<pre tabindex="0"><code># Availability
+sum(rate(caddy_http_response_status_count_total{service=&quot;blog&quot;,status!~&quot;5..&quot;}[1h])) / sum(rate(caddy_http_response_status_count_total{service=&quot;blog&quot;}[1h])) &lt; .99
+
+# Latency
+histogram_quantile(0.99, sum(rate(caddy_http_request_duration_seconds_bucket{service=&quot;blog&quot;}[1h])) by (le)) &gt; 1
+</code></pre><p>This alerting strategy has a fairly high precision, as if we are outside of the
+SLO thresholds for &gt; 15 minutes, there is very likely an issue. Additionally, it
+has a fairly good reset time, in that it takes at most an hour after an incident
+is resolved for it to stop impacting alerting decisions. However, it does not
+have great recall or detection time. Specifically, if we have a 100% outage, we
+would still have to wait at least 15 minutes before receiving an alert, at which
+point we could&rsquo;ve burned our entire error budget. Additionally, forcing the
+SLI to be outside of the SLO threshold for 15 minutes introduces the risk of the
+SLI oscillating around the threshold but never spending a full 15 minutes
+outside of it. In this situation, we don&rsquo;t receive an alert even though there
+may be a real issue.</p>
+<p>Still, despite its flaws, I think our chosen alerting strategy will be
+sufficient for an MVP. So let&rsquo;s move on to implementation!</p>
+<iframe src="https://giphy.com/embed/65os7odbIW6pa" width="480" height="296"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/finals-study-jason-bateman-65os7odbIW6pa">via
+GIPHY</a></p>
+<h2 id="adding-prometheus-rules-for-our-alerting-strategy">Adding Prometheus Rules for our Alerting Strategy</h2>
+<p>Prometheus supports
+<a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/">AlertRules</a>,
+which allow us to use Prometheus expression language to define an alert
+condition, and send notifications about any firing alerts to an external
+service.</p>
+<p><a href="https://github.com/coreos/prometheus-operator">CoreOS' Prometheus Operator</a>
+provides the
+<a href="https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/alerting.md#alerting">PrometheusRule</a>
+custom resource, which allows us to both specify a Prometheus alert rule. In the
+file below, you can see we&rsquo;ve created three alert rules. The <code>BlogDown</code> alert
+checks if the blog is not functioning at all, while the <code>SLOLatencyFailure</code> and
+<code>SLOAvailabilityFailure</code> alerts utilize the previously discussed alerting
+strategy to check if our blog is operating within its SLO.
+I&rsquo;ve included the template file, with line by line documentation, below.</p>
+<script src="https://gist.github.com/mattjmcnaughton/e1d871db50d730048f4c7777e9719dfd.js"></script>
+<p>We also must add a <code>ruleSelector</code> field to our Prometheus clusters' spec. This
+<code>ruleSelector</code> field instructs our Prometheus cluster that it should alert on
+any rules with label <code>role=alert-rules</code>. You can see the changed element of the
+Prometheus manifest below. For now, ignore the <code>alerting</code> field, as we&rsquo;ll
+examine it in the next section.</p>
+<script src="https://gist.github.com/mattjmcnaughton/be48cd708ef96f0ee25c8998b1e7c53e.js"></script>
+<p>After applying both of these manifests to our Kubernetes cluster, our Prometheus
+cluster will now regularly execute the queries defined in our alerting rules,
+and raise an alert if necessary. If you navigate to the <code>/alerts</code> endpoint on
+your Prometheus cluster UI, you should see the
+image below. Please ignore the <code>DeadMansSwitch</code> alert, its just intended to
+ensure that our alerting pipeline is working.</p>
+<img src="/img/prometheus-alerts.png">
+<p>Additionally, if you navigate to the <code>/rules</code> endpoint on your Prometheus
+cluster, you&rsquo;ll receive in-depth information about your Prometheus cluster&rsquo;s
+currently configured alert rules.</p>
+<img src="/img/prometheus-rules.png">
+<h2 id="deploying-alertmanager">Deploying Alertmanager</h2>
+<p>Prometheus alerting rules are concerned simply with noticing something is wrong
+and raising a simple alert. They are not intended to be responsible for
+the more nuanced processing if processing raising alerts, such as routing them
+to different channels (i.e. Slack, Opsgenie, etc.), grouping related alerts,
+etc. <a href="https://prometheus.io/docs/alerting/alertmanager/">Alertmanager</a> fulfills
+said role within the Prometheus ecosystem, so our next goal is deploying
+Alertmanager and configuring our Prometheus cluster to send all alerts to our
+Alertmanager cluster, which will then process them appropriately.</p>
+<p>For this specific example, we&rsquo;ll be configuring AlertManager to route all
+critical alerts to <a href="https://www.opsgenie.com/">Opsgenie</a>, and to do nothing on
+all non-critical alerts. For those who are curious,
+I chose Opsgenie for the simple reason
+that it offers a free tier and PagerDuty doesn&rsquo;t. For now, my alert escalation
+policies are so simple that the functionality differences between the platforms
+have no real impact. If you intend to exactly replicate the SLO implementation described
+in this blog, you&rsquo;ll want to sign up for a free account with Opsgenie before
+progressing to the later steps.</p>
+<p>First, we need to create an <a href="https://prometheus.io/docs/alerting/configuration/">Alertmanager configuration
+file</a>, which we&rsquo;ll
+eventually connect to the Alertmanager cluster running on Kubernetes.
+At a high level, the file below directs Alertmanager to send all alerts with the
+<code>severity=critical</code> label to Opsgenie and swallows all other alerts.</p>
+<p>This configuration file ultimately must include our Opsgenie API key, which we
+should treat as a secret and not check into source control. However, we still
+want the remainder of the file in our Git repo, so we treat this configuration
+file as a template file. We specify <code>opsgenie_api_key: ${OPSGENIE_API_KEY}</code> and
+then use <code>envsubst</code> to fill in the template when necessary. We never save an
+actual file with the <code>OPSGENIE_API_KEY</code> in source control.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">export OPSGENIE_API_KEY<span style="color:#f92672">=</span>...
+cat alertmanager-config.yaml.sample | envsubst &gt; alertmanager-config.yaml
+</code></pre></div><p>And here&rsquo;s the configuration file.</p>
+<script src="https://gist.github.com/mattjmcnaughton/ec5037865b0f0016ba85e7d6a8c290df.js"></script>
+<p>We have our configuration defined, but we need a way to associate it with the
+Alertmanager cluster which we&rsquo;ll be deploying. The Prometheus Operator
+<a href="https://coreos.com/operators/prometheus/docs/latest/user-guides/alerting.html">documentation</a>
+specifies that an Alertmanager resource will load its configuration from the
+<code>alertmanager.yaml</code> data element in a
+<a href="https://kubernetes.io/docs/concepts/configuration/secret/">Secret</a> titled
+<code>alertmanager-$ALERTMANAGER_NAME</code>.</p>
+<p>A Secret is a Kubernetes resource responsible
+for storing a small amount of sensitive information. Pods with access to the
+secret can then access the sensitive value either through exposing it as an
+environment variable or mounting it as a volume into the container.</p>
+<p><a href="https://kubernetes.io/docs/concepts/configuration/secret/#creating-your-own-secrets">Multiple methods
+exist</a> for creating secrets.
+Ideally, we would prefer to check a manifest file for our Secret resource into
+source control. However, as the <a href="https://kubernetes.io/docs/concepts/configuration/secret/#risks">Kubernetes documentation
+highlights</a>,
+the base64 encoding of the sensitive information in the Secret manifest does not
+provide any cryptographic security, and we must treat a Secret manifest file as
+sensitive, and we definitely do not want to check sensitive information into source control.</p>
+<p>We solve this problem similar to how we did with specifying the Opsgenie API key
+in our Alertmanager configuration file. We create a <code>secret.yaml.sample</code> file,
+which specifies <code>alertmanager.yaml: ${ALERTMANAGER_YAML_BASE64}</code> as its singular
+data element. You can see the full file below.</p>
+<script src="https://gist.github.com/mattjmcnaughton/c54c3619c5b1fbb61fb7d985ea734e62.js"></script>
+<p>We can then run the following sequence of commands to create the
+actual <code>secret.yaml</code>, which we git ignore. We can keep the
+<code>secret.yaml</code> on our local disk, meaning <code>kubectl apply -f templates/</code> still
+applies manifests for all our Alertmanager resources. You only need to run the
+below commands to regenerate the <code>secret.yaml</code> when Alertmanager configuration
+changes, Opsgenie credentials change, or when you first clone the Git
+repository.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">export OPSGENIE_API_KEY<span style="color:#f92672">=</span>...
+export ALERTMANAGER_YAML_BASE64<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>cat alertmanager-config.yaml.sample | envsubst | base64 | tr -d <span style="color:#e6db74">&#39;\n&#39;</span><span style="color:#66d9ef">)</span>
+cat secret.yaml.sample | envsubst &gt; secret.yaml
+</code></pre></div><p>It&rsquo;s now smooth sailing for deploying Alertmanager, as our overall approach has
+many parallels with deploying Prometheus to our Kubernetes cluster.
+First, we create a simple
+manifest for the Alertmanager custom resource, specifying we would like a
+Alertmanager cluster with two replicas (i.e. high availability).</p>
+<script src="https://gist.github.com/mattjmcnaughton/cf02ac21757bb1949ab15fb3c60f89c2.js"></script>
+<p>Then, we create a service which allows us to access our Alertmanager cluster.
+As we&rsquo;ve discussed in previous posts in this SLO implementation series,
+I haven&rsquo;t yet configured
+HTTPS for my services. As a result, we cannot do any form of meaningful
+authentication, and as a result, I&rsquo;m hesitant to expose Alertmanager to the
+public internet. So we ensure our service is not accessible externally, and then
+use <code>kubectl port-forward svc/alertmanager 9093:9093</code> to form a secure
+connection when necessary.</p>
+<script src="https://gist.github.com/mattjmcnaughton/794c7bea7387c56c9c1732cb8a389d1d.js"></script>
+<p>Our final step is updating the <code>alerting.alertmanagers</code> value on our Prometheus
+resource, to specify that our Prometheus cluster should send alerts to the
+Alertmanager cluster we just created. The exact syntax necessary for updating
+the manifest can be seen below.</p>
+<script src="https://gist.github.com/mattjmcnaughton/be48cd708ef96f0ee25c8998b1e7c53e.js"></script>
+<p>And with that, Alertmanager should be good to go. See my
+<a href="https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/alertmanager">personal-k8s</a>
+for every necessary manifest, as I continue to punt on describing RBAC in my
+blog posts. We&rsquo;ll get to it soon, I promise.</p>
+<p>After its up and running, and you&rsquo;ve run the port-forwarding command, you should
+be able to navigate to <code>localhost:9093</code> and see Alertmanager (pictured below).
+You also should start receiving alerts via Opsgenie whenever Prometheus fires an
+alert..</p>
+<img src="/img/alertmanager.png">
+<h2 id="wrapping-it-up">Wrapping it up</h2>
+<iframe src="https://giphy.com/embed/ECtuHAGUrcITK" width="396" height="480"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/cat-christmas-mixed-gif-ECtuHAGUrcITK">via
+GIPHY</a></p>
+<p>Congrats, we made it to the end! Remember, in the <a href="/post/slo-implementation-part-0">first
+post</a>, we said
+&ldquo;our goal for this project is to create the monitoring infrastructure which will
+allow us to monitor metrics pertaining to our SLO, and alert me when this blog
+is violating its SLO.&rdquo; I think we accomplished all those objectives, and am
+looking forward to how monitoring this blog&rsquo;s SLO will help me ensure it
+provides a consistent level of service.</p>
+<p>Thank you for reading this series, and
+please reach out in the comments if you have questions about any part of the
+process. To be honest, I&rsquo;m not sure what the next Kubernetes
+project I&rsquo;ll tackle is
+(maybe trying to spend less money on my personal cluster&hellip;), but please stay
+tuned because I&rsquo;ll definitely blog about whatever it ends up being.</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/slo-implementation-part-3/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 3) SLO Implementation: Deploying Grafana</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-0/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 0) Reducing the Cost of Running a Personal k8s Cluster: Introduction</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

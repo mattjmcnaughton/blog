@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 2) SLO Implementation: Prometheus Up &amp; Running - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 2) SLO Implementation: Prometheus Up &amp; Running</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-10-13T00:00:00">2018-10-13</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/prometheus.png" alt="(Part 2) SLO Implementation: Prometheus Up &amp; Running">
+		</figure><div class="content post__content clearfix">
+			<p>For all of you just itching to deploy another application to your Kubernetes
+cluster, this post is for you.</p>
+<iframe src="https://giphy.com/embed/GV3aYiEP8qbao" width="480" height="241"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/dj-khaled-GV3aYiEP8qbao">via GIPHY</a></p>
+<p>In it, I&rsquo;ll be discussing deploying
+<a href="https://prometheus.io">Prometheus</a>, the foundation of our planned monitoring
+and alerting, to our Kubernetes cluster. This post will only discuss getting the
+Prometheus cluster running on our Kubernetes cluster.
+I&rsquo;ll leave setting up monitoring, alerting, and useful visualizations for a later blog post in the
+series.</p>
+<h2 id="deployment-strategy">Deployment Strategy</h2>
+<p>The last application we deployed via Kubernetes, this blog, <a href="/post/hosting-static-blog-on-kubernetes">required us to
+write the all aspects of the configuration from
+scratch</a>. We could pursue the same
+strategy when deploying Prometheus onto our Kubernetes cluster, defining from
+scratch the needed Pods, Deployments, Services, ConfigMaps, Secrets,
+etc. However, doing so would be like writing my own web server to serve this
+blog&rsquo;s static content. Sure we could probably do it, but it&rsquo;d be complicated,
+and at the end of they day, we&rsquo;d have something worse than what already was
+available in the open-source community.</p>
+<p>We&rsquo;d much rather utilize a method that&rsquo;s been developed and tested by the active
+Cloud Native community. Not only does utilizing a community
+method decrease the initial cost of deploying Prometheus, but it also decreases
+the long-term maintenance cost, as I can rely on bug fixes and debugging
+assistance from the community. Yay open source!</p>
+<iframe src="https://giphy.com/embed/4xpB3eE00FfBm" width="480" height="458"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/mrw-week-job-4xpB3eE00FfBm">via GIPHY</a></p>
+<p>A couple of different community supported methods exist for deploying a
+Prometheus cluster onto a Kubernetes cluster.</p>
+<p>The simplest option comes from the
+folks at <a href="https://giantswarm.io/">Giant Swarm</a>. It&rsquo;s a collection of static
+manifests one can use for deploying a <a href="https://github.com/giantswarm/kubernetes-prometheus">Prometheus
+cluster</a>. Essentially, we
+could clone their repo, run <code>kubectl apply -f manfiests-all.yaml</code> and we&rsquo;d be up
+and running. However, we would only be able to manage our Prometheus cluster by
+interacting with low-level Kubernetes API objects, such as Pods and Services,
+with the manifest files. While we don&rsquo;t mind that method for small applications,
+like this blog, it can become unwieldy with a more complex application like
+Prometheus.</p>
+<p>For a little more flexibility, we could use the
+<a href="https://github.com/helm/charts/tree/master/stable/prometheus">Prometheus Helm Chart</a>.
+I plan to discuss <a href="https://helm.sh">Helm</a> and Charts in
+much greater depth in future blog posts, but at a high level, we can think of
+them as a package manager for Kubernetes. Instead of directly interacting with
+static manifest files and low-level Kubernetes API resources,
+we define the Chart as a higher level abstraction. You
+can template the helm chart with custom values and easily share them publicly.
+Helm also offers tools for managing the deployment of charts, with both upgrades
+and easy rollbacks. There are a ton of <a href="https://github.com/helm/charts/tree/master/stable">community contributed Helm
+charts</a> for
+installing popular applications, and fortunately, Prometheus is included.</p>
+<p>Finally, we have the option of using <a href="https://coreos.com/operators">Operators</a>,
+an exciting recent method of packaging, deploying, and managing a Kubernetes
+application. Similar to Helm Charts, Operators provide more application specific
+resources with which we can interact. Operators are quite elegant in their
+design and implementation, so I&rsquo;ll do a deep dive into how they work in the next
+section. Spoiler alert, CoreOS has developed a fantastic
+<a href="https://github.com/coreos/prometheus-operator">Prometheus Operator</a>, and we&rsquo;ll
+use it to deploy our Prometheus cluster.</p>
+<h2 id="a-history-of-custom-resource-definitions-controllers-and-operators">A history of Custom Resource Definitions, Controllers, and Operators</h2>
+<iframe src="https://giphy.com/embed/xT5LMtHmmaTZgm9ELC" width="480"
+height="362" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/season-4-the-simpsons-4x12-xT5LMtHmmaTZgm9ELC">via
+GIPHY</a></p>
+<h3 id="custom-resource-definitions">Custom Resource Definitions</h3>
+<p>From the beginning, Kubernetes defined a number of lower-level resources (or objects), like Pods,
+Services, ConfigMaps, etc. We could only perform CRUD operations on these objects.</p>
+<p>Over time, users started wanting Kubernetes objects to be more high-level.
+Instead of interacting with Deployments, Services, and ConfigMaps, we wanted to
+interact with applications. For example, we wanted to be able to run <code>kubectl get prometheus</code> and see all Prometheus clusters running on our Kubernetes
+cluster just like we can run <code>kubectl get pods</code> and see all pods running on our
+Kubernetes cluster.</p>
+<p>Kubernetes supported this desire via
+<a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">custom resource definitions</a>.
+When we create a new CustomResourceDefinition object, we can then interact
+with the API server to read/write information about our custom object. We can
+achieve the above goal of running <code>kubectl get prometheus</code> and seeing all
+running Prometheus clusters.</p>
+<h3 id="controllers">Controllers</h3>
+<p>We&rsquo;ve introduced a new custom object to the Kubernetes API.
+However, we haven&rsquo;t explained how Kubernetes actually knows what actions to perform
+when CRUD operations are performed on that API object. In other words, when we tell
+Kubernetes to create or delete an instance of our Prometheus object, how is
+Kubernetes to know what to do?</p>
+<p>A brief look at Kubernetes architecture illuminates how we can make this
+possible. Kubernetes runs an API server, to which the user could send requests, which will
+read/write resources from/to Etcd&rsquo;s persistent storage.
+It also contains the Control Plane, which is comprised of the
+Controllers which are responsible for ensuring
+the state declared in the persistent storage is reflected on the cluster.
+In other words, if we send an request to
+the Kubernetes API specifying there should be a Deployment containing
+five pods running an Nginx container image, then the DeploymentController,
+is responsible for ensuring said pods are actually running on some worker nodes.</p>
+<p>We can follow the exact same pattern for the higher level object defined via the
+CustomResourceDefinition. Specifically, we deploy our own custom Controller to
+the Kubernetes cluster. It is responsible for interacting with the Kubernetes
+API and translating our CustomResourceDefinition into native Kubernetes
+concepts. For example, if our Controller sees it must create a new Prometheus
+cluster, it will use the Kubernetes API to create the appropriate Pods, Secrets, etc.</p>
+<h3 id="operators">Operators</h3>
+<p>An <a href="https://coreos.com/operators/">Operator</a> couples CustomResourceDefinitions
+and Controllers with operational knowledge to allow us to deploy and manage an
+application, at a high level of abstraction, entirely via the Kubernetes API.
+Similar to a cloud provisioned service (i.e. Amazon&rsquo;s RDS), we can just specify
+we want an application, and the operator will perform all the necessary actions
+for it to exist.</p>
+<h2 id="using-the-prometheus-operator-to-deploy-a-prometheus-cluster">Using the Prometheus Operator to deploy a Prometheus Cluster</h2>
+<p>With a solid understanding of CustomResourceDefinitions, Controllers, and
+Operators, we are ready to deploy our Prometheus cluster.</p>
+<iframe src="https://giphy.com/embed/l3vRdDji6VmVaj6kE" width="480" height="270"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/pitchonfox-pitch-l3vRdDji6VmVaj6kE">via
+GIPHY</a></p>
+<p>Our first step is deploying the Prometheus Operator to our Kubernetes cluster.
+We define templates for a couple different Kubernetes objects. Unsurprisingly
+based on our previous discussion, we need to specify the
+CustomResourceDefinition objects. We define a CustomResourceDefinition
+object for each high level Prometheus concept, so we have CRDs for Prometheus,
+PrometheusRule, ServiceMonitor, and AlertManager. We&rsquo;ll examine the code
+for interacting with these CRDs shortly. We also specify a Deployment object
+responsible for ensuring our custom Controller is running and translating our
+CustomResourceDefinitions into the proper native Kubernetes objects.
+Note, to keep this blog post focused, I&rsquo;m ignoring all RBAC-related manifests. I&rsquo;ll be diving
+into RBAC in the future on this blog.</p>
+<p>All manifests are available
+<a href="https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/prometheus-operator/templates">here</a>,
+and running <code>kubectl apply -f applications/prometheus-operator/templates</code> after
+cloning <a href="https://github.com/mattjmcnaughton/personal-k8s">personal-k8s</a> will
+actually deploy the operator to your cluster. These manifests are based on the <a href="https://raw.githubusercontent.com/coreos/prometheus-operator/master/bundle.yaml">recommended install
+strategy</a>
+from the good folks at CoreOS.</p>
+<p>Now that we have the Prometheus Operator deployed, we can use it to create a
+Prometheus cluster. We&rsquo;ll make use of the Prometheus and ServiceMonitor
+CustomResourceDefinitions we created when deploying the operator, as well as
+deploying a Service so we can access our Prometheus cluster.</p>
+<p>We start with the manifest for our Prometheus custom resource. I&rsquo;ve written in-depth
+comments in the script, but at the highest level, this manifest specifies we
+want a Prometheus cluster with two replicas. This cluster should scrape metrics
+from all ServiceMonitors which match the <code>app=blog</code> label.</p>
+<script src="https://gist.github.com/mattjmcnaughton/9e37613d51790db76fedbece10d28a32.js"></script>
+<p>We progress to the manifest for our ServiceMonitor resource. A
+ServiceMonitor specifies the services in Kubernetes from which our Prometheus
+cluster should pull metrics. It is quite useful, as it means we don&rsquo;t have to write a
+Prometheus config file, which can be
+<a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config">non-trivial</a>
+when trying to monitor an application running on Kubernetes. The embedded gist
+provides line by line documentation, but overall this manifest specifies we will
+monitor services matching the <code>app=blog</code> label.</p>
+<script src="https://gist.github.com/mattjmcnaughton/502eadd3ba655dc2a716041397fc99f1.js"></script>
+<p>After applying the two manifests above, we should have a Prometheus cluster
+running and scraping metrics from the services we specified. Our final step is
+creating a Service to support us accessing our Prometheus cluster. For now, we
+create a Service with the <code>ClusterIP</code> type, because we do not want to expose
+this Prometheus cluster to the public internet as does not have authentication
+or encryption. Fortunately, we can still access it via port forwarding.
+If we run <code>kubectl port-forward svc/prometheus 9090:9090</code>, then the Prometheus
+cluster UI will be accessible via <code>localhost:9090</code>.</p>
+<script src="https://gist.github.com/mattjmcnaughton/80eed7fc04ff3c680463cfd2899ffe10.js"></script>
+<p>Again, to keep this blog post focused, I&rsquo;m ignoring all RBAC-related manifests.
+All manifests are available
+<a href="https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/prometheus/templates">here</a>,
+and running <code>kubectl apply -f applications/prometheus/templates</code> after
+cloning <a href="https://github.com/mattjmcnaughton/personal-k8s">personal-k8s</a> will
+actually deploy the Prometheus cluster to your k8s cluster. Once the cluster is
+deployed, you can run the port forwarding command listed above to ensure you can
+successfully connect. If you navigate to <code>localhost:9090/targets</code>, you should
+see that your successfully scraping the <code>blog</code> endpoint.</p>
+<p><img src="/img/prometheus-targets-example.png" /></p>
+<h2 id="wrapping-up-and-moving-forward">Wrapping Up and Moving Forward!</h2>
+<p>Phew! We made it - thank you for sticking with me for this longer post.</p>
+<iframe src="https://giphy.com/embed/111ebonMs90YLu" width="480" height="360"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/thumbs-up-111ebonMs90YLu">via GIPHY</a></p>
+<p>In the next posts in this series, we&rsquo;ll focus on configuring a Grafana dashboard
+to track our SLO/Error Budget indicators, and then in the following, and final,
+post, we&rsquo;ll configure alerting around these indicators. Should be fun!</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/personal-k8s-cluster-roadmap/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">Personal k8s Cluster Roadmap</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/slo-implementation-part-3/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 3) SLO Implementation: Deploying Grafana</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

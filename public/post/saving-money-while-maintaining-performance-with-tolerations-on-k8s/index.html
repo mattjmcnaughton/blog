@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Saving Money While Maintaining Performance With Tolerations on k8s - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Saving Money While Maintaining Performance With Tolerations on k8s</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-02-01T00:00:00">2019-02-01</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/saving-money.jpg" alt="Saving Money While Maintaining Performance With Tolerations on k8s">
+		</figure><div class="content post__content clearfix">
+			<p>In our <a href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-0/">blog series</a>
+on decreasing the cost of our Kubernetes cluster, we
+suggested replacing <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html">on-demand EC2 instances with spot instances</a>
+for Kubernetes' nodes. When we first introduced this idea, we mentioned that
+this strategy could have negative impacts on both our applications'
+availability and our ability to monitor our applications' availability. At the
+time, we still converted to spot instances because we believed the savings
+benefits were worth the decrease in reliability. Excitingly, this blog post outlines
+a strategy via which we can still decrease the cost we pay for our Kubernetes'
+cluster, but not sacrifice important applications' availability, or our ability
+to monitor our cluster or the applications running on it.</p>
+<h2 id="the-problem-with-spot-instances">The Problem with Spot Instances</h2>
+<p>Fundamentally, the issue with spot instances is that we can&rsquo;t guarantee that we
+will always have them. One obtains spot instances by specifying a maximum bid.
+You maintain the spot instance as long as the market price of a spot instance is
+less than your maximum bid. However, if it rises above your spot instance,
+Amazon will terminate your spot instance.</p>
+<p>Unfortunately, there is no ceiling on the market price for spot instances. This
+lack of ceiling is somewhat counterintuitive, as we would expect that the price
+of an equivalent on-demand instance would serve as a ceiling. However, this
+expectation rests on the assumption that no one will pay more for a spot
+instance than they would for an equivalent on-demand instance. This assumption is
+not a safe one to make. For example, imagine another spot instance market
+participant is using spot instances to perform video encoding where each unit of
+work takes 1hr. They seek confidence their in-progress work won&rsquo;t be
+interrupted, so they would rather pay $5 an hour to retain their spot instance,
+then $4 an hour for a new on-demand instance on which they would need to begin
+their work from scratch.</p>
+<p>In short, if we are utilizing spot instances, and cost considerations prevent
+us from setting an incredibly high maximum bid, there will be times when
+we cannot purchase spot instances. In practice, I&rsquo;ve found these times to occur
+approximately a couple of times a week for around 10 or so minutes. During these
+windows, our Kubernetes cluster has no nodes on which to run pods.</p>
+<iframe src="https://giphy.com/embed/xTiTnGeUsWOEwsGoG4" width="480"
+height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/problem-dilbert-pointy-haired-boss-xTiTnGeUsWOEwsGoG4">via
+GIPHY</a></p>
+<h2 id="impact-on-our-k8s-cluster">Impact on our k8s cluster</h2>
+<p>The lack of spot instances' impact on our Kubernetes cluster is direct; if we do
+not have nodes, we cannot run any pods. In other words, our Kubernetes
+cluster cannot perform any of its assigned functions, like hosting this blog.
+To compound the issue, the nodes also run our Prometheus and Alertmanager
+pods. We depend on these pods for alerts when either our Kubernetes cluster, or
+the applications running on it, have issues. If they are also not executing,
+because an inability to purchase spot instances caused us to have no
+nodes, then there&rsquo;s no way to tell there&rsquo;s an ongoing issue. Overall, having no
+nodes causes our cluster to completely stop functioning, and removes the
+mechanism responsible for telling us when the cluster and its applications aren&rsquo;t working.</p>
+<h2 id="the-solution">The Solution</h2>
+<p>In certain use cases, short periods of cluster downtime, without corresponding
+alerts, may be acceptable. In that case, its fine to use exclusively spot
+instances for all nodes. However, downtime of this nature is not
+acceptable for our personal Kubernetes cluster. Fortunately, there is a solution.</p>
+<p>In our updated cluster, we transition from using exclusively spot instances for
+our nodes, to using a combination of spot instances and on-demand
+instances. More specifically, we classify all applications running on our
+Kubernetes cluster as either &ldquo;high availability&rdquo; or &ldquo;best effort&rdquo;. We then
+purchase just enough on-demand instance computing resources to run our high
+availability applications, while running all the best effort applications on our
+spot instances. We know Amazon will never reclaim our on-demand instances, so
+they do not have the same recurring downtime as our spot instances.</p>
+<p>This more nuanced strategy gives us the best of both worlds. We save more money on EC2
+resources than we would if we used only on-demand instances for our nodes,
+and we enjoy better reliability thatn we would if we used only spot instances.</p>
+<iframe src="https://giphy.com/embed/5z0cCCGooBQUtejM4v" width="480"
+height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/thedailyshow-funny-reaction-5z0cCCGooBQUtejM4v">via
+GIPHY</a></p>
+<h2 id="the-implementation">The Implementation</h2>
+<p>Fortunately, Kubernetes and Kops provide primitives that make implementing the
+strategy outlined above fairly trivial.</p>
+<p>First, we need to update our Kubernetes' cluster configuration to now have three
+different instance groups. We still have the <code>master-us-west-2a</code> instance group,
+which is responsible for running our Kubernetes master. But now, instead of a
+single instance group for the Nodes, we have two instance groups, one comprising
+of on-demand instances and the other comprising of spot instances. As we can see
+in the configuration file below, Kops allows us to specify how many machines we
+want in each instance group. With this granular control, we can create just
+enough on-demand instances to support our high availability applications, and
+then utilize spot instances for the remainder of the computing resources needed
+to run our best effort applications.</p>
+<script src="https://gist.github.com/mattjmcnaughton/a6d64e8a198ff1cd567571e1455b4f30.js"></script>
+<p>Our final task is determining how we ensure that high availability pods run on
+our on-demand instance while best efforts run on our spot instances.
+Fortunately, Kubernetes gives us control over this via the concepts of <a href="https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/">Taints
+and Tolerations</a>.</p>
+<p>A taint is applied to a node. Once a taint is applied to a node,
+the node knows not to accept any pods that do not
+explicitly tolerate the taints. Whether a pod tolerates a taint or not is
+controlled via the node specifying a toleration for taint in its spec.</p>
+<p>Below, we can see an example of the taint we&rsquo;ve applied to our spot instance
+nodes.</p>
+<pre tabindex="0"><code>taints:
+  - type=spot-instance:NoSchedule
+</code></pre><p>Pods will not be scheduled on all nodes with this taint, unless they have the
+following toleration.</p>
+<pre tabindex="0"><code>tolerations:
+- key: &quot;type&quot;
+  operator: &quot;Equal&quot;
+  value: &quot;spot-instance&quot;
+</code></pre><p>We can then apply this toleration to, for example, our best effort Grafana pod, but
+not our high availability Prometheus pod. In doing so, we guarantee that all
+high availability pods will run on our on-demand instances, which have better
+reliability.</p>
+<h2 id="next-steps-and-conclusion">Next Steps and Conclusion</h2>
+<p>Success! As the title promised, we&rsquo;ve outlined a strategy which helps save
+money while maintaining availability. After utilizing this on-demand/spot
+instance split for a while, you can even decide to purchase a reserved instance
+instead of an on-demand instance, unlocking even further savings.
+See <a href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-1/">our previous post</a>
+for more discussion of converting on-demand instances to reserved instances.</p>
+<p>After making the changes discussed in this post, our cluster now has the
+reliability, and resources, to run our high availability NextCloud cluster, which is what we&rsquo;ll
+be exploring in our next blog post. Thanks for reading!</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/deploying-kubernetes-applications-part-1/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 1) Deploying Kubernetes&#39; Applications: The Solution</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/deploying-next-cloud-on-k8s/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">Deploying Nextcloud on k8s</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

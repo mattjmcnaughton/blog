@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 3) SLO Implementation: Deploying Grafana - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 3) SLO Implementation: Deploying Grafana</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-11-01T00:00:00">2018-11-01</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/grafana.svg" alt="(Part 3) SLO Implementation: Deploying Grafana">
+		</figure><div class="content post__content clearfix">
+			<p>For the past couple of weeks, our Prometheus cluster has been quietly polling
+this blog&rsquo;s web server for metrics. Now that we&rsquo;re collecting the data, our next
+job is make the data provide value. Our data provides value when it assists
+us in understanding our application&rsquo;s past and current SLO adherence, and when it
+improves our actual SLO adherence. In this blog post, we&rsquo;ll focus on the first
+of the two aforementioned value propositions. Specifically, we will create
+visualizations of metrics pertaining to our SLO using
+<a href="https://grafana.com">Grafana</a>.</p>
+<h2 id="deploying-grafana-to-kubernetes">Deploying Grafana to Kubernetes</h2>
+<p>Deploying Grafana to our Kubernetes cluster, and configuring it to read data
+from our Prometheus cluster, is a necessary precursor to any visualization work,
+so again we will start with deploying a popular open source application to
+Kubernetes.</p>
+<iframe src="https://giphy.com/embed/11o5fBqY66IciQ" width="480" height="350"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/11o5fBqY66IciQ">via GIPHY</a></p>
+<p>Grafana is essentially a stateless web application, so its deploy story is more
+similar to this blogs' than it is to Prometheus'. As a result, we won&rsquo;t worry
+about <a href="https://github.com/helm/charts">community Helm Charts</a> or
+<a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">Custom Resources</a>
+and <a href="https://coreos.com/operators/">Operators</a>. Rather, we&rsquo;ll
+write some quick manifest files declaring the
+low-level Kubernetes API objects we need to successfully run Grafana.</p>
+<p>We must define a couple different Kubernetes resources in order to successfully
+deploy Grafana. First, we need a ConfigMap containing
+Grafana&rsquo;s configuration files. Then, we need a Deployment object responsible for
+managing the Pods containing our Grafana container. Finally, we need a Service
+which will allow us to access our Pods from outside our Kubernetes cluster. As a
+reminder, I&rsquo;m skipping all RBAC related configuration until later, but if you&rsquo;re
+curious, you can find it
+<a href="https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/grafana">here</a>.</p>
+<p>Let&rsquo;s start with the
+<a href="https://kubernetes.io/blog/2016/04/configuration-management-with-containers/">ConfigMap</a>.
+A ConfigMap is just a set of key-value pairs, which a Pod can consume as command
+line arguments, environment variables, or files in a volume.
+Our Grafana use case requires a couple different configuration files, so we&rsquo;ll
+focus on the final consumption method.</p>
+<p>First, we need a <code>grafana.ini</code> file, which will be responsible for generic
+Grafana configuration. Next, we need a <code>datasource.yaml</code> file, which configures
+Prometheus as Grafana&rsquo;s singular datasource. Finally, we need a
+<code>dashboards.yaml</code> file, which we&rsquo;ll discuss in the next section.
+At a high level, this manifest creates a ConfigMap containing three separate
+files which we can mount into the Pods running our Grafana container.
+The embedded gist shows the complete source with line by line
+documentation.</p>
+<script src="https://gist.github.com/mattjmcnaughton/1845f794017da17e1de8e7e52a6a6937.js"></script>
+<p>Now that we have specified our configuration files via a ConfigMap, we can write
+the manifest for the Deployment object. At a high level, this manifest creates a
+Deployment responsible for managing the Pods running Grafana. Importantly, the
+Pod specification mounts our aforementioned configuration files from the
+ConfigMap. The embedded shows the complete source with line by line
+documentation.</p>
+<script src="https://gist.github.com/mattjmcnaughton/a3f4ae00d5a3b34e82c92a878e2d6689.js"></script>
+<p>After applying the two manifests above, Grafana should be up and running. Our
+final task is creating a Service to access Grafana. We
+create a Service with the <code>ClusterIP</code> type, because we do not want to expose
+Grafana to the public internet as does not have meaningful authentication
+or encryption. We will access it via port forwarding.
+If we run <code>kubectl port-forward svc/grafana 3000:3000</code>, then Grafana will be
+accessible via <code>localhost:3000</code>. The embedded gist below contains the entire
+manifest with line by line documentation.</p>
+<script src="https://gist.github.com/mattjmcnaughton/d2615241c31e7cbe45da213b76725d3d.js"></script>
+<p>Success! We have deployed Grafana to our Kubernetes cluster. After running the
+port-forward command listed above, navigate to <code>localhost:3000</code>. You can login
+with the username <code>admin</code> and the password <code>password</code>, and you should see the
+Grafana application, with our Prometheus cluster as the singular datasource.</p>
+<h1 id="slo-visualizations-using-grafana">SLO Visualizations using Grafana</h1>
+<p>After completing the steps outlined in the previous section, we&rsquo;re ready to
+create a Grafana dashboard with useful visualizations.</p>
+<p>We want this dashboard to serve a singular purpose, and avoid the &ldquo;wall of
+graphs&rdquo; phenomenon. Specifically, every visualization included in the dashboard
+should contribute to our understanding of this blog&rsquo;s past and present SLO
+adherence. With our desire for focus at the top of our mind, we realize our dashboard only
+needs to graph our two SLIs: availability and latency.</p>
+<p>Given our <a href="/slo">SLO</a>, we know we want to visualize the ratio
+of successful requests for availability and the 99th percentile
+of request times for latency. Fortunately, Grafana allows us to utilize
+<a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL</a>,
+the Prometheus query language, to specify the expressions we want to graph.</p>
+<p>For availability, we specify the following PromQL expression
+to graph the ratio of successful requests over the past hour:</p>
+<pre tabindex="0"><code>sum(rate(caddy_http_response_status_count_total{service=&quot;blog&quot;,status!~&quot;5..&quot;}[1h])) /
+sum(rate(caddy_http_response_status_count_total{service=&quot;blog&quot;}[1h])) /
+</code></pre><p>Over the last 24 hours, our graph displays the image below.
+As you can see, we did not fail a single request.</p>
+<img src="/img/grafana-availability-example.png">
+<p>For latency, we specify the following PromQL expression to graph the
+99th percentile of request time over the past hour:</p>
+<pre tabindex="0"><code>histogram_quantile(0.99, sum(rate(caddy_http_request_duration_seconds_bucket[1h])) by (le))
+</code></pre><p>Over the last 24 hours, our graph displays the image below.
+The 99th percentile request time maxes out just below 250ms, well below our SLO.</p>
+<img src="/img/grafana-latency-example.png">
+<p>When we are exploring different visualizations, we want to interact directly
+with the Grafana UI. However, in the longer term, we want to place our
+dashboard&rsquo;s configuration under source control. Fortunately, Grafana allows us
+to <a href="http://docs.grafana.org/reference/export_import/">export a dashboard&rsquo;s configuration as JSON</a>,
+and then to specify a directory from which Grafana should
+<a href="http://docs.grafana.org/administration/provisioning/#dashboards">load dashboard configuration on boot</a>.</p>
+<p>To utilize this strategy, we create another ConfigMap which we mount into our
+Grafana pod. As the ConfigMap is long, and almost entirely Grafana boilerplate,
+I won&rsquo;t embed it, but you can find it
+<a href="https://github.com/mattjmcnaughton/personal-k8s/blob/master/applications/grafana/templates/configmap-dashboards.yaml">here</a>
+if you&rsquo;re interested.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>We&rsquo;re so close to being done implementing our SLO!</p>
+<iframe src="https://giphy.com/embed/qLWdMYX1NYF2g" width="480" height="270"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/twitter-file-maximum-qLWdMYX1NYF2g">via
+GIPHY</a></p>
+<p>The next blog post will cover our final step, which
+is configuring alerting around the percentage of error
+budget our application has burned. We&rsquo;ll also add a graph of error budget to our
+Grafana dashboard. After completing this step, we&rsquo;ll be extracting all the value
+we can from our instrumentation efforts. Can&rsquo;t wait to wrap this project up with
+y&rsquo;all :)</p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/slo-implementation-part-2/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 2) SLO Implementation: Prometheus Up &amp; Running</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/slo-implementation-part-4/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 4) SLO Implementation: Alerting</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

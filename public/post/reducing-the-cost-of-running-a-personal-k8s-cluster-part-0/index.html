@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>(Part 0) Reducing the Cost of Running a Personal k8s Cluster: Introduction - ~/mattjmcnaughton/blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="~/mattjmcnaughton/blog" rel="home">
+				<div class="logo__title">~/mattjmcnaughton/blog</div>
+				
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/gpg/">
+				
+				<span class="menu__text">GPG</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">(Part 0) Reducing the Cost of Running a Personal k8s Cluster: Introduction</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2018-11-23T00:00:00">2018-11-23</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/projects/" rel="category">Projects</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/money.jpg" alt="(Part 0) Reducing the Cost of Running a Personal k8s Cluster: Introduction">
+		</figure><div class="content post__content clearfix">
+			<p>For the last couple of months, I&rsquo;ve spent the majority of my non-work coding
+time creating a <a href="/post/a-kubernetes-of-ones-own-part-0/">Kubernetes of my own</a>.
+My central thesis for this work is that Kubernetes is
+one of the best platforms for individual developers who want to self-host
+multiple applications with &ldquo;production&rdquo; performance needs (i.e. hosting a blog,
+a private Gitlab, a NextCloud, etc.). Supporting this thesis
+requires multiple forms of evidence.</p>
+<iframe src="https://giphy.com/embed/BwP6oBTVT5oC4" width="480" height="366"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/neogaf-again-popgaf-BwP6oBTVT5oC4">via
+GIPHY</a></p>
+<p>First, we need to show that deploying/maintaining
+multiple different applications with Kubernetes is doable and enjoyable without quitting our
+jobs and becoming full time sysadmins for personal projects.
+Our previous blog posts on <a href="/post/hosting-static-blog-on-kubernetes/">deploying this blog via
+Kubernetes</a> and
+<a href="/post/slo-implementation-part-0/">setting up monitoring and alerting</a>, as well
+as much of the work outlined in <a href="/post/personal-k8s-cluster-roadmap/">my personal k8s
+roadmap</a> focus on deploying and maintaining
+multiple different applications via Kubernetes, so I hope that we&rsquo;ve
+demonstrated, and will continue to demonstrate, Kubernetes' power and ease.</p>
+<p>Equally importantly, but so far unexplored on this blog, we need to demonstrate we
+can run a personal Kubernetes cluster without it breaking the
+bank. If it cost, for example, $500 a month to run a personal Kubernetes
+cluster, we&rsquo;re drastically reducing the segment of developers for whom
+Kubernetes is an appealing tool. At minimum, we want to show choosing Kubernetes
+is a cost-neutral decision, and at best, we&rsquo;d like to show there economic
+advantages to choosing Kubernetes instead of other comparable methods of
+deploying applications.</p>
+<p>As such, this blog series focuses on exploring Kubernetes' cost
+effectiveness.<sup><a href="#fn1">1</a></sup></p>
+<h2 id="where-are-we-at">Where are we at?</h2>
+<iframe src="https://giphy.com/embed/XCLBNof6ICAEM" width="480" height="363"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/seinfeld-newman-accountant-XCLBNof6ICAEM">via
+GIPHY</a></p>
+<p>In <a href="/post/a-kubernetes-of-ones-own-part-2/">part 2</a> of my series on creating a
+Kubernetes cluster for personal usage, I outline the steps for creating a
+Kubernetes cluster using <a href="https://github.com/kubernetes/kops">Kops</a>. The steps
+outlined in that blog post do not derivate from Kops defaults, and as a result
+we create a Kubernetes cluster with one m3.medium master and two t2.medium
+nodes. The master has an attached 64GB gp2 EBS volume, and each node has an
+attached 128GB gp2 EBS volume. Finally, the first application we hosted on
+Kubernetes was our blog, which contained a LoadBalancer service, which in turn
+creates an ELB.<sup><a href="#fn2">2</a></sup> Fortunately, almost
+all the AWS resources created by Kubernetes/Kops have a <code>KubernetesCluster</code> tag,
+which makes it relatively easy to use <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/">AWS Cost
+Explorer</a> to
+examine all Kubernetes/Kops created resources.</p>
+<p>In total, we have the following costs:</p>
+<pre tabindex="0"><code>master ec2 (1 m3.medium): (1 * 0.067 $/hour * 24 * 30) = 48.24
+nodes ec2 (2 t2.medium): (2 * 0.0464 $/hour * 24 * 30) = 66.82
+master ebs (1 64GB gp2): (1 * 64 * .1 $ per GB/month) = 6.4
+nodes ebs (2 128GB gp2): (2 * 128 * .1 $ per GB/month) = 25.6
+elb (1 classic) (1 * .25 $/hour * 24 * 30): 18
+total: 165.06
+</code></pre><p>From this rough math, we&rsquo;re spending around $165 a month to run personal
+Kubernetes cluster. If we run this cluster for 12 months,
+we will end up spending around $2,000. That&rsquo;s a lot of money!</p>
+<iframe src="https://giphy.com/embed/xEp3raFQkgpgY" width="480" height="346"
+frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/xEp3raFQkgpgY">via GIPHY</a></p>
+<p>Fortunately, we can take a number of cost optimization steps to decrease our AWS
+bill. We identified three main types of AWS resources on which we&rsquo;re spending a
+significant amount of money. In order of total cost, they are EC2 instances, EBS
+volumes, and ELB load balancers. We will optimize each resource type
+independently, beginning with our largest expense, EC2 instances, in the <a href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-1">next
+blog post in the series</a>.
+I can&rsquo;t wait to explore these cost-reduction solutions together,
+in order to make running a personal k8s cluster accessible to as many developers as possible.</p>
+<iframe src="https://giphy.com/embed/xTiTnqUxyWbsAXq7Ju" width="400"
+height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a
+href="https://giphy.com/gifs/yosub-money-donald-duck-cash-xTiTnqUxyWbsAXq7Ju">via
+GIPHY</a></p>
+<hr />
+<p><sup id="fn1"> 1. As a note, some of the cost reduction ideas proposed by this series are enabled by our choice
+of AWS as our cloud vendor. Its possible both that some tips we offer won&rsquo;t be
+applicable to other vendors, and also that other vendors may have tips which
+aren&rsquo;t applicable to AWS.</sup></p>
+<p><sup id="fn2">2. I&rsquo;m making the assumption that a personal Kubernetes
+cluster will have at least one publicly available service.</sup></p>
+
+		</div>
+	</article>
+</main>
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/slo-implementation-part-4/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">(Part 4) SLO Implementation: Alerting</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/post/reducing-the-cost-of-running-a-personal-k8s-cluster-part-1/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">(Part 1) Reducing the Cost of Running a Personal k8s Cluster: EC2 Instances</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar">
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/mattjmcnaughton" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:me@mattjmcnaughton.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>me@mattjmcnaughton.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2021 ~/mattjmcnaughton/blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>
