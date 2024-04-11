@@ -1,4 +1,0 @@
-+++
-tags = ["programming"]
-categories = ["Programming"]
-+++

@@ -1,16 +1,11 @@
-# Blog
+# blog
 
-The code and blog entires behind my [blog](http://mattjmcnaughton.com).
+Simple static homepage for myself.
 
-## Deploy
+Using sr.ht pages. See [sr.ht pages docs](https://srht.site/quickstart).
 
-Deployed/hosted using
-[Kubernetes](https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/blog).
+DNS is configured via Terraform in [this
+repo](https://github.com/mattjmcnaughton/nuage/commit/bd8fef872102bce0c3386c7ad9fab92193464555).
 
-Formerly using [ansible](https://github.com/mattjmcnaughton/ansible-blog),
-and before that using [sdep](https://github.com/mattjmcnaughton/sdep).
-
-## Dependencies
-
-Install the `hugo` package with either `sudo apt-get install hugo` or
-`brew install hugo`.
+My old blog is available via the `mattjmcnaughton/archive` branch, and at
+https://archive.mattjmcnaughton.com.

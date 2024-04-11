@@ -1,1 +1,2 @@
-public
+site.tar.gz
+styles.css  # We generate the `styles.css` from the `styles.scss`.
