@@ -1,16 +1,70 @@
 # Blog
 
-The code and blog entires behind my [blog](http://mattjmcnaughton.com).
+The code and blog entires behind my [blog](https://mattjmcnaughton.com).
+
+## Development
+
+We manage the development environment via Nix. Run `nix develop` to enter the
+dev environment.
+
+See [flake.nix](flake.nix) for what is included.
 
 ## Deploy
 
-Deployed/hosted using
-[Kubernetes](https://github.com/mattjmcnaughton/personal-k8s/tree/master/applications/blog).
+Deployed via fly.io.
 
-Formerly using [ansible](https://github.com/mattjmcnaughton/ansible-blog),
-and before that using [sdep](https://github.com/mattjmcnaughton/sdep).
+### Initial provisioning
 
-## Dependencies
+Run `just launch` for the initial provisioning of the application. We only need
+to do this once to generate the `fly.toml`.
 
-Install the `hugo` package with either `sudo apt-get install hugo` or
-`brew install hugo`.
+See https://fly.io/docs/languages-and-frameworks/static/. Ensure we update the
+port from 8080 to 80.
+
+### Deploy
+
+For each new deploy, run `just deploy`. This step will run both `hugo build` and
+`fly deploy`.
+
+### Custom domain
+
+The `mattjmcnaughton.com` DNS lives in
+[nuage](https://github.com/mattjmcnaughton/nuage).
+
+We made the configuration updates in this [nuage
+PR](https://github.com/mattjmcnaughton/nuage/pull/3).
+
+We currently route the following hostnames to `fly.io`:
+- `mattjmcnaughton.com`
+- `www.mattjmcnaughton.com`
+- `blog.mattjmcnaughton.com`
+
+See https://fly.io/docs/networking/custom-domain/ for the documentation we
+followed.
+
+We need to use an A/AAAA record for `mattjmcnaughton.com` (as we cannot set a
+CNAME for `mattjmcnaughton.com`, as its the zone apex, and we can't set a CNAME
+for the zone apex).
+
+We use a CNAME for the non-zone apex domains.
+
+### SSL Certs
+
+We can configure SSL certs via running the following from the project root. **We
+only need to run this operation once for each of the hostnames listed above for
+which we want to set-up certs.**
+
+`fly certs add $HOSTNAME`
+
+We can check the status of the certs with `fly certs show $HOSTNAME`.
+
+See https://fly.io/docs/networking/custom-domain/#get-certified for the
+documentation we followed.
+
+### Provisioning
+
+Currently we deploy 2 machines, each w/ 1 CPU and 256mb RAM. According to
+https://fly.io/docs/about/pricing/, this will cost us ~$4 per month.
+
+If we wanted to deploy only a single machine, we could run `fly deploy
+--ha=false`.
