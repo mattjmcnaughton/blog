@@ -1,3 +1,6 @@
+develop:
+  nix develop
+
 build:
   hugo
 
