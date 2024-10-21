@@ -5,9 +5,6 @@ paginate = "10"
 theme = "mainroad"
 title = "~/mattjmcnaughton/blog"
 
-[Author]
-  name = "Matt McNaughton"
-
 [Params]
   readmore = true
   post_navigation = true
@@ -15,6 +12,9 @@ title = "~/mattjmcnaughton/blog"
   post_meta = ["date", "categories"]
   dateformat = "2006-01-02"
   highlightColor = "#95a5a6"
+
+[Params.author]
+  name = "mattjmcnaughton"
 
 [Params.sidebar]
   home = "right"

@@ -2,12 +2,19 @@
 
 The code and blog entires behind my [blog](https://mattjmcnaughton.com).
 
+## Writing
+
+- To add a new post, run `hugo new content post/SLUG-FOR-POST.md`.
+- To add a new "top-level" page (i.e. `about`, etc...) run `hugo new content SLUG-FOR-PAGE.md`.
+    - Ensure that we add `menu = "main"` to the `config` at the top of the
+      markdown file. See [about.md](./content/about.md) as an example.
+
 ## Development
 
 We manage the development environment via Nix. Run `nix develop` to enter the
 dev environment.
 
-See [flake.nix](flake.nix) for what is included.
+See [flake.nix](./flake.nix) for what is included.
 
 ## Deploy
 
