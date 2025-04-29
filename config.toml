@@ -13,8 +13,8 @@ title = "~/mattjmcnaughton/blog"
   dateformat = "2006-01-02"
   highlightColor = "#95a5a6"
 
-[Params.author]
-  name = "mattjmcnaughton"
+[Params.logo]
+  image = "img/avatar/mattjmcnaughton-and-pug-typing-pixelated.png"
 
 [Params.sidebar]
   home = "right"

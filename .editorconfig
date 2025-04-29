@@ -1,0 +1,25 @@
+# https://editorconfig.org/
+
+# top-most EditorConfig file
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Justfile specific settings
+[justfile]
+indent_style = space
+indent_size = 4
+# Justfiles use spaces, not tabs, for indentation
+tab_width = 4
+
+# Makefile-like syntax highlighting is often used for Justfiles
+[{justfile,Justfile}]
+indent_style = space
+indent_size = 4
+
+# TODO: We can investigate making changes for *.md, etc... later.

@@ -16,6 +16,7 @@
           buildInputs = with pkgs; [
             flyctl
             hugo
+	    imagemagick
             just
           ];
 
