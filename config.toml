@@ -1,7 +1,6 @@
 # Site settings
 baseURL = "https://mattjmcnaughton.com/"
 languageCode = "en-us"
-paginate = "10"
 theme = "mainroad"
 title = "~/mattjmcnaughton/blog"
 
@@ -14,7 +13,7 @@ title = "~/mattjmcnaughton/blog"
   highlightColor = "#95a5a6"
 
 [Params.logo]
-  image = "img/avatar/mattjmcnaughton-and-pug-typing-pixelated.png"
+  image = "img/avatar/mattjmcnaughton-and-two-pugs-typing-pixelated.png"
 
 [Params.sidebar]
   home = "right"
@@ -24,6 +23,7 @@ title = "~/mattjmcnaughton/blog"
 
 [Params.widgets.social]
   github = "mattjmcnaughton"
+  linkedin = "mattjmcnaughton"
   email = "me@mattjmcnaughton.com"
 
 # Needed to render raw html
