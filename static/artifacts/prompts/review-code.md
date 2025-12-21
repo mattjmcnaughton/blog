@@ -52,6 +52,16 @@ Parse the user's message to identify:
      - **Standard**: Post-1.0 projects (the typical default)
      - **Critical**: Code that is particularly complex or impacts critical systems
      - **Security**: Code that handles authentication, authorization, user input, or sensitive data
+   - To determine project maturity (pre-1.0 vs post-1.0), check version in these files:
+     - **Python**: `pyproject.toml` (`version` field under `[project]` or `[tool.poetry]`)
+     - **Rust**: `Cargo.toml` (`version` field under `[package]`)
+     - **JavaScript/TypeScript**: `package.json` (`version` field)
+     - **Go**: Check git tags or `go.mod` module path for version indicators
+     - **Ruby**: `*.gemspec` (`spec.version`) or `VERSION` file
+     - **Java/Kotlin**: `pom.xml` (`<version>`) or `build.gradle`/`build.gradle.kts` (`version`)
+     - **C#/.NET**: `*.csproj` (`<Version>`) or `Directory.Build.props`
+     - **Elixir**: `mix.exs` (`version` in `project/0`)
+     - If no version file is found, check git tags or default to Standard mode
 
 2. **Identify and Retrieve Code**
    - Determine the code source from the input
