@@ -5,7 +5,7 @@ menu = "main"
 disable_comments = true
 +++
 
-You can find my GPG public key [here](/mattjmcnaughton.pub.asc). I accept emails
+You can find my GPG public key [here](/artifacts/gpg/mattjmcnaughton.pub.asc). I accept emails
 encrypted using this public key and sign my emails with this public key when
 helpful.<sup><a href="#fn1">1</a></sup>
 

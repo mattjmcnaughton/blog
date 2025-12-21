@@ -29,5 +29,5 @@ but will post when I have something I'd like to share :)
 You can find me on [Github](https://github.com/mattjmcnaughton),
 [LinkedIn](www.linkedin.com/in/mattjmcnaughton).
 or reach me through [email](mailto:me@mattjmcnaughton.com).
-You can find my GPG public key [here](/mattjmcnaughton.pub.asc)
+You can find my GPG public key [here](/artifacts/gpg/mattjmcnaughton.pub.asc)
 and I'm happy to share a copy of my resume upon request. Just drop me an email!

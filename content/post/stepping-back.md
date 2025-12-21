@@ -32,7 +32,7 @@ enjoy sharing in the future. But I won't pretend that I'm going to post with any
 of regular cadence :)
 
 As always, you can reach me through [email](mailto:me@mattjmcnaughton.com).
-You can find my GPG public key [here](/mattjmcnaughton.pub.asc).
+You can find my GPG public key [here](/artifacts/gpg/mattjmcnaughton.pub.asc).
 Please don't hesitate to reach out if I can ever be of any help, particularly if
 it relates to mental health and programming or diversity and inclusion in
 tech/open source.
