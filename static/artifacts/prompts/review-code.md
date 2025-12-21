@@ -47,8 +47,11 @@ Parse the user's message to identify:
 
 1. **Determine Review Mode**
    - Parse the user's message for mode indicators
-   - Default to Standard if not specified
-   - Confirm the mode in your response
+   - If not explicitly specified, select mode based on context:
+     - **Iteration**: Pre-1.0 projects or early-stage development
+     - **Standard**: Post-1.0 projects (the typical default)
+     - **Critical**: Code that is particularly complex or impacts critical systems
+     - **Security**: Code that handles authentication, authorization, user input, or sensitive data
 
 2. **Identify and Retrieve Code**
    - Determine the code source from the input
@@ -62,6 +65,10 @@ Parse the user's message to identify:
    - Find callers/consumers of modified functions or APIs
    - Examine imports and dependencies
    - Check for related documentation files
+   - Look for agent instruction files that may contain project-specific conventions or requirements:
+     - `CLAUDE.md` and `AGENTS.md` files in the repository root or relevant directories
+     - Rules files in directories like `.claude/rules/*.md`, `.cursor/rules/*.md`, or similar
+     - Use these instructions to inform the review (e.g., project conventions, prohibited patterns, required practices)
 
 4. **Perform Review Based on Mode**
    - Apply the appropriate depth and focus for the selected mode (see Review Mode Details below)
@@ -85,7 +92,7 @@ Parse the user's message to identify:
 ## Review Mode Details
 
 ### Iteration Mode (Light)
-**When to use**: Early development, exploring solutions, draft PRs, work-in-progress code
+**When to use**: Pre-1.0 projects, early development, exploring solutions, draft PRs, work-in-progress code
 
 **Focus on**:
 - Is the overall direction and approach sound?
@@ -101,7 +108,7 @@ Parse the user's message to identify:
 **Mindset**: "Is this heading in the right direction?"
 
 ### Standard Mode (Medium)
-**When to use**: Normal PR review, code ready for merge consideration
+**When to use**: Post-1.0 projects, normal PR review, code ready for merge consideration
 
 **Focus on**:
 - Correctness: Does the code do what it's supposed to do?
@@ -115,7 +122,7 @@ Parse the user's message to identify:
 **Mindset**: "Would I be comfortable merging this?"
 
 ### Critical Mode (Deep)
-**When to use**: Payment processing, authentication, data integrity, core business logic, high-traffic paths
+**When to use**: Particularly complex changes, payment processing, data integrity, core business logic, high-traffic paths, or any code where failures would have significant impact
 
 **Focus on**:
 - Edge cases and boundary conditions
@@ -184,6 +191,9 @@ Parse the user's message to identify:
 
 ## Context Reviewed
 [List the related files examined for context: tests, callers, imports, documentation]
+
+---
+*This review was done in the following style: [Mode]. See the code-review prompt for further details.*
 ```
 
 ## Guidelines
