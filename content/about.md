@@ -5,11 +5,13 @@ menu = "main"
 disable_comments = true
 +++
 
-Hi, my name's Matt :) I live in NYC and am the proud parent of two pugs, Cosmo and Stuart!
+Hi, my name's Matt :) I live in New Jersey (after 10 years in NYC) and am the proud parent of two pugs, Cosmo and Stuart!
 
-I've worked at Flatiron Health since 2016 (my first job post-graduation from Williams College).
-I was promoted to Principal Engineer in 2022, and currently focus on emerging AI technologies
-and clinical research. Prior to joining Clinical Research, I focused on DevOps/DevEx solutions within our Evidence org.
+As of December 2025, I'm working to re-engineer Clinical Research for impact as a Principal Software Engineer at Paradigm Health.
+Previously, I worked at Flatiron Health from 2016-2025.
+
+For the last couple of years, at both Paradigm Health and Flatiron Health, I've focused on emerging AI technologies and clinical research.
+In my early days at Flatiron, I focused on DevOps/DevEx solutions within our Real World Evidence business.
 
 From 2018-2020, I focused most of my "leisure" coding time on Kubernetes and the Cloud
 Native ecosystem. I contributed code and reviews to
@@ -27,7 +29,7 @@ but will post when I have something I'd like to share :)
 ---
 
 You can find me on [Github](https://github.com/mattjmcnaughton),
-[LinkedIn](www.linkedin.com/in/mattjmcnaughton).
+[LinkedIn](https://www.linkedin.com/in/mattjmcnaughton).
 or reach me through [email](mailto:me@mattjmcnaughton.com).
 You can find my GPG public key [here](/artifacts/gpg/mattjmcnaughton.pub.asc)
 and I'm happy to share a copy of my resume upon request. Just drop me an email!
