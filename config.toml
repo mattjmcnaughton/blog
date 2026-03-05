@@ -1,5 +1,5 @@
 # Site settings
-baseURL = "https://mattjmcnaughton.com/"
+baseURL = "https://legacy.mattjmcnaughton.com/"
 languageCode = "en-us"
 theme = "mainroad"
 title = "~/mattjmcnaughton/blog"

@@ -24,7 +24,7 @@ decrease the barriers for potential contributors to making meaningful commits.
 
 For my next couple of blog posts, we'll be examining how to test potential Kubernetes
 contributions. This post assumes you've read my
-[k8s-dev-quick-start](https://mattjmcnaughton.com/post/k8s-dev-quick-start/)
+[k8s-dev-quick-start](/post/k8s-dev-quick-start/)
 post, which covers
 forking and cloning the Kubernetes repo, ensuring the project builds, etc...
 

@@ -1,6 +1,9 @@
-# Blog
+# Blog (Legacy)
 
-The code and blog entires behind my [blog](https://mattjmcnaughton.com).
+> **This blog is now archived.** It is served at
+> [legacy.mattjmcnaughton.com](https://legacy.mattjmcnaughton.com) and no longer
+> receives deploys. The new website lives at
+> [mattjmcnaughton/blog-v2](https://github.com/mattjmcnaughton/blog-v2).
 
 ## Writing
 

@@ -43,7 +43,7 @@ href="https://giphy.com/gifs/soulpancake-lists-paper-4XE33ctnOXywg">via
 GIPHY</a></p>
 
 P.S. I apologize for the interruption from the [SLO
-Implementation](http://mattjmcnaughton.com/post/slo-implementation-part-0/) series.
+Implementation](/post/slo-implementation-part-0/) series.
 I promise my next blog post will be on deploying Prometheus to a Kubernetes
 cluster :)
 
