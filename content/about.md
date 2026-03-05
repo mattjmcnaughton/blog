@@ -5,6 +5,12 @@ menu = "main"
 disable_comments = true
 +++
 
+**Note:** You're on [legacy.mattjmcnaughton.com](https://legacy.mattjmcnaughton.com),
+which is no longer receiving updates. My main website now lives at
+[mattjmcnaughton.com](https://mattjmcnaughton.com).
+
+---
+
 Hi, my name's Matt :) I live in New Jersey (after 10 years in NYC) and am the proud parent of two pugs, Cosmo and Stuart!
 
 As of December 2025, I'm working to re-engineer Clinical Research for impact as a Principal Software Engineer at Paradigm Health.
